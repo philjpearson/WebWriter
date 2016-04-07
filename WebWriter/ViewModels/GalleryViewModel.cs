@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	21 March 2016 20:37:37
+//	Last mod:	07 April 2016 17:36:18
 //
 namespace WebWriter.ViewModels
 	{
@@ -13,6 +13,7 @@ namespace WebWriter.ViewModels
 	using OfficeOpenXml;
 	using System;
 	using System.Windows;
+
 	public class GalleryViewModel : ViewModelBase
 		{
 		const string filePath = @"D:\philj\Documents\OneDrive\My Documents\Ecclesia\Web site\Gallery.webw";
