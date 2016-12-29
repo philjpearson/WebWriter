@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	07 April 2016 17:36:18
+//	Last mod:	29 December 2016 19:01:31
 //
 namespace WebWriter.ViewModels
 	{
@@ -131,14 +131,14 @@ namespace WebWriter.ViewModels
 						link = ws.Cells[row, 5].Value.ToString();
 
 					VideoModel video = new VideoModel()
-					{
+						{
 						Title = title,
 						Link = link,
 						Date = date,
 						IsBibleHour = isBibleHour,
 						Speaker = speaker,
 						Ecclesia = ecclesia
-					};
+						};
 					Gallery.Videos.Add(video);
 					row++;
 					}
@@ -187,6 +187,34 @@ namespace WebWriter.ViewModels
 			GalleryWriter gw = new GalleryWriter(Gallery);
 			gw.Write(@"D:\Documents\Ecclesia\Web site\GalleryDiv.xml");
 			}
+
+		/// <summary>
+		/// Gets the WriteGalleryCommand command.
+		/// </summary>
+		public Command<object> WriteGalleryCommand
+			{
+			get
+				{
+				if (_WriteGalleryCommand == null)
+					_WriteGalleryCommand = new Command<object>(WriteGalleryCommand_Execute);
+				return _WriteGalleryCommand;
+				}
+			}
+
+		private Command<object> _WriteGalleryCommand;
+
+		/// <summary>
+		/// Method to invoke when the WriteGalleryCommand command is executed.
+		/// </summary>
+		/// <param name="parameter">The parameter of the command.</param>
+		private void WriteGalleryCommand_Execute(object parameter)
+			{
+			Gallery.Sort();
+			Gallery.SaveAsXml(filePath);
+			GalleryWriter gw = new GalleryWriter(Gallery);
+			gw.WriteGallery(filePath);
+			}
+
 
 		protected override async Task Initialize()
 			{

@@ -1,4 +1,4 @@
-﻿<!-- Last mod: 12 January 2016 17:29:53 -->
+﻿<!-- Last mod: 27 April 2016 17:41:39 -->
     
 <catel:Window x:Class="WebWriter.Views.MainWindow"
               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -44,8 +44,8 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
-                <Button Height="150" Background="{DynamicResource BackgroundBrush}" BorderThickness="3" Margin="0,0,6,6" Command="{Binding TitlesCommand}" >
-                    <TextBlock FontFamily="Segoe UI Semibold" Text="Bible Hour Titles" FontSize="48" TextOptions.TextFormattingMode="Display" TextWrapping="Wrap" TextAlignment="Center" Foreground="{DynamicResource TextBrush}" />
+                <Button Height="150" Background="{DynamicResource BackgroundBrush}" BorderThickness="3" Margin="0,0,6,6" Command="{Binding CampaignGalleryCommand}" >
+                    <TextBlock FontFamily="Segoe UI Semibold" Text="Campaign Gallery" FontSize="48" TextOptions.TextFormattingMode="Display" TextWrapping="Wrap" TextAlignment="Center" Foreground="{DynamicResource TextBrush}" />
                 </Button>
                 <Button Grid.Column="1" Height="150" Background="{DynamicResource BackgroundBrush}" BorderThickness="3" Margin="6,0,0,6" Command="{Binding GalleryCommand}" >
                     <TextBlock FontFamily="Segoe UI Semibold" Text="Gallery Videos" FontSize="48" TextOptions.TextFormattingMode="Display" TextWrapping="Wrap" TextAlignment="Center" Foreground="{DynamicResource TextBrush}" />

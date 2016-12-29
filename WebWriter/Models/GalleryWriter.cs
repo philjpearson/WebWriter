@@ -1,9 +1,11 @@
 ﻿//
-//	Last mod:	17 December 2015 19:45:44
+//	Last mod:	29 December 2016 19:08:08
 //
 using System;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text;
 using System.Windows;
 using System.Xml;
 
@@ -15,6 +17,10 @@ namespace WebWriter.Models
 		private XmlDocument newDoc;
 		private const string galleryPage = @"D:\Documents\My Web Sites\StaffordChristadelphians\gallery\index.html";
 		private const string newGalleryPage = @"D:\Documents\My Web Sites\StaffordChristadelphians\gallery\index-new.html";
+
+		string ftpUserName { get; } = "websiteupdater";
+		string ftpPassword { get; } = "sandon14road";
+		string galleryFilename { get; } = "Gallery.webw";
 
 		public GalleryWriter(GalleryModel gallery)
 			{
@@ -187,6 +193,50 @@ namespace WebWriter.Models
 			int ind = video.Link.LastIndexOf('/');
 			string code = video.Link.Substring(ind + 1);
 			return string.Format("//www.youtube.com/embed/{0}?rel=0", code);
+			}
+
+		internal void WriteGallery(string filePath)
+			{
+			try
+				{
+				FtpWebRequest request = (FtpWebRequest)WebRequest.Create($"ftp://ftp.servage.net/staffordchristadelphians.org.uk/gallery/{galleryFilename}.new");
+				request.Method = WebRequestMethods.Ftp.UploadFile;
+				request.Credentials = new NetworkCredential(ftpUserName, ftpPassword);
+
+				// Copy the contents of the file to the request stream.
+				using (StreamReader sourceStream = new StreamReader(filePath))
+					{
+					byte[] fileContents = Encoding.UTF8.GetBytes(sourceStream.ReadToEnd());
+					sourceStream.Close();
+					request.ContentLength = fileContents.Length;
+
+					Stream requestStream = request.GetRequestStream();
+					requestStream.Write(fileContents, 0, fileContents.Length);
+					requestStream.Close();
+					}
+				FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+				if (response.StatusCode != FtpStatusCode.CommandOK && response.StatusCode != FtpStatusCode.ClosingData)
+					{
+					MessageBox.Show($"Gallery file ftp upload failed.\r\nResponse status was '{response.StatusDescription}'", "WebWriter", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+					}
+				response.Close();
+
+				request = (FtpWebRequest)WebRequest.Create($"ftp://ftp.servage.net/staffordchristadelphians.org.uk/gallery/{galleryFilename}.new");
+				request.Credentials = new NetworkCredential(ftpUserName, ftpPassword);
+				request.Method = WebRequestMethods.Ftp.Rename;
+				request.RenameTo = galleryFilename;
+				response = (FtpWebResponse)request.GetResponse();
+				if (response.StatusCode != FtpStatusCode.FileActionOK)
+					{
+					MessageBox.Show($"Gallery file ftp rename after upload failed.\r\nResponse status was '{response.StatusDescription}'", "WebWriter", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+					}
+				response.Close();
+				MessageBox.Show("Gallery file written to the server", "Web Writer");
+				}
+			catch (Exception ex)
+				{
+				MessageBox.Show($"Exception in WriteGallery: {ex.Message}'", "WebWriter", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+				}
 			}
 
 		private void AppendAttribute(XmlNode node, string name, string value)

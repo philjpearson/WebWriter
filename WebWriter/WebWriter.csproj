@@ -71,6 +71,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Views\CampaignGalleryView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\GalleryView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -86,8 +90,12 @@
     <Compile Include="Models\GalleryModel.cs" />
     <Compile Include="Models\GalleryWriter.cs" />
     <Compile Include="Models\VideoModel.cs" />
+    <Compile Include="ViewModels\CampaignGalleryViewModel.cs" />
     <Compile Include="ViewModels\GalleryViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Compile Include="Views\CampaignGalleryView.xaml.cs">
+      <DependentUpon>CampaignGalleryView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\GalleryView.xaml.cs">
       <DependentUpon>GalleryView.xaml</DependentUpon>
     </Compile>

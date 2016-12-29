@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	18 July 2015 12:47:15
+//	Last mod:	27 April 2016 17:41:39
 //
 namespace WebWriter.ViewModels
 	{
@@ -22,7 +22,8 @@ namespace WebWriter.ViewModels
 			ExitCommand = new Command<object>(OnExitExecute);
 			TitlesCommand = new Command<object>(OnTitlesExecute);
 			GalleryCommand = new Command<object>(OnGalleryExecute);
-			SettingsCommand = new Command(OnSettingsCommandExecute);
+			SettingsCommand = new Command(OnSettingsExecute);
+			CampaignGalleryCommand = new Command<object>(OnCampaignGalleryExecute);
 			}
 
 		public override string Title { get { return "Phil's Web Writer"; } }
@@ -77,19 +78,25 @@ namespace WebWriter.ViewModels
 		public Command SettingsCommand { get; private set; }
 
 		/// <summary>
-		/// Method to invoke when the SettingsCommand command is executed.
-		/// </summary>
-		private void OnSettingsCommandExecute()
-			{
-			// TODO: Handle command logic here
-			}
-
-		/// <summary>
 		/// Method to invoke when the Settings command is executed.
 		/// </summary>
 		private void OnSettingsExecute()
 			{
 			// TODO: Handle command logic here
+			}
+
+		/// <summary>
+		/// Gets the TitlesCommand command.
+		/// </summary>
+		public Command<object> CampaignGalleryCommand { get; private set; }
+
+		/// <summary>
+		/// Method to invoke when the TitlesCommand command is executed.
+		/// </summary>
+		private void OnCampaignGalleryExecute(object parameter)
+			{
+			CampaignGalleryViewModel cgvm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<CampaignGalleryViewModel>();
+			uiVisualiserService.ShowDialog(cgvm);
 			}
 
 		protected override async Task Initialize()
