@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	27 April 2016 17:41:39
+//	Last mod:	30 December 2016 20:09:50
 //
 namespace WebWriter.ViewModels
 	{
@@ -55,7 +55,8 @@ namespace WebWriter.ViewModels
 		/// </summary>
 		private void OnTitlesExecute(object parameter)
 			{
-			// TODO: Handle command logic here
+			TitlesViewModel vm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<TitlesViewModel>();
+			uiVisualiserService.ShowDialog(vm);
 			}
 
 		/// <summary>
@@ -86,17 +87,42 @@ namespace WebWriter.ViewModels
 			}
 
 		/// <summary>
-		/// Gets the TitlesCommand command.
+		/// Gets the CampaignGalleryCommand command.
 		/// </summary>
 		public Command<object> CampaignGalleryCommand { get; private set; }
 
 		/// <summary>
-		/// Method to invoke when the TitlesCommand command is executed.
+		/// Method to invoke when the CampaignGalleryCommand command is executed.
 		/// </summary>
 		private void OnCampaignGalleryExecute(object parameter)
 			{
 			CampaignGalleryViewModel cgvm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<CampaignGalleryViewModel>();
 			uiVisualiserService.ShowDialog(cgvm);
+			}
+
+		/// <summary>
+				/// Gets the RecordingsCommand command.
+				/// </summary>
+		public Command<object> RecordingsCommand
+			{
+			get
+				{
+				if (_RecordingsCommand == null)
+					_RecordingsCommand = new Command<object>(RecordingsCommand_Execute);
+				return _RecordingsCommand;
+				}
+			}
+
+		private Command<object> _RecordingsCommand;
+
+		/// <summary>
+		/// Method to invoke when the RecordingsCommand command is executed.
+		/// </summary>
+		/// <param name="parameter">The parameter of the command.</param>
+		private void RecordingsCommand_Execute(object parameter)
+			{
+			RecordingsViewModel vm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<RecordingsViewModel>();
+			uiVisualiserService.ShowDialog(vm);
 			}
 
 		protected override async Task Initialize()

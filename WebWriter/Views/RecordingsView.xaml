@@ -1,0 +1,28 @@
+﻿<!-- Last mod: 30 December 2016 20:09:50 -->
+
+<catel:DataWindow x:Class="WebWriter.Views.RecordingsView"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:catel="http://catel.codeplex.com"
+                  SizeToContent="Width"
+                  Title="{Binding Title}"
+                  >
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <DataGrid ItemsSource="{Binding Recordings}" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Date,StringFormat=dd MMM yyyy}" Header="Date" Width="100" />
+                <DataGridTextColumn Binding="{Binding Type}" Header="Type" Width="150"/>
+                <DataGridTextColumn Binding="{Binding File}" Header="File" Width="150"/>
+                <DataGridTextColumn Binding="{Binding Text}" Header="Text" Width="250"/>
+                <DataGridTextColumn Binding="{Binding Speaker}" Header="Speaker" Width="150"/>
+                <DataGridTextColumn Binding="{Binding Ecclesia}" Header="Ecclesia" Width="150"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+
+</catel:DataWindow>
