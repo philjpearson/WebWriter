@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	30 December 2016 19:07:23
+//	Last mod:	31 December 2016 15:47:47
 //
 namespace WebWriter.ViewModels
 	{
@@ -90,19 +90,6 @@ namespace WebWriter.ViewModels
 			public string Date;
 			[FieldQuoted('"', QuoteMode.AlwaysQuoted, MultilineMode.NotAllow)]
 			public string Title;
-
-			public BibleHourTitleRecord Tidied()
-				{
-				if (Date.StartsWith("\""))
-					Date = Date.Substring(1);
-				if (Date.EndsWith("\""))
-					Date = Date.Substring(0, Date.Length - 1);
-				if (Title.StartsWith("\""))
-					Title = Title.Substring(1);
-				if (Title.EndsWith("\""))
-					Title = Title.Substring(0, Title.Length - 1);
-				return this;
-				}
 			}
 
 		public class BibleHourTitle : ModelBase

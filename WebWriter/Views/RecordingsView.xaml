@@ -1,4 +1,4 @@
-﻿<!-- Last mod: 30 December 2016 20:09:50 -->
+﻿<!-- Last mod: 31 December 2016 15:39:56 -->
 
 <catel:DataWindow x:Class="WebWriter.Views.RecordingsView"
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -17,7 +17,7 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Date,StringFormat=dd MMM yyyy}" Header="Date" Width="100" />
                 <DataGridTextColumn Binding="{Binding Type}" Header="Type" Width="150"/>
-                <DataGridTextColumn Binding="{Binding File}" Header="File" Width="150"/>
+                <DataGridTextColumn Binding="{Binding File}" Header="File" Width="200"/>
                 <DataGridTextColumn Binding="{Binding Text}" Header="Text" Width="250"/>
                 <DataGridTextColumn Binding="{Binding Speaker}" Header="Speaker" Width="150"/>
                 <DataGridTextColumn Binding="{Binding Ecclesia}" Header="Ecclesia" Width="150"/>

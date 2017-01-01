@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	30 December 2016 19:07:22
+//	Last mod:	01 January 2017 00:14:30
 //
 using System.IO;
 using System.Net;
@@ -15,9 +15,7 @@ namespace WebWriter.Models
 
 		public static void Upload(string localFile, string remotePath)
 			{
-			int i = remotePath.LastIndexOf('/');
-			if (i == -1)
-				i = 0;
+			int i = 1 + remotePath.LastIndexOf('/');
 			string remoteFilename = remotePath.Substring(i);
 
 			FtpWebRequest request = (FtpWebRequest)WebRequest.Create($"ftp://ftp.servage.net/staffordchristadelphians.org.uk/{remotePath}.new");

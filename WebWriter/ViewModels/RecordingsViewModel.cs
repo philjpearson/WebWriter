@@ -1,12 +1,14 @@
 ﻿//
-//	Last mod:	30 December 2016 20:58:17
+//	Last mod:	01 January 2017 00:14:30
 //
 namespace WebWriter.ViewModels
 	{
 	using Catel.Data;
 	using Catel.MVVM;
+	using Models;
 	using System;
 	using System.Collections.ObjectModel;
+	using System.IO;
 	using System.Linq;
 	using System.Runtime.Serialization;
 	using System.Threading.Tasks;
@@ -20,6 +22,7 @@ namespace WebWriter.ViewModels
 			public DateTime Date { get; set; }
 			public string Type { get; set; }
 			public string File { get; set; }
+			public string Text { get; set; }
 			public string Speaker { get; set; }
 			public string Ecclesia { get; set; }
 			}
@@ -55,7 +58,8 @@ namespace WebWriter.ViewModels
 														Type = (string)r.Element("Type"),
 														File = (string)r.Element("File"),
 														Speaker = (string)r.Element("Speaker"),
-														Ecclesia = (string)r.Element("Ecclesia")
+														Ecclesia = (string)r.Element("Ecclesia"),
+														Text = (string)r.Element("Text")
 														}).ToList();
 				Recordings = new ObservableCollection<Recording>(recordings);
 				}
@@ -70,13 +74,19 @@ namespace WebWriter.ViewModels
 		protected override Task<bool> Save()
 			{
 			XDocument doc = new XDocument(new XDeclaration("1.0", null, null),
-																		new XElement("root", Recordings.Select(r => new XElement("recording", new XElement("Date", r.Date),
-																																																					new XElement("Type", r.Type),
-																																																					new XElement("File", r.File),
-																																																					new XElement("Speaker", r.Speaker),
-																																																					new XElement("Ecclesia", r.Ecclesia)
+																		new XElement("root", Recordings.OrderBy(r=>r.Date)
+																		 .Select(r => new XElement("recording", new XElement("Date", r.Date.ToString("d MMMM yyyy")),
+																																						new XElement("Type", r.Type),
+																																						new XElement("File", r.File),
+																																						new XElement("Text", r.Text),
+																																						new XElement("Speaker", r.Speaker),
+																																						new XElement("Ecclesia", r.Ecclesia)
 																		))));
-			string xxx = doc.ToString();
+			string bakFile = filePath + ".bak";
+			File.Delete(bakFile);
+			File.Move(filePath, bakFile);
+			doc.Save(filePath);
+			Uploader.Upload(filePath, "private/recordings.xml");
 			return base.Save();
 			}
 
