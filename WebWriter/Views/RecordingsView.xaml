@@ -1,4 +1,4 @@
-﻿<!-- Last mod: 31 December 2016 15:39:56 -->
+﻿<!-- Last mod: 02 January 2017 19:11:08 -->
 
 <catel:DataWindow x:Class="WebWriter.Views.RecordingsView"
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -23,6 +23,17 @@
                 <DataGridTextColumn Binding="{Binding Ecclesia}" Header="Ecclesia" Width="150"/>
             </DataGrid.Columns>
         </DataGrid>
+        <Grid Grid.Row="1" Margin="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Label Content="_New Recording:" VerticalAlignment="Center" />
+            <TextBox Grid.Column="1" Text="{Binding NewRecording}" Margin="4,0" VerticalAlignment="Center" />
+            <Button Grid.Column="2" Content="..." Command="{Binding BrowseCommand}" Height="25" Width="30" Margin="4" />
+            <Button Grid.Column="3" Content="_Add" Command="{Binding AddCommand}" Height="25" Width="40" Margin="4" />
+        </Grid>
     </Grid>
-
 </catel:DataWindow>
