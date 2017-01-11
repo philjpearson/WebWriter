@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	11 January 2017 13:41:09
+//	Last mod:	11 January 2017 15:02:39
 //
 namespace WebWriter.ViewModels
 	{
@@ -13,11 +13,17 @@ namespace WebWriter.ViewModels
 	using OfficeOpenXml;
 	using System;
 	using System.Windows;
+	using MySql.Data.MySqlClient;
+	using System.Data;
 
 	public class GalleryViewModel : ViewModelBase
 		{
 		const string filePath = @"D:\philj\Documents\OneDrive\My Documents\Ecclesia\Web site\Gallery.webw";
 		const string excelFilePath = @"D:\philj\Documents\OneDrive\My Documents\Ecclesia\Stafford videos.xlsx";
+
+		StaffordMySQLConnection dbCon;
+		MySqlDataAdapter daVideos;
+		DataSet dsVideos;
 
 		public GalleryViewModel()
 			{
@@ -52,20 +58,8 @@ namespace WebWriter.ViewModels
 		public static readonly PropertyData GalleryProperty = RegisterProperty("Gallery", typeof(GalleryModel));
 
 		// TODO: Register view model properties with the vmprop or vmpropviewmodeltomodel codesnippets
-		/// <summary>
-		/// Gets or sets the property value.
-		/// </summary>
-		[ViewModelToModel("Gallery")]
-		public ObservableCollection<VideoModel> Videos
-			{
-			get { return GetValue<ObservableCollection<VideoModel>>(VideosProperty); }
-			set { SetValue(VideosProperty, value); }
-			}
 
-		/// <summary>
-		/// Register the Videos property so it is known in the class.
-		/// </summary>
-		public static readonly PropertyData VideosProperty = RegisterProperty("Videos", typeof(ObservableCollection<VideoModel>));
+			public DataView Videos { get; set; }
 
 		// TODO: Register commands with the vmcommand or vmcommandwithcanexecute codesnippets
 
@@ -79,6 +73,7 @@ namespace WebWriter.ViewModels
 		/// </summary>
 		private async void OnOkCommandExecute()
 			{
+			await Save();
 			Gallery.SaveAsXml(filePath);
 			await CloseViewModel(true);
 			}
@@ -220,13 +215,51 @@ namespace WebWriter.ViewModels
 			{
 			await base.Initialize();
 
+			try
+				{
+				dbCon = StaffordMySQLConnection.Instance();
+				if (dbCon.IsConnect())
+					{
+					string query = "SELECT Id,Date,Title,Tag,Link,Details,Size,Speaker,Ecclesia,IsBibleHour,Publish FROM Videos ORDER BY Date";
+					daVideos = new MySqlDataAdapter(query, dbCon.Connection);
+					MySqlCommandBuilder cb = new MySqlCommandBuilder(daVideos);
+
+					dsVideos = new DataSet();
+					daVideos.Fill(dsVideos, "Videos");
+					Videos = dsVideos.Tables["Videos"].DefaultView;
+					}
+				}
+			catch (Exception ex)
+				{
+				MessageBox.Show(ex.Message);
+				}
 			// TODO: subscribe to events here
+			}
+
+		protected override Task<bool> Save()
+			{
+			if (dsVideos != null)
+				{
+				try
+					{
+					daVideos.Update(dsVideos, "Videos");
+					dsVideos.Clear();
+					daVideos.Fill(dsVideos, "Videos");
+					}
+				catch (Exception ex)
+					{
+					MessageBox.Show(ex.Message);
+					}
+				}
+
+			return base.Save();
 			}
 
 		protected override async Task Close()
 			{
 			// TODO: unsubscribe from events here
 
+			dbCon?.Close();
 			await base.Close();
 			}
 
