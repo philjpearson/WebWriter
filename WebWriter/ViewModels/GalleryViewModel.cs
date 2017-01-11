@@ -1,20 +1,19 @@
 ﻿//
-//	Last mod:	11 January 2017 15:30:36
+//	Last mod:	11 January 2017 16:00:52
 //
 namespace WebWriter.ViewModels
 	{
-	using Catel.MVVM;
-	using System.Threading.Tasks;
-	using WebWriter.Models;
 	using Catel.Data;
-	using System.Collections.ObjectModel;
-	using System.IO;
-	using System.Linq;
+	using Catel.MVVM;
+	using MySql.Data.MySqlClient;
 	using OfficeOpenXml;
 	using System;
-	using System.Windows;
-	using MySql.Data.MySqlClient;
 	using System.Data;
+	using System.IO;
+	using System.Linq;
+	using System.Threading.Tasks;
+	using System.Windows;
+	using WebWriter.Models;
 
 	public class GalleryViewModel : ViewModelBase
 		{
