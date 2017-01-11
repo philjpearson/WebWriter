@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	18 July 2015 12:47:15
+//	Last mod:	30 December 2016 20:09:50
 //
 namespace WebWriter.ViewModels
 	{
@@ -22,7 +22,8 @@ namespace WebWriter.ViewModels
 			ExitCommand = new Command<object>(OnExitExecute);
 			TitlesCommand = new Command<object>(OnTitlesExecute);
 			GalleryCommand = new Command<object>(OnGalleryExecute);
-			SettingsCommand = new Command(OnSettingsCommandExecute);
+			SettingsCommand = new Command(OnSettingsExecute);
+			CampaignGalleryCommand = new Command<object>(OnCampaignGalleryExecute);
 			}
 
 		public override string Title { get { return "Phil's Web Writer"; } }
@@ -54,7 +55,8 @@ namespace WebWriter.ViewModels
 		/// </summary>
 		private void OnTitlesExecute(object parameter)
 			{
-			// TODO: Handle command logic here
+			TitlesViewModel vm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<TitlesViewModel>();
+			uiVisualiserService.ShowDialog(vm);
 			}
 
 		/// <summary>
@@ -77,19 +79,50 @@ namespace WebWriter.ViewModels
 		public Command SettingsCommand { get; private set; }
 
 		/// <summary>
-		/// Method to invoke when the SettingsCommand command is executed.
-		/// </summary>
-		private void OnSettingsCommandExecute()
-			{
-			// TODO: Handle command logic here
-			}
-
-		/// <summary>
 		/// Method to invoke when the Settings command is executed.
 		/// </summary>
 		private void OnSettingsExecute()
 			{
 			// TODO: Handle command logic here
+			}
+
+		/// <summary>
+		/// Gets the CampaignGalleryCommand command.
+		/// </summary>
+		public Command<object> CampaignGalleryCommand { get; private set; }
+
+		/// <summary>
+		/// Method to invoke when the CampaignGalleryCommand command is executed.
+		/// </summary>
+		private void OnCampaignGalleryExecute(object parameter)
+			{
+			CampaignGalleryViewModel cgvm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<CampaignGalleryViewModel>();
+			uiVisualiserService.ShowDialog(cgvm);
+			}
+
+		/// <summary>
+				/// Gets the RecordingsCommand command.
+				/// </summary>
+		public Command<object> RecordingsCommand
+			{
+			get
+				{
+				if (_RecordingsCommand == null)
+					_RecordingsCommand = new Command<object>(RecordingsCommand_Execute);
+				return _RecordingsCommand;
+				}
+			}
+
+		private Command<object> _RecordingsCommand;
+
+		/// <summary>
+		/// Method to invoke when the RecordingsCommand command is executed.
+		/// </summary>
+		/// <param name="parameter">The parameter of the command.</param>
+		private void RecordingsCommand_Execute(object parameter)
+			{
+			RecordingsViewModel vm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<RecordingsViewModel>();
+			uiVisualiserService.ShowDialog(vm);
 			}
 
 		protected override async Task Initialize()
