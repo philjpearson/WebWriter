@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	29 December 2016 19:08:08
+//	Last mod:	11 January 2017 13:41:09
 //
 using System;
 using System.IO;
@@ -195,7 +195,7 @@ namespace WebWriter.Models
 			return string.Format("//www.youtube.com/embed/{0}?rel=0", code);
 			}
 
-		internal void WriteGallery(string filePath)
+		internal void WriteGalleryFile(string filePath)
 			{
 			try
 				{

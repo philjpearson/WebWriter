@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	29 December 2016 19:01:31
+//	Last mod:	11 January 2017 13:41:09
 //
 namespace WebWriter.ViewModels
 	{
@@ -212,7 +212,7 @@ namespace WebWriter.ViewModels
 			Gallery.Sort();
 			Gallery.SaveAsXml(filePath);
 			GalleryWriter gw = new GalleryWriter(Gallery);
-			gw.WriteGallery(filePath);
+			gw.WriteGalleryFile(filePath);
 			}
 
 
