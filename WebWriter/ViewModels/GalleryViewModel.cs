@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	11 January 2017 15:02:39
+//	Last mod:	11 January 2017 15:30:36
 //
 namespace WebWriter.ViewModels
 	{
@@ -59,7 +59,7 @@ namespace WebWriter.ViewModels
 
 		// TODO: Register view model properties with the vmprop or vmpropviewmodeltomodel codesnippets
 
-			public DataView Videos { get; set; }
+		public DataView Videos { get; set; }
 
 		// TODO: Register commands with the vmcommand or vmcommandwithcanexecute codesnippets
 
