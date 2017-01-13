@@ -1,9 +1,10 @@
-﻿<!-- Last mod: 02 January 2017 19:11:08 -->
+﻿<!-- Last mod: 13 January 2017 16:11:30 -->
 
 <catel:DataWindow x:Class="WebWriter.Views.RecordingsView"
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:catel="http://catel.codeplex.com"
+                  xmlns:vm="clr-namespace:WebWriter.ViewModels"
                   SizeToContent="Width"
                   Title="{Binding Title}"
                   >
@@ -16,7 +17,7 @@
         <DataGrid ItemsSource="{Binding Recordings}" AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Date,StringFormat=dd MMM yyyy}" Header="Date" Width="100" />
-                <DataGridTextColumn Binding="{Binding Type}" Header="Type" Width="150"/>
+                <DataGridComboBoxColumn ItemsSource="{Binding Source={x:Static vm:RecordingsViewModel.RecordingTypes}}" SelectedValuePath="TypeId" DisplayMemberPath="Type" SelectedValueBinding="{Binding TypeId}" Header="Type" Width="150" />
                 <DataGridTextColumn Binding="{Binding File}" Header="File" Width="200"/>
                 <DataGridTextColumn Binding="{Binding Text}" Header="Text" Width="250"/>
                 <DataGridTextColumn Binding="{Binding Speaker}" Header="Speaker" Width="150"/>

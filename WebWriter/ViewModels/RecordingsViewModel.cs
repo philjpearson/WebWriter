@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	13 January 2017 14:59:43
+//	Last mod:	13 January 2017 16:11:31
 //
 namespace WebWriter.ViewModels
 	{
@@ -14,10 +14,8 @@ namespace WebWriter.ViewModels
 	using System.Data;
 	using System.IO;
 	using System.Linq;
-	using System.Runtime.Serialization;
 	using System.Threading.Tasks;
 	using System.Windows;
-	using System.Xml.Linq;
 
 	public class RecordingsViewModel : ViewModelBase
 		{
@@ -50,11 +48,13 @@ namespace WebWriter.ViewModels
 		// TODO: Register models with the vmpropmodel codesnippet
 		// TODO: Register view model properties with the vmprop or vmpropviewmodeltomodel codesnippets
 
-		public ObservableCollection<Recording> Recordings { get; set; }
+		public ObservableCollection<Recording> oldRecordings { get; set; }
 
 		public string NewRecording { get; set; }
 
-		public DataView newRecordings { get; set; }
+		public DataView Recordings { get; set; }
+
+		public static DataView RecordingTypes { get; set; }
 
 
 		// TODO: Register commands with the vmcommand or vmcommandwithcanexecute codesnippets
@@ -118,9 +118,13 @@ namespace WebWriter.ViewModels
 		/// <param name="parameter">The parameter of the command.</param>
 		private void AddCommand_Execute(object parameter)
 			{
-			if (!Recordings.Any(r => r.File == NewRecording))
+			var t = dsRecordings.Tables["Recordings"];
+			if (!t.AsEnumerable().Any(r=>(string)r["File"] == NewRecording))
 				{
-				Recordings.Add(new Recording() { Date = DateTime.Now, File = "lib/" + Path.GetFileName(NewRecording) });
+				var row = t.NewRow();
+				row["Date"] = DateTime.Now;
+				row["File"] = "lib/" + Path.GetFileName(NewRecording);
+				t.Rows.Add(row);
 				addedFiles.Add(NewRecording);
 				}
 			}
@@ -128,29 +132,6 @@ namespace WebWriter.ViewModels
 		protected override async Task Initialize()
 			{
 			await base.Initialize();
-
-			Recordings = new ObservableCollection<Recording>();
-
-			try
-				{
-				XDocument xd = XDocument.Load(filePath);
-				var recordings = (from r in xd.Root.Elements("recording")
-													select new Recording
-														{
-														Date = (DateTime)r.Element("Date"),
-														Type = (string)r.Element("Type"),
-														File = (string)r.Element("File"),
-														Speaker = (string)r.Element("Speaker"),
-														Ecclesia = (string)r.Element("Ecclesia"),
-														Text = (string)r.Element("Text")
-														}).ToList();
-				Recordings = new ObservableCollection<Recording>(recordings);
-				}
-			catch (Exception ex)
-				{
-				MessageBox.Show($"Failed to load xml file: {ex.Message}", "WebWriter", MessageBoxButton.OK, MessageBoxImage.Error);
-				await Close();
-				}
 
 			try
 				{
@@ -163,34 +144,14 @@ namespace WebWriter.ViewModels
 
 					dsRecordings = new DataSet();
 					daRecordings.Fill(dsRecordings, "Recordings");
-					newRecordings = dsRecordings.Tables["Recordings"].DefaultView;
+					Recordings = dsRecordings.Tables["Recordings"].DefaultView;
 
 					query = "SELECT TypeId, Type FROM RecordingTypes";
 					daRecordingTypes = new MySqlDataAdapter(query, dbCon.Connection);
 					MySqlCommandBuilder cbT = new MySqlCommandBuilder(daRecordingTypes);
 					dsRecordingTypes = new DataSet();
 					daRecordingTypes.Fill(dsRecordingTypes, "RecordingTypes");
-
-					// \/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/
-					var t = dsRecordings.Tables["Recordings"];
-					foreach (DataRow row in t.Rows)
-						{
-						row.Delete();
-						}
-
-					foreach (var rec in Recordings)
-						{
-						var row = t.NewRow();
-						row["Date"] = rec.Date;
-						row["TypeId"] = rec.Type.StartsWith("Break") ? 1 : 2; //#################################
-						row["File"] = rec.File;
-						row["Speaker"] = rec.Speaker;
-						row["Ecclesia"] = rec.Ecclesia;
-						row["Text"] = rec.Text;
-						t.Rows.Add(row);
-						}
-					daRecordings.Update(dsRecordings, "Recordings");
-					// /\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\
+					RecordingTypes = dsRecordingTypes.Tables["RecordingTypes"].DefaultView;
 					}
 				}
 			catch (Exception ex)
@@ -203,20 +164,6 @@ namespace WebWriter.ViewModels
 
 		protected override Task<bool> Save()
 			{
-			XDocument doc = new XDocument(new XDeclaration("1.0", null, null),
-																		new XElement("root", Recordings.OrderBy(r => r.Date)
-																		 .Select(r => new XElement("recording", new XElement("Date", r.Date.ToString("d MMMM yyyy")),
-																																						new XElement("Type", r.Type),
-																																						new XElement("File", r.File),
-																																						new XElement("Text", r.Text),
-																																						new XElement("Speaker", r.Speaker),
-																																						new XElement("Ecclesia", r.Ecclesia)
-																		))));
-			string bakFile = filePath + ".bak";
-			File.Delete(bakFile);
-			File.Move(filePath, bakFile);
-			doc.Save(filePath);
-
 			// upload all the added files
 			foreach (var file in addedFiles)
 				{
@@ -224,7 +171,20 @@ namespace WebWriter.ViewModels
 				Uploader.Upload(file, remotePath, true);
 				}
 
-			Uploader.Upload(filePath, "private/recordings.xml");
+			if (dsRecordings != null)
+				{
+				try
+					{
+					daRecordings.Update(dsRecordings, "Recordings");
+					dsRecordings.Clear();
+					daRecordings.Fill(dsRecordings, "Recordings");
+					}
+				catch (Exception ex)
+					{
+					MessageBox.Show(ex.Message);
+					}
+				}
+
 			return base.Save();
 			}
 
