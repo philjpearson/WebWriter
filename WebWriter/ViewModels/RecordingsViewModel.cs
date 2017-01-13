@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	02 January 2017 20:02:15
+//	Last mod:	13 January 2017 14:59:43
 //
 namespace WebWriter.ViewModels
 	{
@@ -7,9 +7,11 @@ namespace WebWriter.ViewModels
 	using Catel.MVVM;
 	using Microsoft.Win32;
 	using Models;
+	using MySql.Data.MySqlClient;
 	using System;
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
+	using System.Data;
 	using System.IO;
 	using System.Linq;
 	using System.Runtime.Serialization;
@@ -35,6 +37,12 @@ namespace WebWriter.ViewModels
 
 		public override string Title { get { return "Recordings"; } }
 
+		StaffordMySQLConnection dbCon;
+		MySqlDataAdapter daRecordings;
+		DataSet dsRecordings;
+		MySqlDataAdapter daRecordingTypes;
+		DataSet dsRecordingTypes;
+
 		const string filePath = @"D:\philj\Documents\OneDrive\My Documents\Ecclesia\Web site\recordings.xml";
 
 		List<string> addedFiles = new List<string>();
@@ -45,6 +53,9 @@ namespace WebWriter.ViewModels
 		public ObservableCollection<Recording> Recordings { get; set; }
 
 		public string NewRecording { get; set; }
+
+		public DataView newRecordings { get; set; }
+
 
 		// TODO: Register commands with the vmcommand or vmcommandwithcanexecute codesnippets
 
@@ -70,7 +81,7 @@ namespace WebWriter.ViewModels
 		private void BrowseCommand_Execute(object parameter)
 			{
 			OpenFileDialog ofd = new OpenFileDialog();
-			ofd.Filter = "mp3 files (*.mp3)|*.mp3|All filkes (*.*)|*.*";
+			ofd.Filter = "mp3 files (*.mp3)|*.mp3|All files (*.*)|*.*";
 			if (ofd.ShowDialog() == true)
 				{
 				NewRecording = ofd.FileName;
@@ -140,6 +151,53 @@ namespace WebWriter.ViewModels
 				MessageBox.Show($"Failed to load xml file: {ex.Message}", "WebWriter", MessageBoxButton.OK, MessageBoxImage.Error);
 				await Close();
 				}
+
+			try
+				{
+				dbCon = StaffordMySQLConnection.Instance();
+				if (dbCon.IsConnect())
+					{
+					string query = "SELECT Id,Date,TypeId,File,Speaker,Ecclesia,Text FROM Recordings ORDER BY Date";
+					daRecordings = new MySqlDataAdapter(query, dbCon.Connection);
+					MySqlCommandBuilder cb = new MySqlCommandBuilder(daRecordings);
+
+					dsRecordings = new DataSet();
+					daRecordings.Fill(dsRecordings, "Recordings");
+					newRecordings = dsRecordings.Tables["Recordings"].DefaultView;
+
+					query = "SELECT TypeId, Type FROM RecordingTypes";
+					daRecordingTypes = new MySqlDataAdapter(query, dbCon.Connection);
+					MySqlCommandBuilder cbT = new MySqlCommandBuilder(daRecordingTypes);
+					dsRecordingTypes = new DataSet();
+					daRecordingTypes.Fill(dsRecordingTypes, "RecordingTypes");
+
+					// \/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/
+					var t = dsRecordings.Tables["Recordings"];
+					foreach (DataRow row in t.Rows)
+						{
+						row.Delete();
+						}
+
+					foreach (var rec in Recordings)
+						{
+						var row = t.NewRow();
+						row["Date"] = rec.Date;
+						row["TypeId"] = rec.Type.StartsWith("Break") ? 1 : 2; //#################################
+						row["File"] = rec.File;
+						row["Speaker"] = rec.Speaker;
+						row["Ecclesia"] = rec.Ecclesia;
+						row["Text"] = rec.Text;
+						t.Rows.Add(row);
+						}
+					daRecordings.Update(dsRecordings, "Recordings");
+					// /\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\_/\
+					}
+				}
+			catch (Exception ex)
+				{
+				MessageBox.Show(ex.Message);
+				}
+
 			// TODO: subscribe to events here
 			}
 
