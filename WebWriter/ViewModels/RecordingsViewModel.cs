@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	13 January 2017 16:11:31
+//	Last mod:	13 January 2017 16:50:46
 //
 namespace WebWriter.ViewModels
 	{
@@ -192,6 +192,7 @@ namespace WebWriter.ViewModels
 			{
 			// TODO: unsubscribe from events here
 
+			dbCon?.Close();
 			await base.Close();
 			}
 		}
