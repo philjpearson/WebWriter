@@ -144,19 +144,5 @@ namespace WebWriter.ViewModels
 			sb.AppendLine("];");
 			Output = sb.ToString();
 			}
-
-		protected override async Task Initialize()
-			{
-			await base.Initialize();
-
-			// TODO: subscribe to events here
-			}
-
-		protected override async Task Close()
-			{
-			// TODO: unsubscribe from events here
-
-			await base.Close();
-			}
 		}
 	}

@@ -21,7 +21,7 @@ namespace WebWriter.ViewModels
 
 		public override string Title { get { return "Bible Hour Titles"; } }
 
-		const string filePath = @"D:\philj\Documents\OneDrive\My Documents\Ecclesia\Web site\titles.csv";
+		const string filePath = @"D:\Users\philj\OneDrive\My Documents\Ecclesia\Web site\titles.csv"; // @"D:\philj\Documents\OneDrive\My Documents\Ecclesia\Web site\titles.csv";
 
 		// TODO: Register models with the vmpropmodel codesnippet
 		// TODO: Register view model properties with the vmprop or vmpropviewmodeltomodel codesnippets
@@ -40,9 +40,9 @@ namespace WebWriter.ViewModels
 		public static readonly PropertyData TitlesProperty = RegisterProperty("Titles", typeof(ObservableCollection<BibleHourTitle>));
 		// TODO: Register commands with the vmcommand or vmcommandwithcanexecute codesnippets
 
-		protected override async Task Initialize()
+		protected override async Task InitializeAsync()
 			{
-			await base.Initialize();
+			await base.InitializeAsync();
 
 			Titles = new ObservableCollection<BibleHourTitle>();
 			try
@@ -59,11 +59,11 @@ namespace WebWriter.ViewModels
 			catch (Exception ex)
 				{
 				MessageBox.Show($"Failed to load from titles.csv file: {ex.Message}", "WebWriter", MessageBoxButton.OK, MessageBoxImage.Error);
-				await Close();
+				await CloseAsync();
 				}
 			}
 
-		protected override Task<bool> Save()
+		protected override Task<bool> SaveAsync()
 			{
 			var titles = new List<BibleHourTitleRecord>();
 			foreach (var t in Titles.OrderBy(t=>t.Date))
@@ -73,14 +73,7 @@ namespace WebWriter.ViewModels
 			var engine = new FileHelperEngine<BibleHourTitleRecord>();
 			engine.WriteFile(filePath, titles);
 			Uploader.Upload(filePath, "titles.csv");
-			return base.Save();
-			}
-
-		protected override async Task Close()
-			{
-			// TODO: unsubscribe from events here
-
-			await base.Close();
+			return base.SaveAsync();
 			}
 
 		[DelimitedRecord(",")]

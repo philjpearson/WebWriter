@@ -3,7 +3,7 @@
 <catel:DataWindow x:Class="WebWriter.Views.RecordingsView"
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                  xmlns:catel="http://catel.codeplex.com"
+                  xmlns:catel="http://schemas.catelproject.com"
                   xmlns:vm="clr-namespace:WebWriter.ViewModels"
                   SizeToContent="Width"
                   Title="{Binding Title}"

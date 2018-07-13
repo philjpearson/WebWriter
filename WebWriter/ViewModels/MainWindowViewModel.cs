@@ -20,10 +20,10 @@ namespace WebWriter.ViewModels
 			this.uiVisualiserService = uiVisualiserService;
 
 			ExitCommand = new Command<object>(OnExitExecute);
-			TitlesCommand = new Command<object>(OnTitlesExecute);
-			GalleryCommand = new Command<object>(OnGalleryExecute);
+			TitlesCommand = new TaskCommand<object>(OnTitlesExecute);
+			GalleryCommand = new TaskCommand<object>(OnGalleryExecute);
 			SettingsCommand = new Command(OnSettingsExecute);
-			CampaignGalleryCommand = new Command<object>(OnCampaignGalleryExecute);
+			CampaignGalleryCommand = new TaskCommand<object>(OnCampaignGalleryExecute);
 			}
 
 		public override string Title { get { return "Phil's Web Writer"; } }
@@ -48,29 +48,29 @@ namespace WebWriter.ViewModels
 		/// <summary>
 		/// Gets the TitlesCommand command.
 		/// </summary>
-		public Command<object> TitlesCommand { get; private set; }
+		public TaskCommand<object> TitlesCommand { get; private set; }
 
 		/// <summary>
 		/// Method to invoke when the TitlesCommand command is executed.
 		/// </summary>
-		private void OnTitlesExecute(object parameter)
+		private async Task<bool?> OnTitlesExecute(object parameter)
 			{
 			TitlesViewModel vm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<TitlesViewModel>();
-			uiVisualiserService.ShowDialog(vm);
+			return await uiVisualiserService.ShowDialogAsync(vm);
 			}
 
 		/// <summary>
 		/// Gets the GalleryCommand command.
 		/// </summary>
-		public Command<object> GalleryCommand { get; private set; }
+		public TaskCommand<object> GalleryCommand { get; private set; }
 
 		/// <summary>
 		/// Method to invoke when the GalleryCommand command is executed.
 		/// </summary>
-		private void OnGalleryExecute(object parameter)
+		private async Task<bool?> OnGalleryExecute(object parameter)
 			{
 			GalleryViewModel gvm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<GalleryViewModel>();
-			uiVisualiserService.ShowDialog(gvm);
+			return await uiVisualiserService.ShowDialogAsync(gvm);
 			}
 
 		/// <summary>
@@ -89,54 +89,45 @@ namespace WebWriter.ViewModels
 		/// <summary>
 		/// Gets the CampaignGalleryCommand command.
 		/// </summary>
-		public Command<object> CampaignGalleryCommand { get; private set; }
+		public TaskCommand<object> CampaignGalleryCommand { get; private set; }
 
 		/// <summary>
 		/// Method to invoke when the CampaignGalleryCommand command is executed.
 		/// </summary>
-		private void OnCampaignGalleryExecute(object parameter)
+		private async Task<bool?> OnCampaignGalleryExecute(object parameter)
 			{
 			CampaignGalleryViewModel cgvm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<CampaignGalleryViewModel>();
-			uiVisualiserService.ShowDialog(cgvm);
+			return await uiVisualiserService.ShowDialogAsync(cgvm);
 			}
 
 		/// <summary>
-				/// Gets the RecordingsCommand command.
-				/// </summary>
-		public Command<object> RecordingsCommand
+		/// Gets the RecordingsCommand command.
+		/// </summary>
+		public TaskCommand<object> RecordingsCommand
 			{
 			get
 				{
 				if (_RecordingsCommand == null)
-					_RecordingsCommand = new Command<object>(RecordingsCommand_Execute);
+					_RecordingsCommand = new TaskCommand<object>(RecordingsCommand_Execute);
 				return _RecordingsCommand;
 				}
 			}
 
-		private Command<object> _RecordingsCommand;
+		private TaskCommand<object> _RecordingsCommand;
 
 		/// <summary>
 		/// Method to invoke when the RecordingsCommand command is executed.
 		/// </summary>
 		/// <param name="parameter">The parameter of the command.</param>
-		private void RecordingsCommand_Execute(object parameter)
+		private async Task<bool?> RecordingsCommand_Execute(object parameter)
 			{
 			RecordingsViewModel vm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<RecordingsViewModel>();
-			uiVisualiserService.ShowDialog(vm);
+			return await uiVisualiserService.ShowDialogAsync(vm);
 			}
 
-		protected override async Task Initialize()
+		protected override Task CloseAsync()
 			{
-			await base.Initialize();
-
-			// TODO: subscribe to events here
-			}
-
-		protected override async Task Close()
-			{
-			// TODO: unsubscribe from events here
-
-			await base.Close();
+			return base.CloseAsync();
 			}
 		}
 	}

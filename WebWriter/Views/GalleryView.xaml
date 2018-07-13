@@ -5,7 +5,7 @@
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:core="clr-namespace:System;assembly=mscorlib"
                   xmlns:models="clr-namespace:WebWriter.Models"
-                  xmlns:catel="http://catel.codeplex.com" Width="1500" ResizeMode="CanResizeWithGrip">
+                  xmlns:catel="http://schemas.catelproject.com" Width="1500" ResizeMode="CanResizeWithGrip">
     <catel:DataWindow.Resources>
         <ObjectDataProvider x:Key="videoSize" MethodName="GetValues" ObjectType="{x:Type core:Enum}">
             <ObjectDataProvider.MethodParameters>

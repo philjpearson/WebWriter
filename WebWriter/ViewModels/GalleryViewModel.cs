@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	11 January 2017 16:00:52
+//	Last mod:	30 January 2017 18:50:14
 //
 namespace WebWriter.ViewModels
 	{
@@ -17,8 +17,8 @@ namespace WebWriter.ViewModels
 
 	public class GalleryViewModel : ViewModelBase
 		{
-		const string filePath = @"D:\philj\Documents\OneDrive\My Documents\Ecclesia\Web site\Gallery.webw";
-		const string excelFilePath = @"D:\philj\Documents\OneDrive\My Documents\Ecclesia\Stafford videos.xlsx";
+		const string filePath = @"D:\Users\philj\OneDrive\My Documents\Ecclesia\Web site\Gallery.webw"; // @"D:\philj\Documents\OneDrive\My Documents\Ecclesia\Web site\Gallery.webw";
+		const string excelFilePath = @"D:\Users\philj\OneDrive\My Documents\Ecclesia\Stafford videos.xlsx"; // @"D:\philj\Documents\OneDrive\My Documents\Ecclesia\Stafford videos.xlsx";
 
 		StaffordMySQLConnection dbCon;
 		MySqlDataAdapter daVideos;
@@ -32,10 +32,7 @@ namespace WebWriter.ViewModels
 			SortCommand = new Command(OnSortCommandExecute);
 			WriteXmlCommand = new Command<object>(OnWriteXmlCommandExecute);
 
-			using (FileStream stream = new FileStream(filePath, FileMode.Open))
-				{
-				Gallery = GalleryModel.Load(stream, SerializationMode.Xml);
-				}
+			Gallery = GalleryModel.Load(filePath);
 			}
 
 		public override string Title { get { return "Video Gallery View"; } }
@@ -72,9 +69,11 @@ namespace WebWriter.ViewModels
 		/// </summary>
 		private async void OnOkCommandExecute()
 			{
-			await Save();
-			Gallery.SaveAsXml(filePath);
-			await CloseViewModel(true);
+			if (await SaveAsync())
+				{
+				Gallery.SaveAsXml(filePath);
+				await CloseViewModelAsync(true);
+				}
 			}
 
 		/// <summary>
@@ -210,9 +209,9 @@ namespace WebWriter.ViewModels
 			}
 
 
-		protected override async Task Initialize()
+		protected override async Task InitializeAsync()
 			{
-			await base.Initialize();
+			await base.InitializeAsync();
 
 			try
 				{
@@ -235,7 +234,7 @@ namespace WebWriter.ViewModels
 			// TODO: subscribe to events here
 			}
 
-		protected override Task<bool> Save()
+		protected override Task<bool> SaveAsync()
 			{
 			if (dsVideos != null)
 				{
@@ -247,19 +246,21 @@ namespace WebWriter.ViewModels
 					}
 				catch (Exception ex)
 					{
+					Console.Write(ex.ToString());
 					MessageBox.Show(ex.Message);
+					return new Task<bool>(()=> { return false; });
 					}
 				}
 
-			return base.Save();
+			return base.SaveAsync();
 			}
 
-		protected override async Task Close()
+		protected override async Task CloseAsync()
 			{
 			// TODO: unsubscribe from events here
 
 			dbCon?.Close();
-			await base.Close();
+			await base.CloseAsync();
 			}
 
 		private bool ExportToExcel()

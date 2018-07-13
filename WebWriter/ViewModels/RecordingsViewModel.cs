@@ -41,7 +41,7 @@ namespace WebWriter.ViewModels
 		MySqlDataAdapter daRecordingTypes;
 		DataSet dsRecordingTypes;
 
-		const string filePath = @"D:\philj\Documents\OneDrive\My Documents\Ecclesia\Web site\recordings.xml";
+		const string filePath = @"D:\Users\philj\OneDrive\My Documents\Ecclesia\Web site\recordings.xml"; // @"D:\philj\Documents\OneDrive\My Documents\Ecclesia\Web site\recordings.xml";
 
 		List<string> addedFiles = new List<string>();
 
@@ -129,9 +129,9 @@ namespace WebWriter.ViewModels
 				}
 			}
 
-		protected override async Task Initialize()
+		protected override async Task InitializeAsync()
 			{
-			await base.Initialize();
+			await base.InitializeAsync();
 
 			try
 				{
@@ -162,7 +162,7 @@ namespace WebWriter.ViewModels
 			// TODO: subscribe to events here
 			}
 
-		protected override Task<bool> Save()
+		protected override Task<bool> SaveAsync()
 			{
 			// upload all the added files
 			foreach (var file in addedFiles)
@@ -185,15 +185,15 @@ namespace WebWriter.ViewModels
 					}
 				}
 
-			return base.Save();
+			return base.SaveAsync();
 			}
 
-		protected override async Task Close()
+		protected override async Task CloseAsync()
 			{
 			// TODO: unsubscribe from events here
 
 			dbCon?.Close();
-			await base.Close();
+			await base.CloseAsync();
 			}
 		}
 	}

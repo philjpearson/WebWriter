@@ -2,13 +2,12 @@
 //	Last mod:	14 March 2015 16:44:40
 //
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 using Catel.Data;
+using Catel.Runtime.Serialization;
 
 namespace WebWriter.Models
 	{
@@ -17,6 +16,17 @@ namespace WebWriter.Models
 		{
 		public GalleryModel()
 			{
+			}
+
+		public static GalleryModel Load(string filePath)
+			{
+			GalleryModel gallery = null;
+
+			using (FileStream stream = new FileStream(filePath, FileMode.Open))
+				{
+				gallery = Load(stream, SerializationFactory.GetXmlSerializer());
+				}
+			return gallery;
 			}
 
 		public GalleryModel(bool initialise)
