@@ -1,10 +1,11 @@
 ﻿//
-//	Last mod:	30 January 2017 18:50:14
+//	Last mod:	06 January 2019 18:18:14
 //
 namespace WebWriter.ViewModels
 	{
 	using Catel.Data;
 	using Catel.MVVM;
+//	using Devart.Data.MySql;
 	using MySql.Data.MySqlClient;
 	using OfficeOpenXml;
 	using System;
@@ -216,7 +217,7 @@ namespace WebWriter.ViewModels
 			try
 				{
 				dbCon = StaffordMySQLConnection.Instance();
-				if (dbCon.IsConnect())
+				if (dbCon.IsConnect(false)) // no tunnel - must use PuTTY
 					{
 					string query = "SELECT Id,Date,Title,Tag,Link,Details,Size,Speaker,Ecclesia,IsBibleHour,Publish FROM Videos ORDER BY Date";
 					daVideos = new MySqlDataAdapter(query, dbCon.Connection);

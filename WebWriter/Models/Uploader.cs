@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	02 January 2017 20:02:15
+//	Last mod:	12 January 2019 11:55:52
 //
 using System;
 using System.IO;
@@ -11,15 +11,15 @@ namespace WebWriter.Models
 	{
 	public class Uploader
 		{
-		const string ftpUserName = "websiteupdater";
-		const string ftpPassword = "sandon14road";
+		const string ftpUserName = "1007246_web"; // "websiteupdater";
+		const string ftpPassword = "sandon14Road";
 
 		public static bool Upload(string localFile, string remotePath, bool binary = false)
 			{
 			int i = 1 + remotePath.LastIndexOf('/');
 			string remoteFilename = remotePath.Substring(i);
-
-			FtpWebRequest request = (FtpWebRequest)WebRequest.Create($"ftp://ftp.servage.net/staffordchristadelphians.org.uk/{remotePath}.new");
+			string remoteAddress = $"ftp://ftp01.servage.net/staffordchristadelphians.org.uk/public_html/{remotePath}.new";
+			FtpWebRequest request = (FtpWebRequest)WebRequest.Create(remoteAddress);
 			request.Method = WebRequestMethods.Ftp.UploadFile;
 			request.Credentials = new NetworkCredential(ftpUserName, ftpPassword);
 
@@ -81,7 +81,7 @@ namespace WebWriter.Models
 
 			if (success)
 				{
-				request = (FtpWebRequest)WebRequest.Create($"ftp://ftp.servage.net/staffordchristadelphians.org.uk/{remotePath}.new");
+				request = (FtpWebRequest)WebRequest.Create(remoteAddress);
 				request.Credentials = new NetworkCredential(ftpUserName, ftpPassword);
 				request.Method = WebRequestMethods.Ftp.Rename;
 				request.RenameTo = remoteFilename;

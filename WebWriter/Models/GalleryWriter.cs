@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	11 January 2017 13:41:09
+//	Last mod:	03 January 2019 20:34:24
 //
 using System;
 using System.IO;
@@ -18,8 +18,8 @@ namespace WebWriter.Models
 		private const string galleryPage = @"D:\Documents\My Web Sites\StaffordChristadelphians\gallery\index.html";
 		private const string newGalleryPage = @"D:\Documents\My Web Sites\StaffordChristadelphians\gallery\index-new.html";
 
-		string ftpUserName { get; } = "websiteupdater";
-		string ftpPassword { get; } = "sandon14road";
+		string ftpUserName { get; } = "1007246_web"; // "websiteupdater";
+		string ftpPassword { get; } = "sandon14Road"; // "sandon14road";
 		string galleryFilename { get; } = "Gallery.webw";
 
 		public GalleryWriter(GalleryModel gallery)
@@ -199,7 +199,7 @@ namespace WebWriter.Models
 			{
 			try
 				{
-				FtpWebRequest request = (FtpWebRequest)WebRequest.Create($"ftp://ftp.servage.net/staffordchristadelphians.org.uk/gallery/{galleryFilename}.new");
+				FtpWebRequest request = (FtpWebRequest)WebRequest.Create($"ftp://ftp01.servage.net/staffordchristadelphians.org.uk/gallery/{galleryFilename}.new");
 				request.Method = WebRequestMethods.Ftp.UploadFile;
 				request.Credentials = new NetworkCredential(ftpUserName, ftpPassword);
 
@@ -221,7 +221,7 @@ namespace WebWriter.Models
 					}
 				response.Close();
 
-				request = (FtpWebRequest)WebRequest.Create($"ftp://ftp.servage.net/staffordchristadelphians.org.uk/gallery/{galleryFilename}.new");
+				request = (FtpWebRequest)WebRequest.Create($"ftp://ftp01.servage.net/staffordchristadelphians.org.uk/gallery/{galleryFilename}.new");
 				request.Credentials = new NetworkCredential(ftpUserName, ftpPassword);
 				request.Method = WebRequestMethods.Ftp.Rename;
 				request.RenameTo = galleryFilename;

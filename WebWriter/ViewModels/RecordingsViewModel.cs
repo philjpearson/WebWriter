@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	13 January 2017 16:50:46
+//	Last mod:	06 January 2019 18:18:40
 //
 namespace WebWriter.ViewModels
 	{
@@ -7,6 +7,7 @@ namespace WebWriter.ViewModels
 	using Catel.MVVM;
 	using Microsoft.Win32;
 	using Models;
+	// using Devart.Data.MySql;
 	using MySql.Data.MySqlClient;
 	using System;
 	using System.Collections.Generic;
