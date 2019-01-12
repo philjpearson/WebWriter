@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	06 January 2019 18:18:14
+//	Last mod:	12 January 2019 12:33:42
 //
 using System;
 // using Devart.Data.MySql;
@@ -14,12 +14,11 @@ namespace WebWriter.Models
 			}
 
 		private string serverTunnel = "127.0.0.1";
-//		private string server = "22.mysql.servage.net"; // "remote-mysql4.servage.net";
-		private string userName = "1007246_jfkgga5j"; // "stafford";
+		private string userName = "1007246_jfkgga5j";
 
-		public string DatabaseName { get; set; } = "1007246-stafford"; // "stafford";
+		public string DatabaseName { get; set; } = "1007246-stafford";
 
-		public string Password { get; set; } = "no2337ttU8"; // "cKjgqVsjUvsW6kNbi0qa";
+		public string Password { get; set; } = "no2337ttU8";
 
 		public MySqlConnection Connection { get; private set; } = null;
 
@@ -39,7 +38,6 @@ namespace WebWriter.Models
 				result = false;
 				if (!String.IsNullOrEmpty(DatabaseName) && (!useTunnel || BudeTunnel.Open()))
 					{
-					//					string connstring = string.Format($"Server={serverTunnel}; Port=3307; database={databaseName}; UID={userName}; password={Password}");
 					string port = (useTunnel ? BudeTunnel.TunnelPort : 3307).ToString();
 
 					string connstring = string.Format($"Host={serverTunnel}; Port={port}; database={DatabaseName}; User={userName}; password={Password}");
