@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	06 January 2019 18:18:14
+//	Last mod:	11 November 2019 11:35:03
 //
 namespace WebWriter.ViewModels
 	{
@@ -249,7 +249,7 @@ namespace WebWriter.ViewModels
 					{
 					Console.Write(ex.ToString());
 					MessageBox.Show(ex.Message);
-					return new Task<bool>(()=> { return false; });
+					return Task.FromResult(false);
 					}
 				}
 

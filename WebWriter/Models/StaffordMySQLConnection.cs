@@ -1,7 +1,8 @@
 ﻿//
-//	Last mod:	12 January 2019 12:33:42
+//	Last mod:	11 November 2019 10:37:46
 //
 using System;
+using System.Windows;
 // using Devart.Data.MySql;
 using MySql.Data.MySqlClient;
 
@@ -36,14 +37,21 @@ namespace WebWriter.Models
 			if (Connection == null)
 				{
 				result = false;
-				if (!String.IsNullOrEmpty(DatabaseName) && (!useTunnel || BudeTunnel.Open()))
+				try
 					{
-					string port = (useTunnel ? BudeTunnel.TunnelPort : 3307).ToString();
+					if (!String.IsNullOrEmpty(DatabaseName) && (!useTunnel || BudeTunnel.Open()))
+						{
+						string port = (useTunnel ? BudeTunnel.TunnelPort : 3307).ToString();
 
-					string connstring = string.Format($"Host={serverTunnel}; Port={port}; database={DatabaseName}; User={userName}; password={Password}");
-					Connection = new MySqlConnection(connstring);
-					Connection.Open();
-					result = true;
+						string connstring = string.Format($"Host={serverTunnel}; Port={port}; database={DatabaseName}; User={userName}; password={Password}");
+						Connection = new MySqlConnection(connstring);
+						Connection.Open();
+						result = true;
+						}
+					}
+				catch (Exception ex)
+					{
+					MessageBox.Show(ex.Message, "StaffordMySQLConnection");
 					}
 				}
 			return result;
