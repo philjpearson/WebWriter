@@ -11,6 +11,7 @@ namespace WebWriter.ViewModels
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
 	using System.Linq;
+	using System.Text;
 	using System.Threading.Tasks;
 	using System.Windows;
 	public class TitlesViewModel : ViewModelBase
@@ -70,7 +71,7 @@ namespace WebWriter.ViewModels
 				{
 				titles.Add(new BibleHourTitleRecord() { Date = t.Date.ToString("d MMMM yyyy"), Title = t.Title });
 				}
-			var engine = new FileHelperEngine<BibleHourTitleRecord>();
+			var engine = new FileHelperEngine<BibleHourTitleRecord>(Encoding.Unicode);
 			engine.WriteFile(filePath, titles);
 			Uploader.Upload(filePath, "titles.csv");
 			return base.SaveAsync();

@@ -3,37 +3,51 @@
 //
 namespace WebWriter.ViewModels
 	{
+	using Catel;
 	using Catel.Data;
+	using Catel.Fody;
 	using Catel.MVVM;
-//	using Devart.Data.MySql;
-	using MySql.Data.MySqlClient;
+	using Catel.Services;
+	using HtmlAgilityPack;
 	using OfficeOpenXml;
 	using System;
+	using System.Collections.Generic;
+	using System.Collections.ObjectModel;
 	using System.Data;
 	using System.IO;
 	using System.Linq;
+	using System.Net;
+	using System.Net.Http;
+	using System.Net.Http.Headers;
+	using System.Text;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using WebWriter.Models;
 
 	public class GalleryViewModel : ViewModelBase
 		{
-		const string filePath = @"D:\Users\philj\OneDrive\My Documents\Ecclesia\Web site\Gallery.webw"; // @"D:\philj\Documents\OneDrive\My Documents\Ecclesia\Web site\Gallery.webw";
-		const string excelFilePath = @"D:\Users\philj\OneDrive\My Documents\Ecclesia\Stafford videos.xlsx"; // @"D:\philj\Documents\OneDrive\My Documents\Ecclesia\Stafford videos.xlsx";
+		const string filePath = @"D:\Users\philj\OneDrive\My Documents\Ecclesia\Web site\Gallery.webw";
+		const string excelFilePath = @"D:\Users\philj\OneDrive\My Documents\Ecclesia\Stafford videos.xlsx";
+		private readonly HttpClient httpClient;
 
-		StaffordMySQLConnection dbCon;
-		MySqlDataAdapter daVideos;
-		DataSet dsVideos;
+		private readonly IMessageService messageService;
 
-		public GalleryViewModel()
+		public GalleryViewModel(IMessageService messageService)
 			{
+			Argument.IsNotNull(() => messageService);
+			this.messageService = messageService;
+
 			OkCommand = new Command<object>(OnOkCommandExecute);
 			ImportCommand = new Command<object>(OnImportExecute);
-			ExportCommand = new Command<object>(OnExportExecute);
+			ExportCommand = new TaskCommand<object>(OnExportExecuteAsync);
 			SortCommand = new Command(OnSortCommandExecute);
-			WriteXmlCommand = new Command<object>(OnWriteXmlCommandExecute);
 
-			Gallery = GalleryModel.Load(filePath);
+			Gallery = new GalleryModel();
+
+			httpClient = new HttpClient();
+			var byteArray = Encoding.UTF8.GetBytes("phil:stafford54%");
+			var header = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+			httpClient.DefaultRequestHeaders.Authorization = header;
 			}
 
 		public override string Title { get { return "Video Gallery View"; } }
@@ -43,6 +57,7 @@ namespace WebWriter.ViewModels
 		/// Gets or sets the property value.
 		/// </summary>
 		[Model]
+		[Expose("Videos")]
 		public GalleryModel Gallery
 			{
 			get { return GetValue<GalleryModel>(GalleryProperty); }
@@ -56,7 +71,8 @@ namespace WebWriter.ViewModels
 
 		// TODO: Register view model properties with the vmprop or vmpropviewmodeltomodel codesnippets
 
-		public DataView Videos { get; set; }
+		[ViewModelToModel]
+		public ObservableCollection<VideoModel> Videos { get; set; }
 
 		// TODO: Register commands with the vmcommand or vmcommandwithcanexecute codesnippets
 
@@ -72,7 +88,6 @@ namespace WebWriter.ViewModels
 			{
 			if (await SaveAsync())
 				{
-				Gallery.SaveAsXml(filePath);
 				await CloseViewModelAsync(true);
 				}
 			}
@@ -124,7 +139,7 @@ namespace WebWriter.ViewModels
 					if (ws.Cells[row, 5].Value != null)
 						link = ws.Cells[row, 5].Value.ToString();
 
-					VideoModel video = new VideoModel()
+					var video = new VideoModel()
 						{
 						Title = title,
 						Link = link,
@@ -133,7 +148,7 @@ namespace WebWriter.ViewModels
 						Speaker = speaker,
 						Ecclesia = ecclesia
 						};
-					Gallery.Videos.Add(video);
+					Videos.Add(video);
 					row++;
 					}
 				}
@@ -142,14 +157,14 @@ namespace WebWriter.ViewModels
 		/// <summary>
 		/// Gets the ExportCommand command.
 		/// </summary>
-		public Command<object> ExportCommand { get; private set; }
+		public TaskCommand<object> ExportCommand { get; private set; }
 
 		/// <summary>
 		/// Method to invoke when the ExportCommand command is executed.
 		/// </summary>
-		private void OnExportExecute()
+		private Task OnExportExecuteAsync(object param)
 			{
-			ExportToExcel();
+			return ExportToExcelAsync();
 			}
 
 		/// <summary>
@@ -168,103 +183,169 @@ namespace WebWriter.ViewModels
 				}
 			}
 
-		/// <summary>
-		/// Gets the WriteXmlCommand command.
-		/// </summary>
-		public Command<object> WriteXmlCommand { get; private set; }
-
-		/// <summary>
-		/// Method to invoke when the WriteXmlCommand command is executed.
-		/// </summary>
-		private void OnWriteXmlCommandExecute()
-			{
-			GalleryWriter gw = new GalleryWriter(Gallery);
-			gw.Write(@"D:\Documents\Ecclesia\Web site\GalleryDiv.xml");
-			}
-
-		/// <summary>
-		/// Gets the WriteGalleryCommand command.
-		/// </summary>
-		public Command<object> WriteGalleryCommand
-			{
-			get
-				{
-				if (_WriteGalleryCommand == null)
-					_WriteGalleryCommand = new Command<object>(WriteGalleryCommand_Execute);
-				return _WriteGalleryCommand;
-				}
-			}
-
-		private Command<object> _WriteGalleryCommand;
-
-		/// <summary>
-		/// Method to invoke when the WriteGalleryCommand command is executed.
-		/// </summary>
-		/// <param name="parameter">The parameter of the command.</param>
-		private void WriteGalleryCommand_Execute(object parameter)
-			{
-			Gallery.Sort();
-			Gallery.SaveAsXml(filePath);
-			GalleryWriter gw = new GalleryWriter(Gallery);
-			gw.WriteGalleryFile(filePath);
-			}
-
-
 		protected override async Task InitializeAsync()
 			{
 			await base.InitializeAsync();
 
 			try
 				{
-				dbCon = StaffordMySQLConnection.Instance();
-				if (dbCon.IsConnect(false)) // no tunnel - must use PuTTY
+				var request = WebRequest.Create("http://staffordchristadelphians.org.uk/manage/");
+				request.Credentials = new NetworkCredential("phil", "stafford54%");
+				var response = request.GetResponse();
+				var data = response.GetResponseStream();
+				string html = string.Empty;
+				using (var sr = new StreamReader(data))
 					{
-					string query = "SELECT Id,Date,Title,Tag,Link,Details,Size,Speaker,Ecclesia,IsBibleHour,Publish FROM Videos ORDER BY Date";
-					daVideos = new MySqlDataAdapter(query, dbCon.Connection);
-					MySqlCommandBuilder cb = new MySqlCommandBuilder(daVideos);
+					html = sr.ReadToEnd();
+					var doc = new HtmlDocument();
+					doc.LoadHtml(html);
+					var table = doc.DocumentNode.SelectSingleNode("//table[@class='videosTable']")
+											.Descendants("tr")
+											.Where(tr => tr.Elements("td").Count() > 1)
+											.Select(tr => tr.Elements("td").Select(td => td.InnerText.Trim()).ToList())
+											.ToList();
+					Videos.Clear();
 
-					dsVideos = new DataSet();
-					daVideos.Fill(dsVideos, "Videos");
-					Videos = dsVideos.Tables["Videos"].DefaultView;
+					foreach (var row in table)
+						{
+						Videos.Add(new VideoModel()
+							{ Id = int.Parse(row[0]), Date = DateTime.Parse(row[1]), Title = row[2], Tag = row[3], Link = row[4], Speaker = row[5], Ecclesia = row[6], Details = row[7] });
+						}
+					Gallery.ResetChanges();
 					}
 				}
 			catch (Exception ex)
 				{
-				MessageBox.Show(ex.Message);
+				await messageService.ShowErrorAsync(ex.Message);
 				}
 			// TODO: subscribe to events here
 			}
 
-		protected override Task<bool> SaveAsync()
+		protected override async Task<bool> SaveAsync()
 			{
-			if (dsVideos != null)
+			if (Videos.Any(v => v.HasDuplicateTag))
 				{
-				try
+				var answer = await messageService.ShowAsync("Save with duplicate tags?", Application.Current.MainWindow.Title, MessageButton.YesNo, MessageImage.Question);
+				if (answer == MessageResult.No)
+					return false;
+				}
+			try
+				{
+				var changes = Gallery.GetChanges();
+				foreach (var change in changes)
 					{
-					daVideos.Update(dsVideos, "Videos");
-					dsVideos.Clear();
-					daVideos.Fill(dsVideos, "Videos");
-					}
-				catch (Exception ex)
-					{
-					Console.Write(ex.ToString());
-					MessageBox.Show(ex.Message);
-					return Task.FromResult(false);
+					switch (change.Value)
+						{
+						case GalleryModel.ChangeType.Edit:
+							await UpdateVideoAsync(change.Key);
+							break;
+
+						case GalleryModel.ChangeType.Add:
+							await AddVideo(change.Key);
+							break;
+
+						case GalleryModel.ChangeType.Delete:
+							await DeleteVideo(change.Key);
+							break;
+
+						case GalleryModel.ChangeType.None:
+						default:
+							break;
+						}
 					}
 				}
+			catch (Exception ex)
+				{
+				Console.Write(ex.ToString());
+				await messageService.ShowErrorAsync(ex.Message);
+				return false;
+				}
+			Gallery.ResetChanges();
+			return await base.SaveAsync();
+			}
 
-			return base.SaveAsync();
+		private async Task AddVideo(VideoModel video)
+			{
+			var values = new Dictionary<string, string>
+				{
+					{ "PhilsWebWriter", "yes" },
+					{ "new", "1" },
+					{ "date", video.Date.ToString("yyyy-MM-dd") },
+					{ "title", video.Title },
+					{ "tag", video.Tag },
+					{ "link", video.Link },
+					{ "speaker", video.Speaker },
+					{ "ecclesia", video.Ecclesia },
+					{ "details", video.Details }
+				};
+
+			var result = await PostWebRequest("insert", values);
+			if (result.statusCode != HttpStatusCode.OK)
+				await messageService.ShowWarningAsync($"Insert failed: {result.reasonPhrase}", Application.Current.MainWindow.Title);
+			}
+
+		private async Task DeleteVideo(VideoModel video)
+			{
+			var values = new Dictionary<string, string>
+				{
+					{ "PhilsWebWriter", "yes" },
+					{ "id", video.Id.ToString() }
+				};
+
+			var result = await PostWebRequest("delete", values);
+			if (result.statusCode != HttpStatusCode.OK)
+				await messageService.ShowWarningAsync($"Delete failed: {result.reasonPhrase}", Application.Current.MainWindow.Title);
+			}
+
+		private async Task UpdateVideoAsync(VideoModel video)
+			{
+			var values = new Dictionary<string, string>
+				{
+					{ "PhilsWebWriter", "yes" },
+					{ "new", "1" },
+					{ "id", video.Id.ToString() },
+					{ "date", video.Date.ToString("yyyy-MM-dd") },
+					{ "title", video.Title },
+					{ "tag", video.Tag },
+					{ "link", video.Link },
+					{ "speaker", video.Speaker },
+					{ "ecclesia", video.Ecclesia },
+					{ "details", video.Details }
+				};
+
+			var result = await PostWebRequest("edit", values);
+			if (result.statusCode != HttpStatusCode.OK)
+				await messageService.ShowWarningAsync($"Update failed: {result.reasonPhrase}", Application.Current.MainWindow.Title);
+			}
+
+		private async Task<(HttpStatusCode statusCode, string reasonPhrase, string responseString)> PostWebRequest(string pageName, Dictionary<string, string> parameters)
+			{
+			var content = new FormUrlEncodedContent(parameters);
+			var response = await httpClient.PostAsync($"http://staffordchristadelphians.org.uk/manage/{pageName}.php", content);
+			var responseString = await response.Content.ReadAsStringAsync();
+			return (response.StatusCode, response.ReasonPhrase, responseString);
+			}
+
+		protected override async Task<bool> CancelAsync()
+			{
+			if (Gallery.GetChanges().Count > 0)
+				{
+				var answer = await messageService.ShowAsync("Abandon changes?", Application.Current.MainWindow.Title, MessageButton.YesNo, MessageImage.Question);
+				if (answer == MessageResult.No)
+					return false;
+				}
+			return await base.CancelAsync();
 			}
 
 		protected override async Task CloseAsync()
 			{
 			// TODO: unsubscribe from events here
 
-			dbCon?.Close();
+			httpClient.Dispose();
 			await base.CloseAsync();
 			}
 
-		private bool ExportToExcel()
+		private async Task<bool> ExportToExcelAsync()
 			{
 			FileInfo excelFile;
 
@@ -274,7 +355,7 @@ namespace WebWriter.ViewModels
 				}
 			catch (IOException ex)
 				{
-				MessageBox.Show(ex.Message, Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
+				await messageService.ShowErrorAsync(ex.Message, Application.Current.MainWindow.Title);
 				return false;
 				}
 
@@ -359,12 +440,12 @@ namespace WebWriter.ViewModels
 
 					ep.Save();
 					}
-				MessageBox.Show($"Video list saved to {excelFilePath}", Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Information);
+				await messageService.ShowAsync($"Video list saved to {excelFilePath}", Application.Current.MainWindow.Title, MessageButton.OK, MessageImage.Information);
 				return true;
 				}
 			catch (Exception ex)
 				{
-				MessageBox.Show(ex.Message, Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
+				await messageService.ShowErrorAsync(ex.Message, Application.Current.MainWindow.Title);
 				return false;
 				}
 			}

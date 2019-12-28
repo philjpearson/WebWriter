@@ -32,6 +32,8 @@ namespace WebWriter.Models
 			{
 			}
 
+		public int Id { get; set; }
+
 		/// <summary>
 		/// Gets or sets the property value.
 		/// </summary>
@@ -171,6 +173,8 @@ namespace WebWriter.Models
 		/// Register the Publish property so it is known in the class.
 		/// </summary>
 		public static readonly PropertyData PublishProperty = RegisterProperty("Publish", typeof(bool), true);
+
+		public bool HasDuplicateTag { get; set; }
 
 		public Size GetSize()
 			{
