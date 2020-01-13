@@ -189,14 +189,12 @@ namespace WebWriter.ViewModels
 
 			try
 				{
-				var request = WebRequest.Create("http://staffordchristadelphians.org.uk/manage/");
-				request.Credentials = new NetworkCredential("phil", "stafford54%");
-				var response = request.GetResponse();
-				var data = response.GetResponseStream();
-				string html = string.Empty;
-				using (var sr = new StreamReader(data))
+				var response = await httpClient.GetAsync("https://staffordchristadelphians.org.uk/manage/index.php");
+				if (response.StatusCode != HttpStatusCode.OK)
+					await messageService.ShowWarningAsync($"Reading videos table failed: {response.ReasonPhrase}", Application.Current.MainWindow.Title);
+				else
 					{
-					html = sr.ReadToEnd();
+					var html = await response.Content.ReadAsStringAsync();
 					var doc = new HtmlDocument();
 					doc.LoadHtml(html);
 					var table = doc.DocumentNode.SelectSingleNode("//table[@class='videosTable']")
@@ -321,7 +319,7 @@ namespace WebWriter.ViewModels
 		private async Task<(HttpStatusCode statusCode, string reasonPhrase, string responseString)> PostWebRequest(string pageName, Dictionary<string, string> parameters)
 			{
 			var content = new FormUrlEncodedContent(parameters);
-			var response = await httpClient.PostAsync($"http://staffordchristadelphians.org.uk/manage/{pageName}.php", content);
+			var response = await httpClient.PostAsync($"https://staffordchristadelphians.org.uk/manage/{pageName}.php", content);
 			var responseString = await response.Content.ReadAsStringAsync();
 			return (response.StatusCode, response.ReasonPhrase, responseString);
 			}
