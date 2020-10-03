@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	12 January 2019 11:55:52
+//	Last mod:	03 October 2020 09:35:18
 //
 using System;
 using System.IO;
@@ -11,8 +11,8 @@ namespace WebWriter.Models
 	{
 	public class Uploader
 		{
-		const string ftpUserName = "1007246_web"; // "websiteupdater";
-		const string ftpPassword = "sandon14Road";
+		const string ftpUserName = "1007246_code";
+		const string ftpPassword = "7wtk3Es1zthmBBHWdPyY";
 
 		public static bool Upload(string localFile, string remotePath, bool binary = false)
 			{

@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	03 January 2019 20:34:24
+//	Last mod:	03 October 2020 09:35:18
 //
 using System;
 using System.IO;
@@ -18,8 +18,9 @@ namespace WebWriter.Models
 		private const string galleryPage = @"D:\Documents\My Web Sites\StaffordChristadelphians\gallery\index.html";
 		private const string newGalleryPage = @"D:\Documents\My Web Sites\StaffordChristadelphians\gallery\index-new.html";
 
-		string ftpUserName { get; } = "1007246_web"; // "websiteupdater";
-		string ftpPassword { get; } = "sandon14Road"; // "sandon14road";
+		const string ftpUserName = "1007246_code";
+		const string ftpPassword = "7wtk3Es1zthmBBHWdPyY";
+
 		string galleryFilename { get; } = "Gallery.webw";
 
 		public GalleryWriter(GalleryModel gallery)

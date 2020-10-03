@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	30 December 2016 20:09:50
+//	Last mod:	26 April 2020 12:26:23
 //
 namespace WebWriter.ViewModels
 	{
@@ -9,8 +9,9 @@ namespace WebWriter.ViewModels
 	using Catel.IoC;
 	using Catel.MVVM;
 	using Catel.Services;
+    using WebWriter.Models;
 
-	public class MainWindowViewModel : ViewModelBase
+    public class MainWindowViewModel : ViewModelBase
 		{
 		private IUIVisualizerService uiVisualiserService;
 
@@ -123,6 +124,33 @@ namespace WebWriter.ViewModels
 			{
 			RecordingsViewModel vm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<RecordingsViewModel>();
 			return await uiVisualiserService.ShowDialogAsync(vm);
+			}
+
+		/// <summary>
+		/// Gets the RecordingsCommand command.
+		/// </summary>
+		public TaskCommand<object> LockdownProgrammeCommand
+			{
+			get
+				{
+				if (_LockdownProgrammeCommand == null)
+					_LockdownProgrammeCommand = new TaskCommand<object>(LockdownProgrammeCommand_Execute);
+				return _LockdownProgrammeCommand;
+				}
+			}
+
+		private TaskCommand<object> _LockdownProgrammeCommand;
+
+		/// <summary>
+		/// Method to invoke when the RecordingsCommand command is executed.
+		/// </summary>
+		/// <param name="parameter">The parameter of the command.</param>
+		private async Task<bool?> LockdownProgrammeCommand_Execute(object parameter)
+			{
+			var filePath = @"D:\Users\philj\OneDrive\My Documents\Ecclesia\Programme\LockdownProgramme.csv";
+			var result = Uploader.Upload(filePath, "private/programme/LockdownProgramme.csv");
+			MessageBox.Show(result ? "Programme updated successfully" : "Oops! Something went wrong", Application.Current.MainWindow.Title, MessageBoxButton.OK, result ? MessageBoxImage.Information : MessageBoxImage.Error);
+			return await Task.FromResult(result);
 			}
 
 		protected override Task CloseAsync()
