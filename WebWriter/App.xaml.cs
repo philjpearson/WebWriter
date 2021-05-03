@@ -1,4 +1,7 @@
-﻿namespace WebWriter
+﻿//
+//	Last mod:	03 May 2021 13:00:30
+//
+namespace WebWriter
 	{
 	using System.Windows;
 
@@ -45,8 +48,6 @@
 			//Log.Info("Registering custom types");
 			//var serviceLocator = ServiceLocator.Default;
 			//serviceLocator.RegisterType<IMyInterface, IMyClass>();
-
-			StyleHelper.CreateStyleForwardersForDefaultStyles();
 
 			Log.Info("Calling base.OnStartup");
 

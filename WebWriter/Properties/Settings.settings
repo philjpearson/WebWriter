@@ -1,7 +1,38 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="WebWriter.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="LegitDirectories" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;string&gt;biblebites&lt;/string&gt;
+  &lt;string&gt;bibleclass&lt;/string&gt;
+  &lt;string&gt;contact&lt;/string&gt;
+  &lt;string&gt;covid19&lt;/string&gt;
+  &lt;string&gt;cyc-reunion&lt;/string&gt;
+  &lt;string&gt;errors&lt;/string&gt;
+  &lt;string&gt;events&lt;/string&gt;
+  &lt;string&gt;free_offers&lt;/string&gt;
+  &lt;string&gt;gallery&lt;/string&gt;
+  &lt;string&gt;images&lt;/string&gt;
+  &lt;string&gt;information_links&lt;/string&gt;
+  &lt;string&gt;manage&lt;/string&gt;
+  &lt;string&gt;news&lt;/string&gt;
+  &lt;string&gt;php&lt;/string&gt;
+  &lt;string&gt;private&lt;/string&gt;
+  &lt;string&gt;programme&lt;/string&gt;
+  &lt;string&gt;prophecy&lt;/string&gt;
+  &lt;string&gt;public_meetings&lt;/string&gt;
+  &lt;string&gt;Rugeley&lt;/string&gt;
+  &lt;string&gt;scripts&lt;/string&gt;
+  &lt;string&gt;seminars&lt;/string&gt;
+  &lt;string&gt;styles&lt;/string&gt;
+  &lt;string&gt;test&lt;/string&gt;
+  &lt;string&gt;visit&lt;/string&gt;
+  &lt;string&gt;what_we_believe&lt;/string&gt;
+  &lt;string&gt;where_we_are&lt;/string&gt;
+  &lt;string&gt;youthgroup&lt;/string&gt;
+&lt;/ArrayOfString&gt;</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>

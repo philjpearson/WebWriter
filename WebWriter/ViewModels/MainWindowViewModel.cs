@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	26 April 2020 12:26:23
+//	Last mod:	07 November 2020 13:34:27
 //
 namespace WebWriter.ViewModels
 	{
@@ -9,11 +9,12 @@ namespace WebWriter.ViewModels
 	using Catel.IoC;
 	using Catel.MVVM;
 	using Catel.Services;
-    using WebWriter.Models;
+  using WebWriter.Models;
+	using WebWriter.Workers;
 
-    public class MainWindowViewModel : ViewModelBase
+	public class MainWindowViewModel : ViewModelBase
 		{
-		private IUIVisualizerService uiVisualiserService;
+		private readonly IUIVisualizerService uiVisualiserService;
 
 		public MainWindowViewModel(IUIVisualizerService uiVisualiserService)
 			{
@@ -23,7 +24,7 @@ namespace WebWriter.ViewModels
 			ExitCommand = new Command<object>(OnExitExecute);
 			TitlesCommand = new TaskCommand<object>(OnTitlesExecute);
 			GalleryCommand = new TaskCommand<object>(OnGalleryExecute);
-			SettingsCommand = new Command(OnSettingsExecute);
+			SettingsCommand = new TaskCommand(OnSettingsExecuteAsync);
 			CampaignGalleryCommand = new TaskCommand<object>(OnCampaignGalleryExecute);
 			}
 
@@ -77,14 +78,15 @@ namespace WebWriter.ViewModels
 		/// <summary>
 		/// Gets the SettingsCommand command.
 		/// </summary>
-		public Command SettingsCommand { get; private set; }
+		public TaskCommand SettingsCommand { get; private set; }
 
 		/// <summary>
 		/// Method to invoke when the Settings command is executed.
 		/// </summary>
-		private void OnSettingsExecute()
+		private async Task OnSettingsExecuteAsync()
 			{
-			// TODO: Handle command logic here
+			var ant = new AntiHacker();
+			await ant.CheckDirectoriesAsync();
 			}
 
 		/// <summary>
@@ -108,13 +110,13 @@ namespace WebWriter.ViewModels
 			{
 			get
 				{
-				if (_RecordingsCommand == null)
-					_RecordingsCommand = new TaskCommand<object>(RecordingsCommand_Execute);
-				return _RecordingsCommand;
+				if (recordingsCommand == null)
+					recordingsCommand = new TaskCommand<object>(RecordingsCommand_Execute);
+				return recordingsCommand;
 				}
 			}
 
-		private TaskCommand<object> _RecordingsCommand;
+		private TaskCommand<object> recordingsCommand;
 
 		/// <summary>
 		/// Method to invoke when the RecordingsCommand command is executed.
@@ -133,13 +135,13 @@ namespace WebWriter.ViewModels
 			{
 			get
 				{
-				if (_LockdownProgrammeCommand == null)
-					_LockdownProgrammeCommand = new TaskCommand<object>(LockdownProgrammeCommand_Execute);
-				return _LockdownProgrammeCommand;
+				if (lockdownProgrammeCommand == null)
+					lockdownProgrammeCommand = new TaskCommand<object>(LockdownProgrammeCommand_Execute);
+				return lockdownProgrammeCommand;
 				}
 			}
 
-		private TaskCommand<object> _LockdownProgrammeCommand;
+		private TaskCommand<object> lockdownProgrammeCommand;
 
 		/// <summary>
 		/// Method to invoke when the RecordingsCommand command is executed.

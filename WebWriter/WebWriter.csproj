@@ -1,9 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Catel.Fody.4.7.0\build\Catel.Fody.props" Condition="Exists('..\packages\Catel.Fody.4.7.0\build\Catel.Fody.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
+    <LangVersion>8.0</LangVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{24912F3B-B827-4748-801C-BFF659624C94}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -39,55 +41,75 @@
   <PropertyGroup>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\WebWriter.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Catel.Core, Version=5.8.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Catel.Core.5.8.0\lib\net46\Catel.Core.dll</HintPath>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.9.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
+      <HintPath>..\packages\BouncyCastle.1.8.9\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
-    <Reference Include="Catel.Extensions.Controls, Version=4.5.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Catel.Extensions.Controls.4.5.4\lib\net45\Catel.Extensions.Controls.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Catel.Core, Version=5.12.13.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Catel.Core.5.12.13\lib\net46\Catel.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Catel.Fody.Attributes, Version=3.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Catel.Fody.3.7.0\lib\net452\Catel.Fody.Attributes.dll</HintPath>
+    <Reference Include="Catel.Fody.Attributes, Version=4.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Catel.Fody.4.7.0\lib\net452\Catel.Fody.Attributes.dll</HintPath>
     </Reference>
-    <Reference Include="Catel.MVVM, Version=5.8.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Catel.MVVM.5.8.0\lib\net46\Catel.MVVM.dll</HintPath>
+    <Reference Include="Catel.MVVM, Version=5.12.13.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Catel.MVVM.5.12.13\lib\net46\Catel.MVVM.dll</HintPath>
     </Reference>
-    <Reference Include="Devart.Data, Version=5.0.2070.0, Culture=neutral, PublicKeyToken=09af7300eec23701, processorArchitecture=MSIL">
-      <HintPath>..\packages\dotConnect.Express.for.MySQL.8.12.1278\lib\Devart.Data.dll</HintPath>
+    <Reference Include="Devart.Data, Version=5.0.2658.0, Culture=neutral, PublicKeyToken=09af7300eec23701, processorArchitecture=MSIL">
+      <HintPath>..\packages\dotConnect.Express.for.MySQL.8.19.1866\lib\Devart.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Devart.Data.MySql, Version=8.12.1278.0, Culture=neutral, PublicKeyToken=09af7300eec23701, processorArchitecture=MSIL">
-      <HintPath>..\packages\dotConnect.Express.for.MySQL.8.12.1278\lib\Devart.Data.MySql.dll</HintPath>
+    <Reference Include="Devart.Data.MySql, Version=8.19.1866.0, Culture=neutral, PublicKeyToken=09af7300eec23701, processorArchitecture=MSIL">
+      <HintPath>..\packages\dotConnect.Express.for.MySQL.8.19.1866\lib\Devart.Data.MySql.dll</HintPath>
     </Reference>
-    <Reference Include="EPPlus, Version=4.5.2.1, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
-      <HintPath>..\packages\EPPlus.4.5.2.1\lib\net40\EPPlus.dll</HintPath>
+    <Reference Include="EPPlus, Version=5.6.3.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.5.6.3\lib\net45\EPPlus.dll</HintPath>
     </Reference>
-    <Reference Include="FileHelpers, Version=3.3.0.0, Culture=neutral, PublicKeyToken=3e0c08d59cc3d657, processorArchitecture=MSIL">
-      <HintPath>..\packages\FileHelpers.3.3.0\lib\net45\FileHelpers.dll</HintPath>
+    <Reference Include="FileHelpers, Version=3.4.2.0, Culture=neutral, PublicKeyToken=3e0c08d59cc3d657, processorArchitecture=MSIL">
+      <HintPath>..\packages\FileHelpers.3.4.2\lib\net45\FileHelpers.dll</HintPath>
     </Reference>
-    <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
-      <HintPath>..\packages\Google.Protobuf.3.5.1\lib\net45\Google.Protobuf.dll</HintPath>
+    <Reference Include="Google.Protobuf, Version=3.15.8.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Protobuf.3.15.8\lib\net45\Google.Protobuf.dll</HintPath>
     </Reference>
-    <Reference Include="HtmlAgilityPack, Version=1.11.17.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
-      <HintPath>..\packages\HtmlAgilityPack.1.11.17\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    <Reference Include="HtmlAgilityPack, Version=1.11.33.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.11.33\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    </Reference>
+    <Reference Include="K4os.Compression.LZ4, Version=1.2.6.0, Culture=neutral, PublicKeyToken=2186fa9121ef231d, processorArchitecture=MSIL">
+      <HintPath>..\packages\K4os.Compression.LZ4.1.2.6\lib\net46\K4os.Compression.LZ4.dll</HintPath>
+    </Reference>
+    <Reference Include="K4os.Compression.LZ4.Streams, Version=1.2.6.0, Culture=neutral, PublicKeyToken=2186fa9121ef231d, processorArchitecture=MSIL">
+      <HintPath>..\packages\K4os.Compression.LZ4.Streams.1.2.6\lib\net46\K4os.Compression.LZ4.Streams.dll</HintPath>
+    </Reference>
+    <Reference Include="K4os.Hash.xxHash, Version=1.0.6.0, Culture=neutral, PublicKeyToken=32cd54395057cec3, processorArchitecture=MSIL">
+      <HintPath>..\packages\K4os.Hash.xxHash.1.0.6\lib\net46\K4os.Hash.xxHash.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Expression.Interactions, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Expression.Blend.Sdk.WPF.1.0.1\lib\net45\Microsoft.Expression.Interactions.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MySql.Data, Version=8.0.13.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\packages\MySql.Data.8.0.13\lib\net452\MySql.Data.dll</HintPath>
+    <Reference Include="Microsoft.IO.RecyclableMemoryStream, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IO.RecyclableMemoryStream.2.0.0\lib\net462\Microsoft.IO.RecyclableMemoryStream.dll</HintPath>
     </Reference>
-    <Reference Include="Renci.SshNet, Version=2016.1.0.0, Culture=neutral, PublicKeyToken=1cee9f8bde3db106, processorArchitecture=MSIL">
-      <HintPath>..\packages\SSH.NET.2016.1.0\lib\net40\Renci.SshNet.dll</HintPath>
+    <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Xaml.Behaviors.Wpf.1.1.31\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data, Version=8.0.24.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.8.0.24\lib\net452\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Renci.SshNet, Version=2020.0.1.0, Culture=neutral, PublicKeyToken=1cee9f8bde3db106, processorArchitecture=MSIL">
+      <HintPath>..\packages\SSH.NET.2020.0.1\lib\net40\Renci.SshNet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Collections.Immutable, Version=1.2.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Collections.Immutable.1.5.0\lib\netstandard2.0\System.Collections.Immutable.dll</HintPath>
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Collections.Immutable, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.Immutable.5.0.0\lib\net461\System.Collections.Immutable.dll</HintPath>
     </Reference>
     <Reference Include="System.ComponentModel" />
     <Reference Include="System.ComponentModel.Annotations, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.ComponentModel.Annotations.4.5.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
+      <HintPath>..\packages\System.ComponentModel.Annotations.5.0.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
     </Reference>
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.configuration" />
@@ -96,10 +118,21 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Design" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
     <Reference Include="System.Reflection, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Reflection.4.3.0\lib\net462\System.Reflection.dll</HintPath>
       <Private>True</Private>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Runtime.Serialization.Formatters, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -118,7 +151,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Security" />
+    <Reference Include="System.Threading.Tasks" />
     <Reference Include="System.Transactions" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -129,9 +166,18 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="Ubiety.Dns.Core, Version=2.2.1.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.8.0.24\lib\net452\Ubiety.Dns.Core.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WinSCPnet, Version=1.7.2.11087, Culture=neutral, PublicKeyToken=2271ec4a3c56d0bf, processorArchitecture=MSIL">
+      <HintPath>..\packages\WinSCP.5.17.10\lib\net40\WinSCPnet.dll</HintPath>
+    </Reference>
+    <Reference Include="Zstandard.Net, Version=1.1.7.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.8.0.24\lib\net452\Zstandard.Net.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -141,14 +187,25 @@
     <Compile Include="Models\BudeTunnel.cs" />
     <Compile Include="Models\StaffordMySQLConnection.cs" />
     <Compile Include="Models\Uploader.cs" />
+    <Compile Include="Utilities\CursorOverride.cs" />
+    <Compile Include="Utilities\IListItemConverter.cs" />
+    <Compile Include="Utilities\MultiSelectorBehaviours.cs" />
+    <Compile Include="Utilities\TwoListSynchronizer.cs" />
+    <Compile Include="ViewModels\DodgyStuffViewModel.cs" />
     <Compile Include="ViewModels\RecordingsViewModel.cs" />
     <Compile Include="ViewModels\TitlesViewModel.cs" />
     <Compile Include="Views\RecordingsView.xaml.cs">
       <DependentUpon>RecordingsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\DodgyStuffView.xaml.cs">
+      <DependentUpon>DodgyStuffView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\TitlesView.xaml.cs">
       <DependentUpon>TitlesView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Workers\AntiHacker.cs" />
+    <Compile Include="Workers\FtpFileInfo.cs" />
+    <Compile Include="Workers\FtpFileSystemItem.cs" />
     <Page Include="Views\CampaignGalleryView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -184,6 +241,10 @@
     <Page Include="Views\RecordingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DodgyStuffView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\TitlesView.xaml">
       <SubType>Designer</SubType>
@@ -228,14 +289,22 @@
   <ItemGroup>
     <Resource Include="Resources\WebWriter.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\WebWriter.png" />
+    <Resource Include="Resources\WebWriter32.png" />
+    <Resource Include="Resources\WebWriter64.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\Fody.3.3.5\build\Fody.targets" Condition="Exists('..\packages\Fody.3.3.5\build\Fody.targets')" />
+  <Import Project="..\packages\Fody.6.5.1\build\Fody.targets" Condition="Exists('..\packages\Fody.6.5.1\build\Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Fody.3.3.5\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.3.3.5\build\Fody.targets'))" />
+    <Error Condition="!Exists('..\packages\Fody.6.5.1\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.6.5.1\build\Fody.targets'))" />
+    <Error Condition="!Exists('..\packages\Catel.Fody.4.7.0\build\Catel.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Catel.Fody.4.7.0\build\Catel.Fody.props'))" />
+    <Error Condition="!Exists('..\packages\WinSCP.5.17.10\build\WinSCP.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinSCP.5.17.10\build\WinSCP.targets'))" />
   </Target>
+  <Import Project="..\packages\WinSCP.5.17.10\build\WinSCP.targets" Condition="Exists('..\packages\WinSCP.5.17.10\build\WinSCP.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

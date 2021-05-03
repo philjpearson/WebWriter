@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	03 October 2020 09:35:18
+//	Last mod:	08 April 2021 17:13:52
 //
 using System;
 using System.IO;
@@ -56,16 +56,23 @@ namespace WebWriter.Models
 				}
 			else
 				{
-				// Copy the contents of the file to the request stream.
-				using (StreamReader sourceStream = new StreamReader(localFile))
+				try
 					{
-					byte[] fileContents = Encoding.UTF8.GetBytes(sourceStream.ReadToEnd());
-					sourceStream.Close();
-					request.ContentLength = fileContents.Length;
+					// Copy the contents of the file to the request stream.
+					using (StreamReader sourceStream = new StreamReader(localFile))
+						{
+						byte[] fileContents = Encoding.UTF8.GetBytes(sourceStream.ReadToEnd());
+						sourceStream.Close();
+						request.ContentLength = fileContents.Length;
 
-					Stream requestStream = request.GetRequestStream();
-					requestStream.Write(fileContents, 0, fileContents.Length);
-					requestStream.Close();
+						Stream requestStream = request.GetRequestStream();
+						requestStream.Write(fileContents, 0, fileContents.Length);
+						requestStream.Close();
+						}
+					}
+				catch (Exception ex)
+					{
+					MessageBox.Show($"Exception during upload: {ex.Message}", "WebWriter", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 					}
 				}
 			response = (FtpWebResponse)request.GetResponse();
