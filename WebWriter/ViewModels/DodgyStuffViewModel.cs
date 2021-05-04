@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	03 May 2021 12:52:38
+//	Last mod:	04 May 2021 15:40:43
 //
 namespace WebWriter.ViewModels
 	{
@@ -63,10 +63,21 @@ namespace WebWriter.ViewModels
 
 		private void DeleteCommandExecute()
 			{
-			//if (AntiHacker.Delete(SelectedThing))
-			//	DodgyStuff.Remove(SelectedThing);
-			//else
-				MessageBox.Show("Sorry! I can't do that. You will have to do it yourself.", "WebWriter");
+			if (MessageBox.Show("Are you sure you want to delete all the selected files from the web site?", Title, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+				{
+				var toRemove = new List<string>();
+				foreach (string thing in SelectedThings)
+					{
+					if (AntiHacker.Delete(thing))
+						toRemove.Add(thing);
+					else
+						MessageBox.Show($"Sorry! I can't delete '{thing}'. You will have to do it yourself.", "WebWriter");
+					}
+				foreach (var item in toRemove)
+					{
+					DodgyStuff.Remove(item);
+					}
+				}
 			}
 
 		private bool DeleteCommandCanExecute()
