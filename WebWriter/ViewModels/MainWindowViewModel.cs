@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	07 November 2020 13:34:27
+//	Last mod:	02 January 2023 16:40:23
 //
 namespace WebWriter.ViewModels
 	{
@@ -9,7 +9,7 @@ namespace WebWriter.ViewModels
 	using Catel.IoC;
 	using Catel.MVVM;
 	using Catel.Services;
-  using WebWriter.Models;
+	using WebWriter.Models;
 	using WebWriter.Workers;
 
 	public class MainWindowViewModel : ViewModelBase
@@ -150,8 +150,28 @@ namespace WebWriter.ViewModels
 		private async Task<bool?> LockdownProgrammeCommand_Execute(object parameter)
 			{
 			var filePath = @"D:\Users\philj\OneDrive\My Documents\Ecclesia\Programme\LockdownProgramme.csv";
+
 			var result = Uploader.Upload(filePath, "private/programme/LockdownProgramme.csv");
-			MessageBox.Show(result ? "Programme updated successfully" : "Oops! Something went wrong", Application.Current.MainWindow.Title, MessageBoxButton.OK, result ? MessageBoxImage.Information : MessageBoxImage.Error);
+
+#if true
+			if (result)
+				{
+				var prog = LockdownProgramme.Load(filePath);
+				var sundays = prog.Sunday;
+				var bibleClass = prog.BibleClass;
+
+				filePath = @"D:\Users\philj\Documents\Ecclesia\Programme\Ecclesial programme.pdf";
+				result = prog.CreatePdf(filePath);
+				if (result)
+					{
+					result = Uploader.Upload(filePath, "programme/Ecclesial programme.pdf", true);
+					}
+				}
+#endif
+			if (result)
+				MessageBox.Show("Programme update uploaded successfully", Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Information);
+			else
+				MessageBox.Show("Oops! Something went wrong", Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
 			return await Task.FromResult(result);
 			}
 
