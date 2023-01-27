@@ -253,7 +253,7 @@
       <Version>1.50.5147</Version>
     </PackageReference>
     <PackageReference Include="SSH.NET">
-      <Version>2020.0.1</Version>
+      <Version>2020.0.2</Version>
     </PackageReference>
     <PackageReference Include="System.Dynamic.Runtime">
       <Version>4.3.0</Version>
