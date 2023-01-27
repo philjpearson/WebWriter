@@ -1,17 +1,19 @@
 ﻿//
-//	Last mod:	02 January 2023 16:28:27
+//	Last mod:	27 January 2023 09:11:15
 //
 using System;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
 using WebWriter.Models;
 
+#nullable enable
+
 namespace WebWriter.Documents
 	{
 	public class ProgrammeDocument : DocumentBase
 		{
-		Table table;
-		Table bcTable;
+		Table? table;
+		Table? bcTable;
 
 		public ProgrammeDocument(LockdownProgramme programme)
 			: base("Stafford Christadelphian Ecclesia", "Programme 2023 (God willing)")
@@ -37,7 +39,7 @@ namespace WebWriter.Documents
 
 		protected override void CreateContent()
 			{
-			MainSection.AddParagraph("Sundays", "Heading1");
+			MainSection!.AddParagraph("Sundays", "Heading1");
 
 			// Create the table
 			table = MainSection.AddTable();
@@ -72,7 +74,7 @@ namespace WebWriter.Documents
 
 		protected override void FillContent()
 			{
-			var headerRow = table.AddRow();
+			var headerRow = table!.AddRow();
 			headerRow.Format.Font.Bold = true;
 			headerRow.Borders.Bottom.Width = "0.05cm";
 			headerRow.Borders.Bottom.Color = BorderColour;
@@ -85,9 +87,12 @@ namespace WebWriter.Documents
 				var para = headerRow.Cells[col++].AddParagraph(s);
 				}
 
+			Row? row = null;
 			foreach (var sunday in Programme.Sunday)
 				{
-				var row = table.AddRow();
+				row = table.AddRow();
+				row.Borders.Bottom.Width = "0.5pt";
+				row.Borders.Bottom.Color = BorderColour;
 				var para = row.Cells[0].AddParagraph(sunday.Date.ToString("d MMM"));
 				para.Format.Alignment = ParagraphAlignment.Right;
 
@@ -105,8 +110,10 @@ namespace WebWriter.Documents
 				row.Cells[4].AddParagraph(sunday.Collection2 ?? "");
 				row.Cells[5].AddParagraph(sunday.Collection3 ?? "");
 				}
+			if (row is not null)
+				row.Borders.Bottom.Width = "0.5mm";
 
-			headerRow = bcTable.AddRow();
+			headerRow = bcTable!.AddRow();
 			headerRow.Format.Font.Bold = true;
 			headerRow.Borders.Bottom.Width = "0.05cm";
 			headerRow.Borders.Bottom.Color = BorderColour;
@@ -121,7 +128,9 @@ namespace WebWriter.Documents
 
 			foreach (var bc in Programme.BibleClass)
 				{
-				var row = bcTable.AddRow();
+				row = bcTable.AddRow();
+				row.Borders.Bottom.Width = "0.5pt";
+				row.Borders.Bottom.Color = BorderColour;
 				var para = row.Cells[0].AddParagraph(bc.Date.ToString("d MMM"));
 				para.Format.Alignment = ParagraphAlignment.Right;
 
@@ -138,6 +147,8 @@ namespace WebWriter.Documents
 				row.Cells[3].AddParagraph(ecclesia);
 				row.Cells[4].AddParagraph(bc.Information);
 				}
+			if (row is not null)
+				row.Borders.Bottom.Width = "0.5mm";
 			}
 		}
 	}

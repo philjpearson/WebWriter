@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	11 November 2019 11:35:03
+//	Last mod:	05 January 2023 09:20:37
 //
 namespace WebWriter.ViewModels
 	{
@@ -45,7 +45,7 @@ namespace WebWriter.ViewModels
 			Gallery = new GalleryModel();
 
 			httpClient = new HttpClient();
-			var byteArray = Encoding.UTF8.GetBytes("phil:stafford54%");
+			var byteArray = Encoding.UTF8.GetBytes("phil:Stafford54%");
 			var header = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 			httpClient.DefaultRequestHeaders.Authorization = header;
 			}

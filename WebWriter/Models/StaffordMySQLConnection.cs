@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	11 November 2019 10:37:46
+//	Last mod:	05 January 2023 13:02:41
 //
 using System;
 using System.Windows;
@@ -15,11 +15,11 @@ namespace WebWriter.Models
 			}
 
 		private string serverTunnel = "127.0.0.1";
-		private string userName = "1007246_jfkgga5j";
+		private string userName = "u880159079_phil";
 
-		public string DatabaseName { get; set; } = "1007246-stafford";
+		public string DatabaseName { get; set; } = "u880159079_stafford";
 
-		public string Password { get; set; } = "no2337ttU8";
+		public string Password { get; set; } = "z6ZjgSn4tfkM_nD";
 
 		public MySqlConnection Connection { get; private set; } = null;
 
@@ -59,7 +59,7 @@ namespace WebWriter.Models
 
 		public void Close()
 			{
-			Connection.Close();
+			Connection?.Close();
 			Connection = null;
 			BudeTunnel.Close();
 			}

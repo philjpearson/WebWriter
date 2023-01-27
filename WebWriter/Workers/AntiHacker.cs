@@ -1,20 +1,15 @@
 ﻿//
-//	Last mod:	03 May 2021 13:09:45
+//	Last mod:	05 January 2023 09:44:21
 //
-using Catel.IoC;
-using Catel.Services;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Catel.IoC;
+using Catel.Services;
 using WebWriter.Utilities;
 using WebWriter.ViewModels;
 using WinSCP;
@@ -23,11 +18,13 @@ namespace WebWriter.Workers
 	{
 	internal class AntiHacker
 		{
-    const string remoteAddress = "ftp://ftp01.servage.net/staffordchristadelphians.org.uk/public_html/";
-    const string serverAddress = "ftp01.servage.net";
-    const string ftpUserName = "1007246_code";
-    const string ftpPassword = "7wtk3Es1zthmBBHWdPyY";
-    const string rootDirectory = "staffordchristadelphians.org.uk/public_html/";
+#if false
+    const string remoteAddress = "ftp://staffordchristadelphians.org.uk/public_html/";
+#endif
+    const string serverAddress = "staffordchristadelphians.org.uk";
+    const string ftpUserName = "u880159079.staffordchristadelphians.org.uk"; // "1007246_code";
+    const string ftpPassword = "z6ZjgSn4tfkM_nD"; // "7wtk3Es1zthmBBHWdPyY";
+    const string rootDirectory = "/public_html/"; // "staffordchristadelphians.org.uk/public_html/";
 
 
     private static readonly SessionOptions sessionOptions = new SessionOptions

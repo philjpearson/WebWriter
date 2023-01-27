@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	05 January 2019 16:09:09
+//	Last mod:	05 January 2023 13:02:41
 //
 using System;
 using System.Net;
@@ -18,19 +18,19 @@ namespace WebWriter.Models
 			{
 			bool result = false;
 
-			var connectionInfo = new PasswordConnectionInfo("ssh.servage.net", "1007246_ssh", "5Alvat10n!ssh")
+			var connectionInfo = new PasswordConnectionInfo("153.92.7.25", "u880159079", "5Alvat10n!ssh")
 				{
 				Timeout = TimeSpan.FromSeconds(30)
 				};
 
-			client = new SshClient(connectionInfo);
+			client = new SshClient("153.92.7.25", 65002, "u880159079", "5Alvat10n!ssh"); // new SshClient(connectionInfo);
 			try
 				{
 				Console.WriteLine("Trying SSH connection...");
 				client.Connect();
 				if (client.IsConnected)
 					{
-					var portFwld = new ForwardedPortLocal("127.0.0.1", /*3307,*/ "127.0.0.1", 3306);
+					var portFwld = new ForwardedPortLocal("127.0.0.1", /*3307,*/ "127.0.0.1", 3307);
 					client.AddForwardedPort(portFwld);
 					portFwld.Start();
 					if (portFwld.IsStarted)

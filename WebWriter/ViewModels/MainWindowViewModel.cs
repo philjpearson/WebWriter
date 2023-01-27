@@ -1,8 +1,9 @@
 ﻿//
-//	Last mod:	02 January 2023 16:40:23
+//	Last mod:	09 January 2023 13:59:03
 //
 namespace WebWriter.ViewModels
 	{
+	using System;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using Catel;
@@ -149,6 +150,8 @@ namespace WebWriter.ViewModels
 		/// <param name="parameter">The parameter of the command.</param>
 		private async Task<bool?> LockdownProgrammeCommand_Execute(object parameter)
 			{
+			bool reportedError = false;
+
 			var filePath = @"D:\Users\philj\OneDrive\My Documents\Ecclesia\Programme\LockdownProgramme.csv";
 
 			var result = Uploader.Upload(filePath, "private/programme/LockdownProgramme.csv");
@@ -156,21 +159,29 @@ namespace WebWriter.ViewModels
 #if true
 			if (result)
 				{
-				var prog = LockdownProgramme.Load(filePath);
-				var sundays = prog.Sunday;
-				var bibleClass = prog.BibleClass;
-
-				filePath = @"D:\Users\philj\Documents\Ecclesia\Programme\Ecclesial programme.pdf";
-				result = prog.CreatePdf(filePath);
-				if (result)
+				try
 					{
-					result = Uploader.Upload(filePath, "programme/Ecclesial programme.pdf", true);
+					var prog = LockdownProgramme.Load(filePath);
+					var sundays = prog.Sunday;
+					var bibleClass = prog.BibleClass;
+
+					filePath = @"D:\Users\philj\Documents\Ecclesia\Programme\Ecclesial programme.pdf";
+					result = prog.CreatePdf(filePath);
+					if (result)
+						{
+						result = Uploader.Upload(filePath, "programme/Ecclesial programme.pdf", true);
+						}
+					}
+				catch (Exception ex)
+					{
+					MessageBox.Show($"Error creating PDF: {ex.Message}", Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
+					reportedError = true;
 					}
 				}
 #endif
 			if (result)
 				MessageBox.Show("Programme update uploaded successfully", Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Information);
-			else
+			else if (!reportedError)
 				MessageBox.Show("Oops! Something went wrong", Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
 			return await Task.FromResult(result);
 			}

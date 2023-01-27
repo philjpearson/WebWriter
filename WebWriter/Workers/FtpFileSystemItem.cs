@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	03 May 2021 11:55:03
+//	Last mod:	05 January 2023 09:59:56
 //
 using System;
 using System.Collections.Generic;
@@ -33,7 +33,7 @@ namespace WebWriter.Workers
 
 		public string Name { get { return FileInfo?.Name ?? "root"; } }
 
-		public string Path { get { return FileInfo?.FullName.Substring(rootName.Length + 1) ?? "root"; } }
+		public string Path { get { return FileInfo?.FullName.Substring(rootName.LastIndexOf('/') + 1) ?? "root"; } }
 
 		public bool IsRoot { get; private set; } = false;
 

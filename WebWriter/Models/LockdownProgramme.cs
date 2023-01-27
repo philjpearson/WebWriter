@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	02 January 2023 16:08:25
+//	Last mod:	27 January 2023 09:12:27
 //
 using System;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ namespace WebWriter.Models
 	{
 	public class LockdownProgramme
 		{
-		public string ExcelFilePath { get; set; } = @"D:\Users\philj\OneDrive\My Documents\Ecclesia\Programme\Ecclesial Programme.xlsx";
+		public string ExcelFilePath { get; set; } = @"D:\Users\philj\OneDrive\My Documents\Ecclesia\Programme\Ecclesial Programme.xlsm";
 
 		public List<LockdownProgrammeItem> Programme { get; set; }
 
