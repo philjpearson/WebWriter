@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	09 January 2023 13:59:03
+//	Last mod:	27 January 2023 14:44:23
 //
 namespace WebWriter.ViewModels
 	{
@@ -126,6 +126,7 @@ namespace WebWriter.ViewModels
 		private async Task<bool?> RecordingsCommand_Execute(object parameter)
 			{
 			RecordingsViewModel vm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<RecordingsViewModel>();
+//			RecordingsViewModel vm = new();
 			return await uiVisualiserService.ShowDialogAsync(vm);
 			}
 
@@ -152,7 +153,7 @@ namespace WebWriter.ViewModels
 			{
 			bool reportedError = false;
 
-			var filePath = @"D:\Users\philj\OneDrive\My Documents\Ecclesia\Programme\LockdownProgramme.csv";
+			var filePath = @"C:\Users\Phil\OneDrive\My Documents\Ecclesia\Programme\LockdownProgramme.csv";
 
 			var result = Uploader.Upload(filePath, "private/programme/LockdownProgramme.csv");
 
@@ -165,7 +166,7 @@ namespace WebWriter.ViewModels
 					var sundays = prog.Sunday;
 					var bibleClass = prog.BibleClass;
 
-					filePath = @"D:\Users\philj\Documents\Ecclesia\Programme\Ecclesial programme.pdf";
+					filePath = @"C:\Users\Phil\Documents\Ecclesia\Programme\Ecclesial programme.pdf";
 					result = prog.CreatePdf(filePath);
 					if (result)
 						{

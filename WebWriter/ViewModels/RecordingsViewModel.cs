@@ -1,14 +1,8 @@
 ﻿//
-//	Last mod:	06 January 2019 18:18:40
+//	Last mod:	27 January 2023 16:23:09
 //
 namespace WebWriter.ViewModels
 	{
-	using Catel.Data;
-	using Catel.MVVM;
-	using Microsoft.Win32;
-	using Models;
-	// using Devart.Data.MySql;
-	using MySql.Data.MySqlClient;
 	using System;
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
@@ -17,9 +11,17 @@ namespace WebWriter.ViewModels
 	using System.Linq;
 	using System.Threading.Tasks;
 	using System.Windows;
+	using Catel.Data;
+	using Catel.IoC;
+	using Catel.MVVM;
+	using Catel.Services;
+	using Models;
+	using MySql.Data.MySqlClient;
 
 	public class RecordingsViewModel : ViewModelBase
 		{
+		private readonly UIVisualizerService uiVisualiserService;
+
 		public class Recording : ModelBase
 			{
 			public DateTime Date { get; set; }
@@ -30,8 +32,10 @@ namespace WebWriter.ViewModels
 			public string Ecclesia { get; set; }
 			}
 
-		public RecordingsViewModel()
+		public RecordingsViewModel(/*UIVisualizerService uiVisualiserService*/)
 			{
+			// this.uiVisualiserService = uiVisualiserService;
+			this.uiVisualiserService = ServiceLocator.Default.ResolveType<UIVisualizerService>();
 			}
 
 		public override string Title { get { return "Recordings"; } }
@@ -42,16 +46,14 @@ namespace WebWriter.ViewModels
 		MySqlDataAdapter daRecordingTypes;
 		DataSet dsRecordingTypes;
 
-		const string filePath = @"D:\Users\philj\OneDrive\My Documents\Ecclesia\Web site\recordings.xml"; // @"D:\philj\Documents\OneDrive\My Documents\Ecclesia\Web site\recordings.xml";
+		const string filePath = @"C:\Users\Phil\OneDrive\My Documents\Ecclesia\Web site\recordings.xml"; // @"D:\philj\Documents\OneDrive\My Documents\Ecclesia\Web site\recordings.xml";
 
-		List<string> addedFiles = new List<string>();
+		List<RecordingToAdd> addedRecordings = new();
 
 		// TODO: Register models with the vmpropmodel codesnippet
 		// TODO: Register view model properties with the vmprop or vmpropviewmodeltomodel codesnippets
 
 		public ObservableCollection<Recording> oldRecordings { get; set; }
-
-		public string NewRecording { get; set; }
 
 		public DataView Recordings { get; set; }
 
@@ -61,48 +63,18 @@ namespace WebWriter.ViewModels
 		// TODO: Register commands with the vmcommand or vmcommandwithcanexecute codesnippets
 
 		/// <summary>
-		/// Gets the BrowseCommand command.
-		/// </summary>
-		public Command<object> BrowseCommand
-			{
-			get
-				{
-				if (_BrowseCommand == null)
-					_BrowseCommand = new Command<object>(BrowseCommand_Execute);
-				return _BrowseCommand;
-				}
-			}
-
-		private Command<object> _BrowseCommand;
-
-		/// <summary>
-		/// Method to invoke when the BrowseCommand command is executed.
-		/// </summary>
-		/// <param name="parameter">The parameter of the command.</param>
-		private void BrowseCommand_Execute(object parameter)
-			{
-			OpenFileDialog ofd = new OpenFileDialog();
-			ofd.Filter = "mp3 files (*.mp3)|*.mp3|All files (*.*)|*.*";
-			if (ofd.ShowDialog() == true)
-				{
-				NewRecording = ofd.FileName;
-				}
-			}
-
-		/// <summary>
 		/// Gets the AddCommand command.
 		/// </summary>
-		public Command<object, object> AddCommand
+		public TaskCommand<object, object> AddCommand
 			{
 			get
 				{
-				if (_AddCommand == null)
-					_AddCommand = new Command<object, object>(AddCommand_Execute, AddCommand_CanExecute);
-				return _AddCommand;
+				addCommand ??= new TaskCommand<object, object>(AddCommand_ExecuteAsync, AddCommand_CanExecute);
+				return addCommand;
 				}
 			}
 
-		private Command<object, object> _AddCommand;
+		private TaskCommand<object, object> addCommand;
 
 		/// <summary>
 		/// Method to check whether the AddCommand command can be executed.
@@ -110,23 +82,31 @@ namespace WebWriter.ViewModels
 		/// <param name="parameter">The parameter of the command.</param>
 		private bool AddCommand_CanExecute(object parameter)
 			{
-			return !string.IsNullOrWhiteSpace(NewRecording);
+			return true;
 			}
 
 		/// <summary>
 		/// Method to invoke when the AddCommand command is executed.
 		/// </summary>
 		/// <param name="parameter">The parameter of the command.</param>
-		private void AddCommand_Execute(object parameter)
+		private async Task AddCommand_ExecuteAsync(object parameter)
 			{
-			var t = dsRecordings.Tables["Recordings"];
-			if (!t.AsEnumerable().Any(r=>(string)r["File"] == NewRecording))
+			var vm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<AddRecordingViewModel>();
+			if (await uiVisualiserService.ShowDialogAsync(vm) == true)
 				{
-				var row = t.NewRow();
-				row["Date"] = DateTime.Now;
-				row["File"] = "lib/" + Path.GetFileName(NewRecording);
-				t.Rows.Add(row);
-				addedFiles.Add(NewRecording);
+				var t = dsRecordings.Tables["Recordings"];
+				if (!t.AsEnumerable().Any(r => (string)r["File"] == vm.FilePath))
+					{
+					var recordingToAdd = new RecordingToAdd
+						{
+						TypeId = vm.TypeId,
+						FilePath = vm.FilePath,
+						Text = vm.Text,
+						Speaker = vm.Speaker,
+						Ecclesia= vm.Ecclesia,
+						};
+					addedRecordings.Add(recordingToAdd);
+					}
 				}
 			}
 
@@ -139,7 +119,8 @@ namespace WebWriter.ViewModels
 				dbCon = StaffordMySQLConnection.Instance();
 				if (dbCon.IsConnect())
 					{
-					string query = "SELECT Id,Date,TypeId,File,Speaker,Ecclesia,Text FROM Recordings ORDER BY Date";
+//					string query = "SELECT Id,Date,TypeId,File,Speaker,Ecclesia,Text FROM Recordings ORDER BY Date";
+					string query = "SELECT Id, Date, Recordings.TypeId, Type, File, Text, Speaker, Ecclesia FROM Recordings JOIN RecordingTypes ON Recordings.TypeId = RecordingTypes.TypeId ORDER BY Date";
 					daRecordings = new MySqlDataAdapter(query, dbCon.Connection);
 					MySqlCommandBuilder cb = new MySqlCommandBuilder(daRecordings);
 
@@ -157,7 +138,11 @@ namespace WebWriter.ViewModels
 				}
 			catch (Exception ex)
 				{
-				MessageBox.Show(ex.Message);
+				MessageBox.Show(ex.InnerException.Message);
+				}
+			finally
+				{
+				dbCon.Close();
 				}
 
 			// TODO: subscribe to events here
@@ -166,12 +151,41 @@ namespace WebWriter.ViewModels
 		protected override Task<bool> SaveAsync()
 			{
 			// upload all the added files
-			foreach (var file in addedFiles)
+			foreach (var rec in addedRecordings)
 				{
-				string remotePath = "private/lib/" + Path.GetFileName(file);
-				Uploader.Upload(file, remotePath, true);
+				string remotePath = "private/lib/" + Path.GetFileName(rec.FilePath);
+				Uploader.Upload(rec.FilePath, remotePath, true);
 				}
 
+			try
+				{
+				if (dbCon.IsConnect())
+					{
+					foreach (var rec in addedRecordings)
+						{
+						string query = "INSERT INTO Recordings (Date,TypeId,File,Speaker,Ecclesia,Text) VALUES(@date,@typeid,@file,@speaker,@ecclesia,@text)";
+
+						MySqlCommand cmd = new MySqlCommand(query, dbCon);
+						cmd.Parameters.AddWithValue("@date", DateTime.UtcNow);
+						cmd.Parameters.AddWithValue("@typeid", rec.TypeId);
+						cmd.Parameters.AddWithValue("@file", "lib/" + Path.GetFileName(rec.FilePath));
+						cmd.Parameters.AddWithValue("@speaker", rec.Speaker);
+						cmd.Parameters.AddWithValue("@ecclesia", rec.Ecclesia);
+						cmd.Parameters.AddWithValue("@text", rec.Text);
+						cmd.ExecuteNonQuery();
+						}
+					}
+				}
+			catch (Exception ex)
+				{
+				MessageBox.Show(ex.InnerException.Message);
+				}
+			finally
+				{
+				dbCon.Close();
+				}
+
+			/*
 			if (dsRecordings != null)
 				{
 				try
@@ -182,10 +196,10 @@ namespace WebWriter.ViewModels
 					}
 				catch (Exception ex)
 					{
-					MessageBox.Show(ex.Message);
+					MessageBox.Show(ex.InnerException.Message);
 					}
 				}
-
+			*/
 			return base.SaveAsync();
 			}
 

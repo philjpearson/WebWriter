@@ -1,4 +1,4 @@
-﻿<!-- Last mod: 13 January 2017 16:11:30 -->
+﻿<!-- Last mod: 27 January 2023 14:23:28 -->
 
 <catel:DataWindow x:Class="WebWriter.Views.RecordingsView"
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -8,33 +8,33 @@
                   SizeToContent="Width"
                   Title="{Binding Title}"
                   >
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
 
-        <DataGrid ItemsSource="{Binding Recordings}" AutoGenerateColumns="False">
-            <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Date,StringFormat=dd MMM yyyy}" Header="Date" Width="100" />
-                <DataGridComboBoxColumn ItemsSource="{Binding Source={x:Static vm:RecordingsViewModel.RecordingTypes}}" SelectedValuePath="TypeId" DisplayMemberPath="Type" SelectedValueBinding="{Binding TypeId}" Header="Type" Width="150" />
-                <DataGridTextColumn Binding="{Binding File}" Header="File" Width="200"/>
-                <DataGridTextColumn Binding="{Binding Text}" Header="Text" Width="250"/>
-                <DataGridTextColumn Binding="{Binding Speaker}" Header="Speaker" Width="150"/>
-                <DataGridTextColumn Binding="{Binding Ecclesia}" Header="Ecclesia" Width="150"/>
-            </DataGrid.Columns>
-        </DataGrid>
-        <Grid Grid.Row="1" Margin="4">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <Label Content="_New Recording:" VerticalAlignment="Center" />
-            <TextBox Grid.Column="1" Text="{Binding NewRecording}" Margin="4,0" VerticalAlignment="Center" />
-            <Button Grid.Column="2" Content="..." Command="{Binding BrowseCommand}" Height="25" Width="30" Margin="4" />
-            <Button Grid.Column="3" Content="_Add" Command="{Binding AddCommand}" Height="25" Width="40" Margin="4" />
-        </Grid>
-    </Grid>
+		<DataGrid ItemsSource="{Binding Recordings}" AutoGenerateColumns="False">
+			<DataGrid.Columns>
+				<DataGridTextColumn Binding="{Binding Date,StringFormat=dd MMM yyyy}" Header="Date" Width="100" />
+				<!--
+        <DataGridComboBoxColumn ItemsSource="{Binding Source={x:Static vm:RecordingsViewModel.RecordingTypes}}" SelectedValuePath="TypeId" DisplayMemberPath="Type" SelectedValueBinding="{Binding TypeId}" Header="Type" Width="150" />
+				-->
+				<DataGridTextColumn Binding="{Binding Type}" Header="Type" Width="150"/>
+				<DataGridTextColumn Binding="{Binding File}" Header="File" Width="200"/>
+				<DataGridTextColumn Binding="{Binding Text}" Header="Text" Width="250"/>
+				<DataGridTextColumn Binding="{Binding Speaker}" Header="Speaker" Width="150"/>
+				<DataGridTextColumn Binding="{Binding Ecclesia}" Header="Ecclesia" Width="150"/>
+			</DataGrid.Columns>
+		</DataGrid>
+		<Grid Grid.Row="1" Margin="4">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			<Button Grid.Column="0" Content="_Add" Command="{Binding AddCommand}" Height="25" Width="60" Margin="4" />
+			<Button Grid.Column="2" Content="_Delete" Command="{Binding DeleteCommand}" Height="25" Width="60" Margin="4" />
+		</Grid>
+	</Grid>
 </catel:DataWindow>

@@ -89,15 +89,20 @@
     <Compile Include="Models\BudeTunnel.cs" />
     <Compile Include="Models\LockdownProgramme.cs" />
     <Compile Include="Models\LockdownProgrammeItem.cs" />
+    <Compile Include="Models\RecordingToAdd.cs" />
     <Compile Include="Models\StaffordMySQLConnection.cs" />
     <Compile Include="Models\Uploader.cs" />
     <Compile Include="Utilities\CursorOverride.cs" />
     <Compile Include="Utilities\IListItemConverter.cs" />
     <Compile Include="Utilities\MultiSelectorBehaviours.cs" />
     <Compile Include="Utilities\TwoListSynchronizer.cs" />
+    <Compile Include="ViewModels\AddRecordingViewModel.cs" />
     <Compile Include="ViewModels\DodgyStuffViewModel.cs" />
     <Compile Include="ViewModels\RecordingsViewModel.cs" />
     <Compile Include="ViewModels\TitlesViewModel.cs" />
+    <Compile Include="Views\AddRecordingView.xaml.cs">
+      <DependentUpon>AddRecordingView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\RecordingsView.xaml.cs">
       <DependentUpon>RecordingsView.xaml</DependentUpon>
     </Compile>
@@ -110,6 +115,10 @@
     <Compile Include="Workers\AntiHacker.cs" />
     <Compile Include="Workers\FtpFileInfo.cs" />
     <Compile Include="Workers\FtpFileSystemItem.cs" />
+    <Page Include="Views\AddRecordingView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\CampaignGalleryView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -26,8 +26,8 @@ namespace WebWriter.ViewModels
 
 	public class GalleryViewModel : ViewModelBase
 		{
-		const string filePath = @"D:\Users\philj\OneDrive\My Documents\Ecclesia\Web site\Gallery.webw";
-		const string excelFilePath = @"D:\Users\philj\OneDrive\My Documents\Ecclesia\Stafford videos.xlsx";
+		const string filePath = @"C:\Users\Phil\OneDrive\My Documents\Ecclesia\Web site\Gallery.webw";
+		const string excelFilePath = @"C:\Users\Phil\OneDrive\My Documents\Ecclesia\Stafford videos.xlsx";
 		private readonly HttpClient httpClient;
 
 		private readonly IMessageService messageService;

@@ -1,0 +1,39 @@
+﻿<!-- Last mod: 27 January 2023 15:05:09 -->
+
+<catel:DataWindow x:Class="WebWriter.Views.AddRecordingView"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:catel="http://schemas.catelproject.com"
+                  xmlns:vm="clr-namespace:WebWriter.ViewModels"
+									>
+
+	<Grid Margin="6">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="Auto" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" Margin="4">Type:</TextBlock>
+		<ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Source={x:Static vm:RecordingsViewModel.RecordingTypes}}"
+							SelectedValuePath="TypeId" DisplayMemberPath="Type" SelectedValue="{Binding TypeId}" HorizontalAlignment="Left" Width="150" Margin="2" />
+		<TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" Margin="4" VerticalAlignment="Center">File:</TextBlock>
+		<StackPanel Grid.Row="1" Grid.Column="1"  Orientation="Horizontal" Margin="4">
+			<TextBox Text="{Binding FilePath}" VerticalAlignment="Center" Width="200" />
+			<Button Grid.Column="2" Content="..." Command="{Binding BrowseCommand}" Margin="4,0,0,0" Height="25" Width="30" />
+		</StackPanel>
+		<TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" Margin="4">Text:</TextBlock>
+		<TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Text}" HorizontalAlignment="Stretch" Margin="4" />
+		<TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" Margin="4">Speaker:</TextBlock>
+		<TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Speaker}" HorizontalAlignment="Stretch" Margin="4" />
+		<TextBlock Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" Margin="4">Ecclesia:</TextBlock>
+		<TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Ecclesia}" HorizontalAlignment="Stretch" Margin="4" />
+	</Grid>
+
+</catel:DataWindow>

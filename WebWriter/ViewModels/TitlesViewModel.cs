@@ -22,7 +22,7 @@ namespace WebWriter.ViewModels
 
 		public override string Title { get { return "Bible Hour Titles"; } }
 
-		const string filePath = @"D:\Users\philj\OneDrive\My Documents\Ecclesia\Web site\titles.csv"; // @"D:\philj\Documents\OneDrive\My Documents\Ecclesia\Web site\titles.csv";
+		const string filePath = @"C:\Users\Phil\OneDrive\My Documents\Ecclesia\Web site\titles.csv"; // @"D:\philj\Documents\OneDrive\My Documents\Ecclesia\Web site\titles.csv";
 
 		// TODO: Register models with the vmpropmodel codesnippet
 		// TODO: Register view model properties with the vmprop or vmpropviewmodeltomodel codesnippets

@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	05 January 2023 13:02:41
+//	Last mod:	27 January 2023 16:23:08
 //
 using System;
 using System.Windows;
@@ -15,6 +15,7 @@ namespace WebWriter.Models
 			}
 
 		private string serverTunnel = "127.0.0.1";
+		private string server = "sql495.main-hosting.eu";
 		private string userName = "u880159079_phil";
 
 		public string DatabaseName { get; set; } = "u880159079_stafford";
@@ -31,7 +32,9 @@ namespace WebWriter.Models
 			return _instance;
 			}
 
-		public bool IsConnect(bool useTunnel = true)
+		public static implicit operator MySqlConnection(StaffordMySQLConnection con) => con.Connection;
+
+		public bool IsConnect(bool useTunnel = false)
 			{
 			bool result = true;
 			if (Connection == null)
@@ -39,11 +42,11 @@ namespace WebWriter.Models
 				result = false;
 				try
 					{
-					if (!String.IsNullOrEmpty(DatabaseName) && (!useTunnel || BudeTunnel.Open()))
+					if (!string.IsNullOrEmpty(DatabaseName) && (!useTunnel || BudeTunnel.Open()))
 						{
-						string port = (useTunnel ? BudeTunnel.TunnelPort : 3307).ToString();
-
-						string connstring = string.Format($"Host={serverTunnel}; Port={port}; database={DatabaseName}; User={userName}; password={Password}");
+						string port = (useTunnel ? BudeTunnel.TunnelPort : 3306).ToString();
+						string srv = useTunnel ? serverTunnel : server;
+						string connstring = string.Format($"Server={srv}; Port={port}; Database={DatabaseName}; Uid={userName}; Pwd={Password}");
 						Connection = new MySqlConnection(connstring);
 						Connection.Open();
 						result = true;

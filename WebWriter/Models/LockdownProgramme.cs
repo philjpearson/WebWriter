@@ -15,7 +15,7 @@ namespace WebWriter.Models
 	{
 	public class LockdownProgramme
 		{
-		public string ExcelFilePath { get; set; } = @"D:\Users\philj\OneDrive\My Documents\Ecclesia\Programme\Ecclesial Programme.xlsm";
+		public string ExcelFilePath { get; set; } = @"C:\Users\Phil\OneDrive\My Documents\Ecclesia\Programme\Ecclesial Programme.xlsm";
 
 		public List<LockdownProgrammeItem> Programme { get; set; }
 
