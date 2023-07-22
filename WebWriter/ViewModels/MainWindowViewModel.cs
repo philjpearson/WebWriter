@@ -4,6 +4,7 @@
 namespace WebWriter.ViewModels
 	{
 	using System;
+	using System.IO;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using Catel;
@@ -166,7 +167,7 @@ namespace WebWriter.ViewModels
 					var sundays = prog.Sunday;
 					var bibleClass = prog.BibleClass;
 
-					filePath = @"C:\Users\Phil\Documents\Ecclesia\Programme\Ecclesial programme.pdf";
+					filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"Ecclesia\Programme\Ecclesial programme.pdf");
 					result = prog.CreatePdf(filePath);
 					if (result)
 						{

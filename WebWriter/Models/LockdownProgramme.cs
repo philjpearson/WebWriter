@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	27 January 2023 09:12:27
+//	Last mod:	22 July 2023 13:42:23
 //
 using System;
 using System.Collections.Generic;
@@ -72,6 +72,22 @@ namespace WebWriter.Models
 					{
 					int row = 4;
 					while (ws.Cells[row, 2].Value is DateTime dt && dt.Year == 2023)
+						{
+						var sunday = Programme.Where(p => p.Date.Date == dt.Date).FirstOrDefault();
+						if (sunday != null)
+							{
+							sunday.Collection2 = ws.Cells[row, 21].Value as string;
+							sunday.Collection3 = ws.Cells[row, 22].Value as string;
+							}
+						row++;
+						}
+					}
+
+				ws = (from w in ep.Workbook.Worksheets where w.Name == "2024" select w).FirstOrDefault();
+				if (ws != null)
+					{
+					int row = 4;
+					while (ws.Cells[row, 2].Value is DateTime dt && dt.Year == 2024)
 						{
 						var sunday = Programme.Where(p => p.Date.Date == dt.Date).FirstOrDefault();
 						if (sunday != null)

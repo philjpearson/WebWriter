@@ -1,4 +1,7 @@
-﻿using System.Reflection;
+﻿//
+//	Last mod:	27 March 2023 14:11:39
+//
+using System.Reflection;
 using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -12,7 +15,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("WebWriter")]
-[assembly: AssemblyCopyright("Copyright © by Phil J Pearson 2015,2016")]
+[assembly: AssemblyCopyright("Copyright © by Phil J Pearson 2015-2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -50,4 +53,4 @@ using System.Windows;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.21123.0")]
+[assembly: AssemblyFileVersion("1.0.23203.0")]
