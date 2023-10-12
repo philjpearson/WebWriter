@@ -98,10 +98,14 @@
     <Compile Include="Utilities\TwoListSynchronizer.cs" />
     <Compile Include="ViewModels\AddRecordingViewModel.cs" />
     <Compile Include="ViewModels\DodgyStuffViewModel.cs" />
+    <Compile Include="ViewModels\SundaysViewModel.cs" />
     <Compile Include="ViewModels\RecordingsViewModel.cs" />
     <Compile Include="ViewModels\TitlesViewModel.cs" />
     <Compile Include="Views\AddRecordingView.xaml.cs">
       <DependentUpon>AddRecordingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SundaysView..xaml.cs">
+      <DependentUpon>SundaysView..xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\RecordingsView.xaml.cs">
       <DependentUpon>RecordingsView.xaml</DependentUpon>
@@ -151,6 +155,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\SundaysView..xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\RecordingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

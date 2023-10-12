@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	27 January 2023 14:44:23
+//	Last mod:	11 October 2023 15:56:47
 //
 namespace WebWriter.ViewModels
 	{
@@ -112,9 +112,7 @@ namespace WebWriter.ViewModels
 			{
 			get
 				{
-				if (recordingsCommand == null)
-					recordingsCommand = new TaskCommand<object>(RecordingsCommand_Execute);
-				return recordingsCommand;
+				return recordingsCommand ??= new TaskCommand<object>(RecordingsCommand_Execute);
 				}
 			}
 
@@ -127,20 +125,40 @@ namespace WebWriter.ViewModels
 		private async Task<bool?> RecordingsCommand_Execute(object parameter)
 			{
 			RecordingsViewModel vm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<RecordingsViewModel>();
-//			RecordingsViewModel vm = new();
 			return await uiVisualiserService.ShowDialogAsync(vm);
 			}
 
 		/// <summary>
-		/// Gets the RecordingsCommand command.
+		/// Gets the SundayCommand command.
+		/// </summary>
+		public TaskCommand<object> SundayCommand
+			{
+			get
+				{
+				return sundayCommand ??= new TaskCommand<object>(SundayCommand_Execute);
+				}
+			}
+
+		private TaskCommand<object> sundayCommand;
+
+		/// <summary>
+		/// Method to invoke when the RundayCommand command is executed.
+		/// </summary>
+		/// <param name="parameter">The parameter of the command.</param>
+		private async Task<bool?> SundayCommand_Execute(object parameter)
+			{
+			var vm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<SundaysViewModel>();
+			return await uiVisualiserService.ShowDialogAsync(vm);
+			}
+
+		/// <summary>
+		/// Gets the LockdownProgrammeCommand command.
 		/// </summary>
 		public TaskCommand<object> LockdownProgrammeCommand
 			{
 			get
 				{
-				if (lockdownProgrammeCommand == null)
-					lockdownProgrammeCommand = new TaskCommand<object>(LockdownProgrammeCommand_Execute);
-				return lockdownProgrammeCommand;
+				return lockdownProgrammeCommand ??= new TaskCommand<object>(LockdownProgrammeCommand_Execute);
 				}
 			}
 
@@ -158,7 +176,6 @@ namespace WebWriter.ViewModels
 
 			var result = Uploader.Upload(filePath, "private/programme/LockdownProgramme.csv");
 
-#if true
 			if (result)
 				{
 				try
@@ -180,7 +197,7 @@ namespace WebWriter.ViewModels
 					reportedError = true;
 					}
 				}
-#endif
+
 			if (result)
 				MessageBox.Show("Programme update uploaded successfully", Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Information);
 			else if (!reportedError)

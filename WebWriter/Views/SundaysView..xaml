@@ -1,0 +1,28 @@
+﻿<!-- Last mod: 11 October 2023 16:16:01 -->
+
+<catel:DataWindow x:Class="WebWriter.Views.SundaysView"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:catel="http://schemas.catelproject.com"
+                  xmlns:vm="clr-namespace:WebWriter.ViewModels"
+                  SizeToContent="Width"
+                  Title="{Binding Title}"
+                  >
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<DataGrid ItemsSource="{Binding Sundays}" AutoGenerateColumns="False">
+			<DataGrid.Columns>
+				<DataGridTextColumn Binding="{Binding Date,StringFormat=dd MMM yyyy}" Header="Date" Width="100" />
+				<DataGridTextColumn Binding="{Binding Speaker}" Header="Speaker" Width="150"/>
+				<DataGridTextColumn Binding="{Binding Ecclesia}" Header="Ecclesia" Width="150"/>
+				<DataGridTextColumn Binding="{Binding Email}" Header="email" Width="150"/>
+				<DataGridTextColumn Binding="{Binding Timestamp,StringFormat=dd MMM yyyy HH:mm:ss}" Header="Timestamp" Width="120" IsReadOnly="True" />
+				<DataGridCheckBoxColumn Binding="{Binding Processed}" Header="Processed" />
+			</DataGrid.Columns>
+		</DataGrid>
+	</Grid>
+</catel:DataWindow>

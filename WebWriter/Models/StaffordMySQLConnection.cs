@@ -1,70 +1,57 @@
 ﻿//
-//	Last mod:	27 January 2023 16:23:08
+//	Last mod:	11 October 2023 15:22:53
 //
 using System;
-using System.Windows;
-// using Devart.Data.MySql;
 using MySql.Data.MySqlClient;
+
+#nullable enable
 
 namespace WebWriter.Models
 	{
-	class StaffordMySQLConnection
+	class StaffordMySQLConnection : IDisposable
 		{
-		private StaffordMySQLConnection()
-			{
-			}
-
-		private string serverTunnel = "127.0.0.1";
-		private string server = "sql495.main-hosting.eu";
+		private string server = "srv495.hstgr.io";
 		private string userName = "u880159079_phil";
+		private const string password = "z6ZjgSn4tfkM_nD";
 
 		public string DatabaseName { get; set; } = "u880159079_stafford";
 
-		public string Password { get; set; } = "z6ZjgSn4tfkM_nD";
+		public Exception? LastException { get; private set; }
 
-		public MySqlConnection Connection { get; private set; } = null;
-
-		private static StaffordMySQLConnection _instance = null;
-		public static StaffordMySQLConnection Instance()
+		public StaffordMySQLConnection()
 			{
-			if (_instance == null)
-				_instance = new StaffordMySQLConnection();
-			return _instance;
+			string connstring = string.Format($"Server={server}; Database={DatabaseName}; Uid={userName}; Pwd={password}");
+			Connection = new MySqlConnection(connstring);
 			}
+
+		public MySqlConnection Connection { get; private set; }
 
 		public static implicit operator MySqlConnection(StaffordMySQLConnection con) => con.Connection;
 
-		public bool IsConnect(bool useTunnel = false)
+		public bool Open()
 			{
-			bool result = true;
-			if (Connection == null)
+			try
 				{
-				result = false;
-				try
-					{
-					if (!string.IsNullOrEmpty(DatabaseName) && (!useTunnel || BudeTunnel.Open()))
-						{
-						string port = (useTunnel ? BudeTunnel.TunnelPort : 3306).ToString();
-						string srv = useTunnel ? serverTunnel : server;
-						string connstring = string.Format($"Server={srv}; Port={port}; Database={DatabaseName}; Uid={userName}; Pwd={Password}");
-						Connection = new MySqlConnection(connstring);
-						Connection.Open();
-						result = true;
-						}
-					}
-				catch (Exception ex)
-					{
-					MessageBox.Show(ex.Message, "StaffordMySQLConnection");
-					}
+				Connection?.Open();
+				LastException = null;
+				return true;
 				}
-			return result;
+			catch (Exception ex)
+				{
+				LastException = ex;
+				return false;
+				}
 			}
 
 		public void Close()
 			{
 			Connection?.Close();
-			Connection = null;
-			BudeTunnel.Close();
+			}
+
+		public void Dispose()
+			{
+			Close();
+			Connection?.Dispose();
 			}
 		}
 	}

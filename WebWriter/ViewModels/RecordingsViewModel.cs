@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	27 January 2023 16:23:09
+//	Last mod:	11 October 2023 15:22:53
 //
 namespace WebWriter.ViewModels
 	{
@@ -69,8 +69,7 @@ namespace WebWriter.ViewModels
 			{
 			get
 				{
-				addCommand ??= new TaskCommand<object, object>(AddCommand_ExecuteAsync, AddCommand_CanExecute);
-				return addCommand;
+				return addCommand ??= new TaskCommand<object, object>(AddCommand_ExecuteAsync, AddCommand_CanExecute);
 				}
 			}
 
@@ -103,7 +102,7 @@ namespace WebWriter.ViewModels
 						FilePath = vm.FilePath,
 						Text = vm.Text,
 						Speaker = vm.Speaker,
-						Ecclesia= vm.Ecclesia,
+						Ecclesia = vm.Ecclesia,
 						};
 					addedRecordings.Add(recordingToAdd);
 					}
@@ -116,33 +115,28 @@ namespace WebWriter.ViewModels
 
 			try
 				{
-				dbCon = StaffordMySQLConnection.Instance();
-				if (dbCon.IsConnect())
-					{
-//					string query = "SELECT Id,Date,TypeId,File,Speaker,Ecclesia,Text FROM Recordings ORDER BY Date";
-					string query = "SELECT Id, Date, Recordings.TypeId, Type, File, Text, Speaker, Ecclesia FROM Recordings JOIN RecordingTypes ON Recordings.TypeId = RecordingTypes.TypeId ORDER BY Date";
-					daRecordings = new MySqlDataAdapter(query, dbCon.Connection);
-					MySqlCommandBuilder cb = new MySqlCommandBuilder(daRecordings);
+				using (dbCon = new StaffordMySQLConnection())
+					if (dbCon.Open())
+						{
+						string query = "SELECT Id, Date, Recordings.TypeId, Type, File, Text, Speaker, Ecclesia FROM Recordings JOIN RecordingTypes ON Recordings.TypeId = RecordingTypes.TypeId ORDER BY Date";
+						daRecordings = new MySqlDataAdapter(query, dbCon.Connection);
+						MySqlCommandBuilder cb = new MySqlCommandBuilder(daRecordings);
 
-					dsRecordings = new DataSet();
-					daRecordings.Fill(dsRecordings, "Recordings");
-					Recordings = dsRecordings.Tables["Recordings"].DefaultView;
+						dsRecordings = new DataSet();
+						daRecordings.Fill(dsRecordings, "Recordings");
+						Recordings = dsRecordings.Tables["Recordings"].DefaultView;
 
-					query = "SELECT TypeId, Type FROM RecordingTypes";
-					daRecordingTypes = new MySqlDataAdapter(query, dbCon.Connection);
-					MySqlCommandBuilder cbT = new MySqlCommandBuilder(daRecordingTypes);
-					dsRecordingTypes = new DataSet();
-					daRecordingTypes.Fill(dsRecordingTypes, "RecordingTypes");
-					RecordingTypes = dsRecordingTypes.Tables["RecordingTypes"].DefaultView;
-					}
+						query = "SELECT TypeId, Type FROM RecordingTypes";
+						daRecordingTypes = new MySqlDataAdapter(query, dbCon.Connection);
+						MySqlCommandBuilder cbT = new MySqlCommandBuilder(daRecordingTypes);
+						dsRecordingTypes = new DataSet();
+						daRecordingTypes.Fill(dsRecordingTypes, "RecordingTypes");
+						RecordingTypes = dsRecordingTypes.Tables["RecordingTypes"].DefaultView;
+						}
 				}
 			catch (Exception ex)
 				{
 				MessageBox.Show(ex.InnerException.Message);
-				}
-			finally
-				{
-				dbCon.Close();
 				}
 
 			// TODO: subscribe to events here
@@ -159,47 +153,29 @@ namespace WebWriter.ViewModels
 
 			try
 				{
-				if (dbCon.IsConnect())
-					{
-					foreach (var rec in addedRecordings)
+				using (dbCon = new StaffordMySQLConnection())
+					if (dbCon.Open())
 						{
-						string query = "INSERT INTO Recordings (Date,TypeId,File,Speaker,Ecclesia,Text) VALUES(@date,@typeid,@file,@speaker,@ecclesia,@text)";
+						foreach (var rec in addedRecordings)
+							{
+							string query = "INSERT INTO Recordings (Date,TypeId,File,Speaker,Ecclesia,Text) VALUES(@date,@typeid,@file,@speaker,@ecclesia,@text)";
 
-						MySqlCommand cmd = new MySqlCommand(query, dbCon);
-						cmd.Parameters.AddWithValue("@date", DateTime.UtcNow);
-						cmd.Parameters.AddWithValue("@typeid", rec.TypeId);
-						cmd.Parameters.AddWithValue("@file", "lib/" + Path.GetFileName(rec.FilePath));
-						cmd.Parameters.AddWithValue("@speaker", rec.Speaker);
-						cmd.Parameters.AddWithValue("@ecclesia", rec.Ecclesia);
-						cmd.Parameters.AddWithValue("@text", rec.Text);
-						cmd.ExecuteNonQuery();
+							MySqlCommand cmd = new MySqlCommand(query, dbCon);
+							cmd.Parameters.AddWithValue("@date", DateTime.UtcNow);
+							cmd.Parameters.AddWithValue("@typeid", rec.TypeId);
+							cmd.Parameters.AddWithValue("@file", "lib/" + Path.GetFileName(rec.FilePath));
+							cmd.Parameters.AddWithValue("@speaker", rec.Speaker);
+							cmd.Parameters.AddWithValue("@ecclesia", rec.Ecclesia);
+							cmd.Parameters.AddWithValue("@text", rec.Text);
+							cmd.ExecuteNonQuery();
+							}
 						}
-					}
 				}
 			catch (Exception ex)
 				{
 				MessageBox.Show(ex.InnerException.Message);
 				}
-			finally
-				{
-				dbCon.Close();
-				}
 
-			/*
-			if (dsRecordings != null)
-				{
-				try
-					{
-					daRecordings.Update(dsRecordings, "Recordings");
-					dsRecordings.Clear();
-					daRecordings.Fill(dsRecordings, "Recordings");
-					}
-				catch (Exception ex)
-					{
-					MessageBox.Show(ex.InnerException.Message);
-					}
-				}
-			*/
 			return base.SaveAsync();
 			}
 

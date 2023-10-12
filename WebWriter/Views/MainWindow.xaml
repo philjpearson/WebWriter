@@ -1,4 +1,4 @@
-﻿<!-- Last mod: 25 April 2020 15:35:46 -->
+﻿<!-- Last mod: 11 October 2023 16:00:51 -->
 
 <catel:Window x:Class="WebWriter.Views.MainWindow"
               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -54,16 +54,24 @@
                 </Button>
 							-->
 				<Button Height="150" Background="{DynamicResource BackgroundBrush}" BorderThickness="3" Margin="0,0,6,6" Command="{Binding LockdownProgrammeCommand}" >
-					<TextBlock FontFamily="Segoe UI Semibold" Text="Lockdown Programme" FontSize="48" TextOptions.TextFormattingMode="Display" TextWrapping="Wrap" TextAlignment="Center" Foreground="{DynamicResource TextBrush}" />
+					<TextBlock FontFamily="Segoe UI Semibold" Text="Programme" FontSize="48" TextOptions.TextFormattingMode="Display" TextWrapping="Wrap" TextAlignment="Center" Foreground="{DynamicResource TextBrush}" />
 				</Button>
 				<Button Grid.Column="1" Height="150" Background="{DynamicResource BackgroundBrush}" BorderThickness="3" Margin="6,0,0,6" Command="{Binding GalleryCommand}" >
 					<TextBlock FontFamily="Segoe UI Semibold" Text="Gallery Videos" FontSize="48" TextOptions.TextFormattingMode="Display" TextWrapping="Wrap" TextAlignment="Center" Foreground="{DynamicResource TextBrush}" />
 				</Button>
+				<!--
 				<Button Grid.Row="1" Height="150" Background="{DynamicResource BackgroundBrush}" BorderThickness="3" Margin="0,0,6,6" Command="{Binding RecordingsCommand}" >
 					<TextBlock FontFamily="Segoe UI Semibold" Text="Recordings" FontSize="48" TextOptions.TextFormattingMode="Display" TextWrapping="Wrap" TextAlignment="Center" Foreground="{DynamicResource TextBrush}" />
 				</Button>
 				<Button Grid.Row="1" Grid.Column="1" Height="150" Background="{DynamicResource BackgroundBrush}" BorderThickness="3" Margin="6,0,0,6" Command="{Binding TitlesCommand}" >
 					<TextBlock FontFamily="Segoe UI Semibold" Text="Bible Hour Titles" FontSize="48" TextOptions.TextFormattingMode="Display" TextWrapping="Wrap" TextAlignment="Center" Foreground="{DynamicResource TextBrush}" />
+				</Button>
+				-->
+				<Button Grid.Row="1" Height="150" Background="{DynamicResource BackgroundBrush}" BorderThickness="3" Margin="0,0,6,6" Command="{Binding BibleClassCommand}" >
+					<TextBlock FontFamily="Segoe UI Semibold" Text="Bible Class" FontSize="48" TextOptions.TextFormattingMode="Display" TextWrapping="Wrap" TextAlignment="Center" Foreground="{DynamicResource TextBrush}" />
+				</Button>
+				<Button Grid.Row="1" Grid.Column="1" Height="150" Background="{DynamicResource BackgroundBrush}" BorderThickness="3" Margin="6,0,0,6" Command="{Binding SundayCommand}" >
+					<TextBlock FontFamily="Segoe UI Semibold" Text="Sundays" FontSize="48" TextOptions.TextFormattingMode="Display" TextWrapping="Wrap" TextAlignment="Center" Foreground="{DynamicResource TextBrush}" />
 				</Button>
 			</Grid>
 		</Grid>
