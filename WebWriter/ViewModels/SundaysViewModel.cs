@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	11 October 2023 16:59:27
+//	Last mod:	12 October 2023 12:13:16
 //
 namespace WebWriter.ViewModels
 	{
@@ -7,23 +7,14 @@ namespace WebWriter.ViewModels
 	using System.Data;
 	using System.Threading.Tasks;
 	using System.Windows;
-	using Catel.Data;
 	using Catel.MVVM;
 	using Models;
 	using MySql.Data.MySqlClient;
+	using PJP.Utilities;
+	using WebWriter.Utilities;
 
 	public class SundaysViewModel : ViewModelBase
 		{
-		public class Recording : ModelBase
-			{
-			public DateTime Date { get; set; }
-			public string Type { get; set; }
-			public string File { get; set; }
-			public string Text { get; set; }
-			public string Speaker { get; set; }
-			public string Ecclesia { get; set; }
-			}
-
 		public SundaysViewModel()
 			{
 			}
@@ -47,6 +38,7 @@ namespace WebWriter.ViewModels
 
 			try
 				{
+				using (var wait = new CursorOverride("earth.ani"))
 				using (dbCon = new StaffordMySQLConnection())
 					if (dbCon.Open())
 						{
@@ -71,31 +63,18 @@ namespace WebWriter.ViewModels
 			{
 			if (dsSundays.HasChanges())
 				{
-				var reply = MessageBox.Show("Save the changes you made", Title, MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
-				switch (reply)
+				try
 					{
-				case MessageBoxResult.Yes:
-					try
-						{
-						using (dbCon = new StaffordMySQLConnection())
-							if (dbCon.Open())
-								{
-								daSundays.Update(dsSundays.Tables["SundayDates"]);
-								}
-						}
-					catch (Exception ex)
-						{
-						MessageBox.Show(ex.InnerException.Message);
-						}
-					break;
-
-				case MessageBoxResult.No:
-					dsSundays.Clear();
-					break;
-
-				case MessageBoxResult.Cancel:
-				default:
-					return Task.FromResult(false);
+					using (var wait = new CursorOverride("earth.ani"))
+					using (dbCon = new StaffordMySQLConnection())
+						if (dbCon.Open())
+							{
+							daSundays.Update(dsSundays.Tables["SundayDates"]);
+							}
+					}
+				catch (Exception ex)
+					{
+					MessageBox.Show(ex.Innermost().Message, Title);
 					}
 				}
 			return base.SaveAsync();
@@ -105,7 +84,7 @@ namespace WebWriter.ViewModels
 			{
 			if (dsSundays.HasChanges())
 				{
-				var reply = MessageBox.Show("Discard the changes you made", Title, MessageBoxButton.YesNo, MessageBoxImage.Question);
+				var reply = MessageBox.Show("Discard the changes you made?", Title, MessageBoxButton.YesNo, MessageBoxImage.Question);
 				if (reply == MessageBoxResult.No)
 					{
 					return Task.FromResult(false);

@@ -1,8 +1,9 @@
 ﻿//
-//	Last mod:	03 May 2021 13:09:45
+//	Last mod:	12 October 2023 09:38:14
 //
 using System;
 using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Input;
 
 namespace WebWriter.Utilities
@@ -11,7 +12,12 @@ namespace WebWriter.Utilities
 		{
     static Stack<Cursor> stack = new Stack<Cursor>();
 
-    public CursorOverride(Cursor changeToCursor)
+		public CursorOverride(string changeToCursorResourceName)
+			: this(LoadFromResource(changeToCursorResourceName))
+			{
+			}
+
+		public CursorOverride(Cursor changeToCursor)
       {
       stack.Push(changeToCursor);
 
@@ -28,5 +34,21 @@ namespace WebWriter.Utilities
       if (cursor != Mouse.OverrideCursor)
         Mouse.OverrideCursor = cursor;
       }
-    }
+
+		public static Cursor? LoadFromResource(string resourceName)
+			{
+			Cursor? cursor = null;
+
+			try
+				{
+				var uri = new Uri($"pack://application:,,,/Resources/{resourceName}", UriKind.RelativeOrAbsolute);
+				var stream = Application.GetResourceStream(uri).Stream;
+				cursor = new Cursor(stream);
+				}
+			catch (Exception ex)
+				{
+				}
+			return cursor;
+			}
+		}
 	}

@@ -79,6 +79,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="..\..\SharedFiles\ExceptionExtensions.cs">
+      <Link>Utilities\ExceptionExtensions.cs</Link>
+    </Compile>
     <Compile Include="Documents\DocumentBase.cs" />
     <Compile Include="Documents\DocumentHandlingException.cs" />
     <Compile Include="Documents\MigraDocHelpers.cs" />
@@ -98,11 +101,15 @@
     <Compile Include="Utilities\TwoListSynchronizer.cs" />
     <Compile Include="ViewModels\AddRecordingViewModel.cs" />
     <Compile Include="ViewModels\DodgyStuffViewModel.cs" />
+    <Compile Include="ViewModels\BibleClassViewModel.cs" />
     <Compile Include="ViewModels\SundaysViewModel.cs" />
     <Compile Include="ViewModels\RecordingsViewModel.cs" />
     <Compile Include="ViewModels\TitlesViewModel.cs" />
     <Compile Include="Views\AddRecordingView.xaml.cs">
       <DependentUpon>AddRecordingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\BibleClassView.xaml.cs">
+      <DependentUpon>BibleClassView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SundaysView..xaml.cs">
       <DependentUpon>SundaysView..xaml</DependentUpon>
@@ -155,6 +162,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\BibleClassView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\SundaysView..xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -196,6 +207,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <Resource Include="Resources\earth.ani" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\Interfaces\" />

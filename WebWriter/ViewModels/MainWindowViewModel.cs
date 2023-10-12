@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	11 October 2023 15:56:47
+//	Last mod:	12 October 2023 10:35:48
 //
 namespace WebWriter.ViewModels
 	{
@@ -148,6 +148,29 @@ namespace WebWriter.ViewModels
 		private async Task<bool?> SundayCommand_Execute(object parameter)
 			{
 			var vm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<SundaysViewModel>();
+			return await uiVisualiserService.ShowDialogAsync(vm);
+			}
+
+		/// <summary>
+		/// Gets the SundayCommand command.
+		/// </summary>
+		public TaskCommand<object> BibleClassCommand
+			{
+			get
+				{
+				return bibleCassCommand ??= new TaskCommand<object>(BibleClassCommand_Execute);
+				}
+			}
+
+		private TaskCommand<object> bibleCassCommand;
+
+		/// <summary>
+		/// Method to invoke when the RundayCommand command is executed.
+		/// </summary>
+		/// <param name="parameter">The parameter of the command.</param>
+		private async Task<bool?> BibleClassCommand_Execute(object parameter)
+			{
+			var vm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<BibleClassViewModel>();
 			return await uiVisualiserService.ShowDialogAsync(vm);
 			}
 
