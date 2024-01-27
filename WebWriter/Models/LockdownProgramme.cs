@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	22 July 2023 13:42:23
+//	Last mod:	18 December 2023 15:35:50
 //
 using System;
 using System.Collections.Generic;
@@ -108,13 +108,13 @@ namespace WebWriter.Models
 			return result;
 			}
 
-		public bool CreatePdf(string filePath)
+		public bool CreatePdf(string filePath, DateTime startDate)
 			{
 			bool result = true;
 
 			try
 				{
-				var doc = new ProgrammeDocument(this);
+				var doc = new ProgrammeDocument(this, startDate);
 				doc.CreatePDF(filePath);
 				result = true;
 				}

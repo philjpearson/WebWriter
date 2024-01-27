@@ -1,7 +1,8 @@
 ﻿//
-//	Last mod:	27 January 2023 09:11:15
+//	Last mod:	18 December 2023 15:35:51
 //
 using System;
+using System.Linq;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
 using WebWriter.Models;
@@ -14,10 +15,12 @@ namespace WebWriter.Documents
 		{
 		Table? table;
 		Table? bcTable;
+		DateTime startDate;
 
-		public ProgrammeDocument(LockdownProgramme programme)
-			: base("Stafford Christadelphian Ecclesia", "Programme 2023 (God willing)")
+		public ProgrammeDocument(LockdownProgramme programme, DateTime startDate)
+			: base("Stafford Christadelphian Ecclesia", "Programme 2024 (God willing)")
 			{
+			this.startDate = startDate;
 			Programme = programme;
 			HeaderImageResourceName = "";
 			FooterLeftText = $"Issued: {DateTime.Now:d MMMM yyyy}";
@@ -69,7 +72,6 @@ namespace WebWriter.Documents
 				column = bcTable.AddColumn($"{width}mm");
 				column.Format.Alignment = ParagraphAlignment.Left;
 				}
-
 			}
 
 		protected override void FillContent()
@@ -88,7 +90,7 @@ namespace WebWriter.Documents
 				}
 
 			Row? row = null;
-			foreach (var sunday in Programme.Sunday)
+			foreach (var sunday in Programme.Sunday.Where(p => p.Date >= startDate))
 				{
 				row = table.AddRow();
 				row.Borders.Bottom.Width = "0.5pt";
@@ -126,7 +128,7 @@ namespace WebWriter.Documents
 				var para = headerRow.Cells[col++].AddParagraph(s);
 				}
 
-			foreach (var bc in Programme.BibleClass)
+			foreach (var bc in Programme.BibleClass.Where(p => p.Date >= startDate))
 				{
 				row = bcTable.AddRow();
 				row.Borders.Bottom.Width = "0.5pt";

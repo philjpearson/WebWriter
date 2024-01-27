@@ -304,6 +304,12 @@
       <Version>5.21.7</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Doodads\Doodads.csproj">
+      <Project>{0ba1ff9c-6071-4afa-8d38-906e55f7b1ef}</Project>
+      <Name>Doodads</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

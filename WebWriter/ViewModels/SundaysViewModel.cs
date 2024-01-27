@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	12 October 2023 12:13:16
+//	Last mod:	13 October 2023 18:42:06
 //
 namespace WebWriter.ViewModels
 	{
@@ -30,19 +30,49 @@ namespace WebWriter.ViewModels
 
 		public DataView Sundays { get; set; }
 
+		public bool FutureOnly { get; set; } = true;
+
+		public bool UnprocessedOnly { get; set; }
+
 		// TODO: Register commands with the vmcommand or vmcommandwithcanexecute codesnippets
 
 		protected override async Task InitializeAsync()
 			{
 			await base.InitializeAsync();
 
+			LoadData();
+
+			// TODO: subscribe to events here
+			}
+
+		private void OnFutureOnlyChanged()
+			{
+			LoadData();
+			}
+
+		private void OnUnprocessedOnlyChanged()
+			{
+			LoadData();
+			}
+
+		private void LoadData()
+			{
 			try
 				{
 				using (var wait = new CursorOverride("earth.ani"))
 				using (dbCon = new StaffordMySQLConnection())
 					if (dbCon.Open())
 						{
-						string query = "SELECT Id, Date, Speaker, Ecclesia, Email, Timestamp, Processed FROM SundayDates ORDER BY Date";
+						string where = "Where True ";
+						if (FutureOnly)
+							{
+							where += $"AND Date > '{DateTime.Now.ToString("yyyy-MM-dd")}' ";
+							}
+						if (UnprocessedOnly)
+							{
+							where += "AND Processed = False ";
+							}
+						string query = $"SELECT Id, Date, Speaker, Ecclesia, Email, Timestamp, Processed FROM SundayDates {where}ORDER BY Date";
 						daSundays = new MySqlDataAdapter(query, dbCon.Connection);
 						MySqlCommandBuilder cb = new MySqlCommandBuilder(daSundays);
 
@@ -55,8 +85,6 @@ namespace WebWriter.ViewModels
 				{
 				MessageBox.Show(ex.InnerException.Message);
 				}
-
-			// TODO: subscribe to events here
 			}
 
 		protected override Task<bool> SaveAsync()

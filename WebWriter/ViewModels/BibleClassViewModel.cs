@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	12 October 2023 12:13:15
+//	Last mod:	27 January 2024 20:11:15
 //
 namespace WebWriter.ViewModels
 	{
@@ -13,6 +13,8 @@ namespace WebWriter.ViewModels
 	using MySql.Data.MySqlClient;
 	using WebWriter.Utilities;
 
+#nullable enable
+
 	public class BibleClassViewModel : ViewModelBase
 		{
 		public BibleClassViewModel()
@@ -21,14 +23,18 @@ namespace WebWriter.ViewModels
 
 		public override string Title { get { return "Bible Class bookings"; } }
 
-		StaffordMySQLConnection dbCon;
-		MySqlDataAdapter daBibleClass;
-		DataSet dsBibleClass;
+		StaffordMySQLConnection? dbCon;
+		MySqlDataAdapter? daBibleClass;
+		DataSet? dsBibleClass;
 
 		// TODO: Register models with the vmpropmodel codesnippet
 		// TODO: Register view model properties with the vmprop or vmpropviewmodeltomodel codesnippets
 
-		public DataView BibleClass { get; set; }
+		public DataView? BibleClass { get; set; }
+
+		public bool FutureOnly { get; set; } = true;
+
+		public bool UnprocessedOnly { get; set; }
 
 		// TODO: Register commands with the vmcommand or vmcommandwithcanexecute codesnippets
 
@@ -36,14 +42,29 @@ namespace WebWriter.ViewModels
 			{
 			await base.InitializeAsync();
 
+			LoadData();
+
+			// TODO: subscribe to events here
+			}
+
+		private void LoadData()
+			{
 			try
 				{
 				using (var wait = new CursorOverride("earth.ani"))
 				using (dbCon = new StaffordMySQLConnection())
 					if (dbCon.Open())
 						{
-						string query = "SELECT BibleClassDates.Id, Date, BibleClassDates.Speaker, BibleClassDates.Ecclesia, BibleClassDates.Email, BibleClassDates.Title, TitleId, BibleClassDates.Timestamp, Processed, BibleClassSubjects.Title AS Subject FROM (BibleClassDates LEFT JOIN BibleClassSubjects ON(BibleClassDates.TitleId = BibleClassSubjects.Id)) ORDER BY Date;";
-						// string query = "SELECT Id, Date, Speaker, Ecclesia, Email, Title, TitleId, Timestamp, Processed FROM BibleClassDates ORDER BY Date";
+						string where = "Where True ";
+						if (FutureOnly)
+							{
+							where += $"AND Date > '{DateTime.Now.ToString("yyyy-MM-dd")}' ";
+							}
+						if (UnprocessedOnly)
+							{
+							where += "AND Processed = False ";
+							}
+						string query = $"SELECT BCD.Id, Date, BCD.Speaker, BCD.Ecclesia, BCD.Email, BCD.Title, TitleId, BCD.Timestamp, Processed, BibleClassSubjects.Title AS Subject FROM (BibleClassDates AS BCD LEFT JOIN BibleClassSubjects ON(BCD.TitleId = BibleClassSubjects.Id)) {where}ORDER BY Date;";
 						daBibleClass = new MySqlDataAdapter(query, dbCon.Connection);
 						MySqlCommandBuilder cb = new MySqlCommandBuilder(daBibleClass);
 
@@ -56,13 +77,11 @@ namespace WebWriter.ViewModels
 				{
 				MessageBox.Show(ex.Innermost().Message, Title);
 				}
-
-			// TODO: subscribe to events here
 			}
 
 		protected override Task<bool> SaveAsync()
 			{
-			if (dsBibleClass.HasChanges())
+			if (dsBibleClass?.HasChanges() == true)
 				{
 				try
 					{
@@ -93,7 +112,7 @@ namespace WebWriter.ViewModels
 
 		protected override Task<bool> CancelAsync()
 			{
-			if (dsBibleClass.HasChanges())
+			if (dsBibleClass?.HasChanges() == true)
 				{
 				var reply = MessageBox.Show("Discard the changes you made?", Title, MessageBoxButton.YesNo, MessageBoxImage.Question);
 				if (reply == MessageBoxResult.No)
@@ -107,6 +126,16 @@ namespace WebWriter.ViewModels
 		protected override async Task CloseAsync()
 			{
 			await base.CloseAsync();
+			}
+
+		private void OnFutureOnlyChanged()
+			{
+			LoadData();
+			}
+
+		private void OnUnprocessedOnlyChanged()
+			{
+			LoadData();
 			}
 		}
 	}

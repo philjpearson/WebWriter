@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	12 October 2023 10:35:48
+//	Last mod:	18 December 2023 15:35:51
 //
 namespace WebWriter.ViewModels
 	{
@@ -208,7 +208,7 @@ namespace WebWriter.ViewModels
 					var bibleClass = prog.BibleClass;
 
 					filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"Ecclesia\Programme\Ecclesial programme.pdf");
-					result = prog.CreatePdf(filePath);
+					result = prog.CreatePdf(filePath, new DateTime(2024, 1, 1));
 					if (result)
 						{
 						result = Uploader.Upload(filePath, "programme/Ecclesial programme.pdf", true);
