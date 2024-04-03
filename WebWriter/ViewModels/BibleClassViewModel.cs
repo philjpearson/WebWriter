@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	27 January 2024 20:11:15
+//	Last mod:	27 January 2024 20:27:02
 //
 namespace WebWriter.ViewModels
 	{
@@ -9,8 +9,8 @@ namespace WebWriter.ViewModels
 	using System.Windows;
 	using Catel.MVVM;
 	using Models;
+	using MySqlConnector;
 	using PJP.Utilities;
-	using MySql.Data.MySqlClient;
 	using WebWriter.Utilities;
 
 #nullable enable

@@ -227,9 +227,6 @@
     <Resource Include="Resources\WebWriter64.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="BouncyCastle">
-      <Version>1.8.9</Version>
-    </PackageReference>
     <PackageReference Include="Catel.Fody">
       <Version>4.7.0</Version>
       <!--<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>-->
@@ -273,8 +270,8 @@
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf">
       <Version>1.1.39</Version>
     </PackageReference>
-    <PackageReference Include="MySql.Data">
-      <Version>8.0.32</Version>
+    <PackageReference Include="MySqlConnector">
+      <Version>2.3.5</Version>
     </PackageReference>
     <PackageReference Include="PDFsharp-MigraDoc-GDI">
       <Version>1.50.5147</Version>

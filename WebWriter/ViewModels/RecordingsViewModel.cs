@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	11 October 2023 15:22:53
+//	Last mod:	27 January 2024 20:27:01
 //
 namespace WebWriter.ViewModels
 	{
@@ -16,7 +16,7 @@ namespace WebWriter.ViewModels
 	using Catel.MVVM;
 	using Catel.Services;
 	using Models;
-	using MySql.Data.MySqlClient;
+	using MySqlConnector;
 
 	public class RecordingsViewModel : ViewModelBase
 		{

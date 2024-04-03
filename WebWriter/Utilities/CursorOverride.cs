@@ -1,23 +1,25 @@
 ﻿//
-//	Last mod:	12 October 2023 09:38:14
+//	Last mod:	27 January 2024 20:27:01
 //
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 
+#nullable enable
+
 namespace WebWriter.Utilities
 	{
 	class CursorOverride : IDisposable
 		{
-    static Stack<Cursor> stack = new Stack<Cursor>();
+    static Stack<Cursor?> stack = new Stack<Cursor?>();
 
 		public CursorOverride(string changeToCursorResourceName)
 			: this(LoadFromResource(changeToCursorResourceName))
 			{
 			}
 
-		public CursorOverride(Cursor changeToCursor)
+		public CursorOverride(Cursor? changeToCursor)
       {
       stack.Push(changeToCursor);
 
@@ -29,7 +31,7 @@ namespace WebWriter.Utilities
       {
       stack.Pop();
 
-      Cursor cursor = stack.Count > 0 ? stack.Peek() : null;
+      Cursor? cursor = stack.Count > 0 ? stack.Peek() : null;
 
       if (cursor != Mouse.OverrideCursor)
         Mouse.OverrideCursor = cursor;

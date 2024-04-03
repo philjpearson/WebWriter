@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	13 October 2023 18:42:06
+//	Last mod:	03 April 2024 22:00:44
 //
 namespace WebWriter.ViewModels
 	{
@@ -9,7 +9,7 @@ namespace WebWriter.ViewModels
 	using System.Windows;
 	using Catel.MVVM;
 	using Models;
-	using MySql.Data.MySqlClient;
+	using MySqlConnector;
 	using PJP.Utilities;
 	using WebWriter.Utilities;
 
@@ -97,7 +97,17 @@ namespace WebWriter.ViewModels
 					using (dbCon = new StaffordMySQLConnection())
 						if (dbCon.Open())
 							{
-							daSundays.Update(dsSundays.Tables["SundayDates"]);
+							string query = $"SELECT Id, Date, Speaker, Ecclesia, Email, Timestamp, Processed FROM SundayDates";
+							var daTemp = new MySqlDataAdapter(query, dbCon.Connection)
+								{
+								MissingSchemaAction = MissingSchemaAction.Ignore
+								};
+							MySqlCommandBuilder cb = new MySqlCommandBuilder(daTemp);
+							var dsTemp = new DataSet();
+							daTemp.Fill(dsTemp, "SundayDates");
+							var changesDataset = dsSundays.GetChanges();
+							dsTemp.Merge(changesDataset);
+							daTemp.Update(dsTemp.Tables["SundayDates"]);
 							}
 					}
 				catch (Exception ex)
