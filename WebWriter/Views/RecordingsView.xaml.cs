@@ -1,4 +1,7 @@
-﻿namespace WebWriter.Views
+﻿//
+//	Last mod:	04 February 2025 12:07:58
+//
+namespace WebWriter.Views
 	{
 	using Catel.Windows;
 	using ViewModels;
@@ -9,7 +12,7 @@
 				: this(null)
 			{ }
 
-		public RecordingsView(RecordingsViewModel viewModel)
+		public RecordingsView(RecordingsViewModel? viewModel)
 				: base(viewModel)
 			{
 			InitializeComponent();

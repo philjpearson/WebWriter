@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	27 January 2024 20:27:01
+//	Last mod:	04 February 2025 15:07:06
 //
 namespace WebWriter.ViewModels
 	{
@@ -17,47 +17,46 @@ namespace WebWriter.ViewModels
 	using Catel.Services;
 	using Models;
 	using MySqlConnector;
+	using PJP.Utilities;
 
 	public class RecordingsViewModel : ViewModelBase
 		{
+		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
 		private readonly UIVisualizerService uiVisualiserService;
 
 		public class Recording : ModelBase
 			{
 			public DateTime Date { get; set; }
-			public string Type { get; set; }
-			public string File { get; set; }
-			public string Text { get; set; }
-			public string Speaker { get; set; }
-			public string Ecclesia { get; set; }
+			public string? Type { get; set; }
+			public string? File { get; set; }
+			public string? Text { get; set; }
+			public string? Speaker { get; set; }
+			public string? Ecclesia { get; set; }
 			}
 
-		public RecordingsViewModel(/*UIVisualizerService uiVisualiserService*/)
+		public RecordingsViewModel()
 			{
-			// this.uiVisualiserService = uiVisualiserService;
-			this.uiVisualiserService = ServiceLocator.Default.ResolveType<UIVisualizerService>();
+			uiVisualiserService = ServiceLocator.Default.ResolveType<UIVisualizerService>();
 			}
 
 		public override string Title { get { return "Recordings"; } }
 
-		StaffordMySQLConnection dbCon;
-		MySqlDataAdapter daRecordings;
-		DataSet dsRecordings;
-		MySqlDataAdapter daRecordingTypes;
-		DataSet dsRecordingTypes;
+		private StaffordMySQLConnection? dbCon;
+		private MySqlDataAdapter? daRecordings;
+		private DataSet? dsRecordings;
+		private MySqlDataAdapter? daRecordingTypes;
+		private DataSet? dsRecordingTypes;
 
-		const string filePath = @"C:\Users\Phil\OneDrive\My Documents\Ecclesia\Web site\recordings.xml"; // @"D:\philj\Documents\OneDrive\My Documents\Ecclesia\Web site\recordings.xml";
+//		private const string filePath = @"C:\Users\Phil\OneDrive\My Documents\Ecclesia\Web site\recordings.xml";
 
-		List<RecordingToAdd> addedRecordings = new();
+		private readonly List<RecordingToAdd> addedRecordings = [];
 
-		// TODO: Register models with the vmpropmodel codesnippet
-		// TODO: Register view model properties with the vmprop or vmpropviewmodeltomodel codesnippets
+		public ObservableCollection<Recording>? OldRecordings { get; set; }
 
-		public ObservableCollection<Recording> oldRecordings { get; set; }
+		public DataView? Recordings { get; set; }
 
-		public DataView Recordings { get; set; }
-
-		public static DataView RecordingTypes { get; set; }
+		public static DataView? RecordingTypes { get; set; }
 
 
 		// TODO: Register commands with the vmcommand or vmcommandwithcanexecute codesnippets
@@ -73,7 +72,7 @@ namespace WebWriter.ViewModels
 				}
 			}
 
-		private TaskCommand<object, object> addCommand;
+		private TaskCommand<object, object>? addCommand;
 
 		/// <summary>
 		/// Method to check whether the AddCommand command can be executed.
@@ -93,16 +92,16 @@ namespace WebWriter.ViewModels
 			var vm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<AddRecordingViewModel>();
 			if (await uiVisualiserService.ShowDialogAsync(vm) == true)
 				{
-				var t = dsRecordings.Tables["Recordings"];
+				var t = dsRecordings!.Tables["Recordings"]!;
 				if (!t.AsEnumerable().Any(r => (string)r["File"] == vm.FilePath))
 					{
 					var recordingToAdd = new RecordingToAdd
 						{
 						TypeId = vm.TypeId,
-						FilePath = vm.FilePath,
-						Text = vm.Text,
-						Speaker = vm.Speaker,
-						Ecclesia = vm.Ecclesia,
+						FilePath = vm.FilePath!,
+						Text = vm.Text ?? string.Empty,
+						Speaker = vm.Speaker ?? string.Empty,
+						Ecclesia = vm.Ecclesia ?? string.Empty,
 						};
 					addedRecordings.Add(recordingToAdd);
 					}
@@ -124,19 +123,20 @@ namespace WebWriter.ViewModels
 
 						dsRecordings = new DataSet();
 						daRecordings.Fill(dsRecordings, "Recordings");
-						Recordings = dsRecordings.Tables["Recordings"].DefaultView;
+						Recordings = dsRecordings.Tables["Recordings"]!.DefaultView;
 
 						query = "SELECT TypeId, Type FROM RecordingTypes";
 						daRecordingTypes = new MySqlDataAdapter(query, dbCon.Connection);
 						MySqlCommandBuilder cbT = new MySqlCommandBuilder(daRecordingTypes);
 						dsRecordingTypes = new DataSet();
 						daRecordingTypes.Fill(dsRecordingTypes, "RecordingTypes");
-						RecordingTypes = dsRecordingTypes.Tables["RecordingTypes"].DefaultView;
+						RecordingTypes = dsRecordingTypes.Tables["RecordingTypes"]!.DefaultView;
 						}
 				}
 			catch (Exception ex)
 				{
-				MessageBox.Show(ex.InnerException.Message);
+				logger.Error("Error retrieving records from database: {0}", ex.Innermost().Message);
+				MessageBox.Show(ex.Innermost().Message);
 				}
 
 			// TODO: subscribe to events here
@@ -173,7 +173,8 @@ namespace WebWriter.ViewModels
 				}
 			catch (Exception ex)
 				{
-				MessageBox.Show(ex.InnerException.Message);
+				logger.Error("Error saving changes to database: {0}", ex.Message);
+				MessageBox.Show(ex.Innermost().Message);
 				}
 
 			return base.SaveAsync();

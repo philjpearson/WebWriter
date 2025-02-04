@@ -1,8 +1,10 @@
 ﻿//
-//	Last mod:	02 January 2023 16:01:30
+//	Last mod:	04 February 2025 13:50:26
 //
 using System;
 using CsvHelper.Configuration.Attributes;
+
+#nullable disable
 
 namespace WebWriter.Models
 	{

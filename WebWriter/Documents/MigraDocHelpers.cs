@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	02 January 2023 11:06:43
+//	Last mod:	04 February 2025 11:21:37
 //
 using System;
 using System.IO;
@@ -17,7 +17,7 @@ namespace WebWriter.Documents
 
 		static byte[] LoadImageFromResource(Assembly assy, string name)
 			{
-			using (Stream stream = assy.GetManifestResourceStream(name))
+			using (Stream? stream = assy.GetManifestResourceStream(name))
 				{
 				if (stream == null)
 					throw new ArgumentException("No resource with name " + name);
@@ -31,7 +31,7 @@ namespace WebWriter.Documents
 
 		static byte[] LoadImageFromResource(string name)
 			{
-			using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(name))
+			using (Stream? stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(name))
 				{
 				if (stream == null)
 					throw new ArgumentException("No resource with name " + name);

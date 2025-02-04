@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	07 March 2015 20:08:15
+//	Last mod:	04 February 2025 12:07:57
 //
 namespace WebWriter.Views
 	{
@@ -11,7 +11,7 @@ namespace WebWriter.Views
 		public GalleryView()
 			: this(null) { }
 
-		public GalleryView(GalleryViewModel viewModel)
+		public GalleryView(GalleryViewModel? viewModel)
 			: base(viewModel, DataWindowMode.Custom)
 			{
 			InitializeComponent();

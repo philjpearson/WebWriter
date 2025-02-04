@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	05 January 2023 13:02:41
+//	Last mod:	04 February 2025 11:21:36
 //
 using System;
 using System.Net;
@@ -10,7 +10,7 @@ namespace WebWriter.Models
 	{
 	public static class BudeTunnel
 		{
-		private static SshClient client;
+		private static SshClient? client;
 
 		public static uint TunnelPort { get; private set; }
 

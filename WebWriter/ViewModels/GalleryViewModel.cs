@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	05 January 2023 09:20:37
+//	Last mod:	04 February 2025 13:50:27
 //
 namespace WebWriter.ViewModels
 	{
@@ -26,8 +26,7 @@ namespace WebWriter.ViewModels
 
 	public class GalleryViewModel : ViewModelBase
 		{
-		const string filePath = @"C:\Users\Phil\OneDrive\My Documents\Ecclesia\Web site\Gallery.webw";
-		const string excelFilePath = @"C:\Users\Phil\OneDrive\My Documents\Ecclesia\Stafford videos.xlsx";
+		private const string excelFilePath = @"C:\Users\Phil\OneDrive\My Documents\Ecclesia\Stafford videos.xlsx";
 		private readonly HttpClient httpClient;
 
 		private readonly IMessageService messageService;
@@ -57,7 +56,7 @@ namespace WebWriter.ViewModels
 		/// Gets or sets the property value.
 		/// </summary>
 		[Model]
-		[Expose("Videos")]
+		[Expose(nameof(Videos))]
 		public GalleryModel Gallery
 			{
 			get { return GetValue<GalleryModel>(GalleryProperty); }
@@ -72,7 +71,7 @@ namespace WebWriter.ViewModels
 		// TODO: Register view model properties with the vmprop or vmpropviewmodeltomodel codesnippets
 
 		[ViewModelToModel]
-		public ObservableCollection<VideoModel> Videos { get; set; }
+		public ObservableCollection<VideoModel>? Videos { get; set; }
 
 		// TODO: Register commands with the vmcommand or vmcommandwithcanexecute codesnippets
 
@@ -122,22 +121,22 @@ namespace WebWriter.ViewModels
 						isBibleHour = ws.Cells[row, 2].Value.ToString() == "Bible Hour";
 
 					if (ws.Cells[row, 3].Value != null)
-						title = ws.Cells[row, 3].Value.ToString();
+						title = ws.Cells[row, 3].Value.ToString()!;
 
 					if (ws.Cells[row, 4].Value != null)
 						{
-						speaker = ws.Cells[row, 4].Value.ToString();
+						speaker = ws.Cells[row, 4].Value.ToString()!;
 						int ind = speaker.IndexOf('(');
 						if (ind != -1)
 							{
-							ecclesia = speaker.Substring(ind + 1);
+							ecclesia = speaker[(ind + 1)..];
 							ecclesia = ecclesia.Replace(')', ' ').Trim();
-							speaker = speaker.Substring(0, ind - 1).Trim();
+							speaker = speaker[..(ind - 1)].Trim();
 							}
 						}
 
 					if (ws.Cells[row, 5].Value != null)
-						link = ws.Cells[row, 5].Value.ToString();
+						link = ws.Cells[row, 5].Value.ToString()!;
 
 					var video = new VideoModel()
 						{
@@ -148,7 +147,7 @@ namespace WebWriter.ViewModels
 						Speaker = speaker,
 						Ecclesia = ecclesia
 						};
-					Videos.Add(video);
+					Videos!.Add(video);
 					row++;
 					}
 				}
@@ -177,10 +176,7 @@ namespace WebWriter.ViewModels
 		/// </summary>
 		private void OnSortCommandExecute()
 			{
-			if (Gallery != null)
-				{
-				Gallery.Sort();
-				}
+			Gallery?.Sort();
 			}
 
 		protected override async Task InitializeAsync()
@@ -202,7 +198,7 @@ namespace WebWriter.ViewModels
 											.Where(tr => tr.Elements("td").Count() > 1)
 											.Select(tr => tr.Elements("td").Select(td => td.InnerText.Trim()).ToList())
 											.ToList();
-					Videos.Clear();
+					Videos!.Clear();
 
 					foreach (var row in table)
 						{
@@ -221,7 +217,7 @@ namespace WebWriter.ViewModels
 
 		protected override async Task<bool> SaveAsync()
 			{
-			if (Videos.Any(v => v.HasDuplicateTag))
+			if (Videos!.Any(v => v.HasDuplicateTag))
 				{
 				var answer = await messageService.ShowAsync("Save with duplicate tags?", Application.Current.MainWindow.Title, MessageButton.YesNo, MessageImage.Question);
 				if (answer == MessageResult.No)
@@ -277,9 +273,9 @@ namespace WebWriter.ViewModels
 					{ "details", video.Details }
 				};
 
-			var result = await PostWebRequest("insert", values);
-			if (result.statusCode != HttpStatusCode.OK)
-				await messageService.ShowWarningAsync($"Insert failed: {result.reasonPhrase}", Application.Current.MainWindow.Title);
+			var (statusCode, reasonPhrase, _) = await PostWebRequest("insert", values);
+			if (statusCode != HttpStatusCode.OK)
+				await messageService.ShowWarningAsync($"Insert failed: {reasonPhrase}", Application.Current.MainWindow.Title);
 			}
 
 		private async Task DeleteVideo(VideoModel video)
@@ -290,9 +286,9 @@ namespace WebWriter.ViewModels
 					{ "id", video.Id.ToString() }
 				};
 
-			var result = await PostWebRequest("delete", values);
-			if (result.statusCode != HttpStatusCode.OK)
-				await messageService.ShowWarningAsync($"Delete failed: {result.reasonPhrase}", Application.Current.MainWindow.Title);
+			var (statusCode, reasonPhrase, _) = await PostWebRequest("delete", values);
+			if (statusCode != HttpStatusCode.OK)
+				await messageService.ShowWarningAsync($"Delete failed: {reasonPhrase}", Application.Current.MainWindow.Title);
 			}
 
 		private async Task UpdateVideoAsync(VideoModel video)
@@ -311,17 +307,17 @@ namespace WebWriter.ViewModels
 					{ "details", video.Details }
 				};
 
-			var result = await PostWebRequest("edit", values);
-			if (result.statusCode != HttpStatusCode.OK)
-				await messageService.ShowWarningAsync($"Update failed: {result.reasonPhrase}", Application.Current.MainWindow.Title);
+			var (statusCode, reasonPhrase, _) = await PostWebRequest("edit", values);
+			if (statusCode != HttpStatusCode.OK)
+				await messageService.ShowWarningAsync($"Update failed: {reasonPhrase}", Application.Current.MainWindow.Title);
 			}
 
 		private async Task<(HttpStatusCode statusCode, string reasonPhrase, string responseString)> PostWebRequest(string pageName, Dictionary<string, string> parameters)
 			{
 			var content = new FormUrlEncodedContent(parameters);
 			var response = await httpClient.PostAsync($"https://staffordchristadelphians.org.uk/manage/{pageName}.php", content);
-			var responseString = await response.Content.ReadAsStringAsync();
-			return (response.StatusCode, response.ReasonPhrase, responseString);
+			var responseString = await response!.Content.ReadAsStringAsync();
+			return (response.StatusCode, response.ReasonPhrase!, responseString);
 			}
 
 		protected override async Task<bool> CancelAsync()
@@ -361,7 +357,7 @@ namespace WebWriter.ViewModels
 				{
 				using (ExcelPackage ep = new ExcelPackage(excelFile))
 					{
-					ExcelWorksheet ws = (from w in ep.Workbook.Worksheets where w.Name == "Videos" select w).FirstOrDefault();
+					ExcelWorksheet? ws = (from w in ep.Workbook.Worksheets where w.Name == "Videos" select w).FirstOrDefault();
 					if (ws != null)
 						{
 						ws.Cells[1, 1, 202, 9].Clear();
@@ -413,11 +409,11 @@ namespace WebWriter.ViewModels
 						{
 						string size = video.Size.ToString();
 						if (size.StartsWith("Size"))
-							size = size.Substring(4);
+							size = size[4..];
 
 						string code = string.Empty;
 						if (!string.IsNullOrWhiteSpace(video.Link))
-							code = video.Link.Substring(video.Link.LastIndexOf('/') + 1);
+							code = video.Link[(video.Link.LastIndexOf('/') + 1)..];
 
 						ws.Cells[row, 1].Value = video.Date;
 						ws.Cells[row, 2].Value = video.IsBibleHour ? "Bible Hour" : "Special";

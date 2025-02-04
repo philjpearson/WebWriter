@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	27 April 2016 21:07:03
+//	Last mod:	04 February 2025 12:07:56
 //
 namespace WebWriter.ViewModels
 	{
@@ -72,13 +72,11 @@ namespace WebWriter.ViewModels
 			{
 			get
 				{
-				if (_GoCommand == null)
-					_GoCommand = new Command<object>(GoCommand_Execute);
-				return _GoCommand;
+				return goCommand ??= new Command<object>(GoCommand_Execute);
 				}
 			}
 
-		private Command<object> _GoCommand;
+		private Command<object>? goCommand;
 
 		/// <summary>
 		/// Method to invoke when the GoCommand command is executed.
@@ -97,13 +95,11 @@ namespace WebWriter.ViewModels
 			{
 			get
 				{
-				if (_CreateOutputCommand == null)
-					_CreateOutputCommand = new Command<object>(CreateOutputCommand_Execute);
-				return _CreateOutputCommand;
+				return createOutputCommand ??= new Command<object>(CreateOutputCommand_Execute);
 				}
 			}
 
-		private Command<object> _CreateOutputCommand;
+		private Command<object>? createOutputCommand;
 
 		/// <summary>
 		/// Method to invoke when the CreateOutputCommand command is executed.
@@ -131,7 +127,7 @@ namespace WebWriter.ViewModels
 				{
 				string fname = Path.GetFileName(item);
 				string tname = fname.Replace("JPG", "jpg");
-				string pname = Path.GetFileName(Path.GetDirectoryName(item));
+				string pname = Path.GetFileName(Path.GetDirectoryName(item))!;
 
 				sb.AppendLine("  {");
 				sb.AppendLine($"  thumb: 'img/gallery/thmb/{tname}',");

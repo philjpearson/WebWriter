@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	18 December 2023 15:35:50
+//	Last mod:	04 February 2025 15:07:05
 //
 using System;
 using System.Collections.Generic;
@@ -15,15 +15,17 @@ namespace WebWriter.Models
 	{
 	public class LockdownProgramme
 		{
+		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
 		public string ExcelFilePath { get; set; } = @"C:\Users\Phil\OneDrive\My Documents\Ecclesia\Programme\Ecclesial Programme.xlsm";
 
-		public List<LockdownProgrammeItem> Programme { get; set; }
+		public List<LockdownProgrammeItem>? Programme { get; set; }
 
 		public List<LockdownProgrammeItem> Sunday
 			{
 			get
 				{
-				return Programme.Where(p => p.Type == 1).ToList();
+				return Programme!.Where(p => p.Type == 1).ToList();
 				}
 			}
 
@@ -31,7 +33,7 @@ namespace WebWriter.Models
 			{
 			get
 				{
-				return Programme.Where(p => p.Type == 3).ToList();
+				return Programme!.Where(p => p.Type == 3).ToList();
 				}
 			}
 
@@ -67,13 +69,16 @@ namespace WebWriter.Models
 			using var ep = new ExcelPackage(excelFile);
 			try
 				{
-				ExcelWorksheet ws = (from w in ep.Workbook.Worksheets where w.Name == "2023" select w).FirstOrDefault();
+				ExcelWorksheet? ws;
+
+#if false
+				ws = (from w in ep.Workbook.Worksheets where w.Name == "2024" select w).FirstOrDefault();
 				if (ws != null)
 					{
 					int row = 4;
-					while (ws.Cells[row, 2].Value is DateTime dt && dt.Year == 2023)
+					while (ws.Cells[row, 2].Value is DateTime dt && dt.Year == 2024)
 						{
-						var sunday = Programme.Where(p => p.Date.Date == dt.Date).FirstOrDefault();
+						var sunday = Programme!.Where(p => p.Date.Date == dt.Date).FirstOrDefault();
 						if (sunday != null)
 							{
 							sunday.Collection2 = ws.Cells[row, 21].Value as string;
@@ -82,14 +87,14 @@ namespace WebWriter.Models
 						row++;
 						}
 					}
-
-				ws = (from w in ep.Workbook.Worksheets where w.Name == "2024" select w).FirstOrDefault();
+#endif
+				ws = (from w in ep.Workbook.Worksheets where w.Name == "2025" select w).FirstOrDefault();
 				if (ws != null)
 					{
 					int row = 4;
-					while (ws.Cells[row, 2].Value is DateTime dt && dt.Year == 2024)
+					while (ws.Cells[row, 2].Value is DateTime dt && dt.Year == 2025)
 						{
-						var sunday = Programme.Where(p => p.Date.Date == dt.Date).FirstOrDefault();
+						var sunday = Programme!.Where(p => p.Date.Date == dt.Date).FirstOrDefault();
 						if (sunday != null)
 							{
 							sunday.Collection2 = ws.Cells[row, 21].Value as string;
@@ -102,6 +107,7 @@ namespace WebWriter.Models
 				}
 			catch (Exception ex)
 				{
+				logger.Error("Error getting collections: {0}", ex.Message);
 				MessageBox.Show($"Error getting collections: {ex.Message}", Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
 				}
 
@@ -120,7 +126,9 @@ namespace WebWriter.Models
 				}
 			catch (Exception ex)
 				{
+				logger.Error("Saving to PDF failed: {0}", ex.Message);
 				MessageBox.Show($"Saving to PDF failed: {ex.Message}");
+				result = false;
 				}
 			return result;
 			}

@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	14 March 2015 16:44:40
+//	Last mod:	04 February 2025 12:08:00
 //
 using System;
 using System.Collections.Generic;
@@ -16,7 +16,7 @@ namespace WebWriter.Models
 	[Serializable]
 	public class GalleryModel : SavableModelBase<GalleryModel>
 		{
-		ChangeNotificationWrapper wrapper;
+		ChangeNotificationWrapper? wrapper;
 
 		public GalleryModel()
 			{
@@ -95,16 +95,16 @@ namespace WebWriter.Models
 				}
 			}
 
-		private void Wrapper_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+		private void Wrapper_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 			{
-			if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+			if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add && e.NewItems is not null)
 				{
 				foreach (VideoModel item in e.NewItems)
 					{
 					changeDictionary.Add(item, ChangeType.Add);
 					}
 				}
-			else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
+			else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove && e.OldItems is not null)
 				{
 				foreach (VideoModel item in e.OldItems)
 					{
@@ -115,7 +115,7 @@ namespace WebWriter.Models
 			CheckDuplicateTags();
 			}
 
-		private void Wrapper_CollectionItemPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		private void Wrapper_CollectionItemPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
 			{
 			if (sender is VideoModel video
 				&& new string[] { nameof(VideoModel.Date),

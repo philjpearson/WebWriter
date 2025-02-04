@@ -1,8 +1,13 @@
+//
+//	Last mod:	04 February 2025 13:50:26
+//
 using System.Collections;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Controls;
 using System;
+
+#nullable disable
 
 namespace FunctionalFun.UI.Behaviours
 {

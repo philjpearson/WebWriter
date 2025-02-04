@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	12 October 2023 10:31:33
+//	Last mod:	04 February 2025 12:07:58
 //
 namespace WebWriter.Views
 	{
@@ -12,7 +12,7 @@ namespace WebWriter.Views
 				: this(null)
 			{ }
 
-		public BibleClassView(BibleClassViewModel viewModel)
+		public BibleClassView(BibleClassViewModel? viewModel)
 				: base(viewModel)
 			{
 			InitializeComponent();

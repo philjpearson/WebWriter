@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	31 December 2016 15:47:47
+//	Last mod:	04 February 2025 12:07:57
 //
 namespace WebWriter.ViewModels
 	{
@@ -22,10 +22,8 @@ namespace WebWriter.ViewModels
 
 		public override string Title { get { return "Bible Hour Titles"; } }
 
-		const string filePath = @"C:\Users\Phil\OneDrive\My Documents\Ecclesia\Web site\titles.csv"; // @"D:\philj\Documents\OneDrive\My Documents\Ecclesia\Web site\titles.csv";
+		const string filePath = @"C:\Users\Phil\OneDrive\My Documents\Ecclesia\Web site\titles.csv";
 
-		// TODO: Register models with the vmpropmodel codesnippet
-		// TODO: Register view model properties with the vmprop or vmpropviewmodeltomodel codesnippets
 		/// <summary>
 		/// Gets or sets the Titles property value
 		/// </summary>
@@ -39,21 +37,20 @@ namespace WebWriter.ViewModels
 		/// Register the Titles property so it is known in the class.
 		/// </summary>
 		public static readonly PropertyData TitlesProperty = RegisterProperty("Titles", typeof(ObservableCollection<BibleHourTitle>));
-		// TODO: Register commands with the vmcommand or vmcommandwithcanexecute codesnippets
 
 		protected override async Task InitializeAsync()
 			{
 			await base.InitializeAsync();
 
-			Titles = new ObservableCollection<BibleHourTitle>();
+			Titles = [];
 			try
 				{
 				var engine = new FileHelperEngine<BibleHourTitleRecord>();
 				var records = engine.ReadFile(filePath);
 				foreach (var record in records)
 					{
-					DateTime dt = DateTime.Parse(record.Date);
-					var bht = new BibleHourTitle() { Date = dt, Title = record.Title };
+					DateTime dt = DateTime.Parse(record.Date!);
+					var bht = new BibleHourTitle() { Date = dt, Title = record.Title ?? "" };
 					Titles.Add(bht);
 					}
 				}
@@ -81,15 +78,15 @@ namespace WebWriter.ViewModels
 		public class BibleHourTitleRecord
 			{
 			[FieldQuoted('"', QuoteMode.AlwaysQuoted, MultilineMode.NotAllow)]
-			public string Date;
+			public string? Date;
 			[FieldQuoted('"', QuoteMode.AlwaysQuoted, MultilineMode.NotAllow)]
-			public string Title;
+			public string? Title;
 			}
 
 		public class BibleHourTitle : ModelBase
 			{
 			public DateTime Date { get; set; }
-			public string Title { get; set; }
+			public string Title { get; set; } = string.Empty;
 			}
 		}
 	}

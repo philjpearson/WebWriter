@@ -1,10 +1,11 @@
 ﻿//
-//	Last mod:	27 March 2023 14:11:39
+//	Last mod:	04 February 2025 11:06:41
 //
 using System.Reflection;
 using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Windows;
 
 // General Information about an assembly is controlled through the following 
@@ -15,9 +16,10 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("WebWriter")]
-[assembly: AssemblyCopyright("Copyright © by Phil J Pearson 2015-2023")]
+[assembly: AssemblyCopyright("Copyright © by Phil J Pearson 2015-2025")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
+[assembly: SupportedOSPlatform("windows")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -53,4 +55,4 @@ using System.Windows;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.24094.0")]
+[assembly: AssemblyFileVersion("1.0.25035.0")]

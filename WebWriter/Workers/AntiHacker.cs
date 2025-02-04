@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	05 January 2023 09:44:21
+//	Last mod:	04 February 2025 12:07:59
 //
 using System;
 using System.Collections.Generic;
@@ -27,8 +27,8 @@ namespace WebWriter.Workers
     const string rootDirectory = "/public_html/"; // "staffordchristadelphians.org.uk/public_html/";
 
 
-    private static readonly SessionOptions sessionOptions = new SessionOptions
-      {
+    private static readonly SessionOptions sessionOptions = new()
+			{
       Protocol = Protocol.Ftp,
       HostName = serverAddress,
       UserName = ftpUserName,
@@ -36,13 +36,13 @@ namespace WebWriter.Workers
       };
 
 
-    protected static Regex ftpListingRegex = new Regex(@"^([d-])((?:[rwxt-]{3}){3})\s+(\d{1,})\s+(\w+)?\s+(\w+)?\s+(\d{1,})\s+(\w+)\s+(\d{1,2})\s+(\d{4})?(\d{1,2}:\d{2})?\s+(.+?)\s?$",
-                RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
+    protected static Regex ftpListingRegex = new(@"^([d-])((?:[rwxt-]{3}){3})\s+(\d{1,})\s+(\w+)?\s+(\w+)?\s+(\d{1,})\s+(\w+)\s+(\d{1,2})\s+(\d{4})?(\d{1,2}:\d{2})?\s+(.+?)\s?$",
+																							RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
     protected static readonly string Timeformat = "MMM dd yyyy HH:mm";
 
-    static System.Collections.Specialized.StringCollection legitDirectories;
+    static readonly System.Collections.Specialized.StringCollection legitDirectories;
 
-    private Session session;
+    private Session? session;
 
 
     static AntiHacker()
@@ -67,7 +67,7 @@ namespace WebWriter.Workers
       else
         {
         IUIVisualizerService uIVisualiserService = ServiceLocator.Default.ResolveType<IUIVisualizerService>();
-        if (!(uIVisualiserService is null))
+				if (uIVisualiserService is not null)
 					{
           await uIVisualiserService.ShowDialogAsync<DodgyStuffViewModel>(dodgy);
 					}
@@ -142,14 +142,14 @@ namespace WebWriter.Workers
 
     private void AddDirectory(FtpFileSystemItem parentItem, string path)
 			{
-      RemoteDirectoryInfo directory = session.ListDirectory(path);
+      RemoteDirectoryInfo directory = session!.ListDirectory(path);
 			foreach (RemoteFileInfo item in directory.Files)
 				{
         if (!item.IsParentDirectory && !item.IsThisDirectory)
           {
           var child = parentItem.AddChild(item);
           if (child.IsDirectory)
-            AddDirectory(child, child.FileInfo.FullName);
+            AddDirectory(child, child.FileInfo!.FullName);
           }
 				}
       }

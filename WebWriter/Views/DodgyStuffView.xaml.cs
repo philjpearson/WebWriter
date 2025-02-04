@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	07 November 2020 13:21:52
+//	Last mod:	04 February 2025 12:07:57
 //
 namespace WebWriter.Views
 	{
@@ -12,7 +12,7 @@ namespace WebWriter.Views
 				: this(null)
 			{ }
 
-		public DodgyStuffView(DodgyStuffViewModel viewModel)
+		public DodgyStuffView(DodgyStuffViewModel? viewModel)
 				: base(viewModel, DataWindowMode.Close)
 			{
 			InitializeComponent();

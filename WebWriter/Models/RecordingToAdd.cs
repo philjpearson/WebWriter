@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	27 January 2023 16:09:49
+//	Last mod:	04 February 2025 11:32:53
 //
 
 namespace WebWriter.Models
@@ -8,12 +8,12 @@ namespace WebWriter.Models
 		{
 		public uint TypeId { get; set; }
 
-		public string FilePath { get; set; }
+		public string FilePath { get; set; } = string.Empty;
 
-		public string Text { get; set; }
+		public string Text { get; set; } = string.Empty;
 
-		public string Speaker { get; set; }
+		public string Speaker { get; set; } = string.Empty;
 
-		public string Ecclesia { get; set; }
+		public string Ecclesia { get; set; } = string.Empty;
 		}
 	}

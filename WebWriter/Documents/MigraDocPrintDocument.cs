@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	02 January 2023 11:58:19
+//	Last mod:	04 February 2025 12:14:52
 //
 
 using System;
@@ -35,7 +35,7 @@ namespace WebWriter.Documents
 		/// </summary>
 		public MigraDocPrintDocument(DocumentRenderer renderer)
 			{
-			this.renderer = renderer;
+			Renderer = renderer;
 			DefaultPageSettings.Margins = new Margins(0, 0, 0, 0);
 			OriginAtMargins = false;
 			}
@@ -43,14 +43,14 @@ namespace WebWriter.Documents
 		public MigraDocPrintDocument(Document document)
 				: this()
 			{
-			renderer = MakeRenderer(document);
+			Renderer = MakeRenderer(document);
 			}
 
 		public MigraDocPrintDocument(string ddl)
 				: this()
 			{
 			var document = DdlReader.DocumentFromString(ddl);
-			renderer = MakeRenderer(document);
+			Renderer = MakeRenderer(document);
 			}
 
 		private static DocumentRenderer MakeRenderer(Document document)
@@ -63,12 +63,7 @@ namespace WebWriter.Documents
 		/// <summary>
 		/// Gets or sets the DocumentRenderer that prints the pages of the document.
 		/// </summary>
-		public DocumentRenderer Renderer
-			{
-			get { return renderer; }
-			set { renderer = value; }
-			}
-		DocumentRenderer renderer;
+		public DocumentRenderer? Renderer { get; set; }
 
 		/// <summary>
 		/// Gets or sets the page number that identifies the selected page. It it used on printing when 
@@ -87,7 +82,7 @@ namespace WebWriter.Documents
 		/// <param name="e">A <see cref="T:System.Drawing.Printing.PrintEventArgs"/> that contains the event data.</param>
 		protected override void OnBeginPrint(PrintEventArgs e)
 			{
-			if (renderer == null)
+			if (Renderer is null)
 				throw new Exception("Cannot print without a MigraDoc.Rendering.DocumentRenderer.");
 
 			base.OnBeginPrint(e);
@@ -97,7 +92,7 @@ namespace WebWriter.Documents
 					{
 				case PrintRange.AllPages:
 					pageNumber = 1;
-					pageCount = renderer.FormattedDocument.PageCount;
+					pageCount = Renderer.FormattedDocument!.PageCount;
 					break;
 
 				case PrintRange.SomePages:
@@ -130,7 +125,7 @@ namespace WebWriter.Documents
 			if (!e.Cancel)
 				{
 				PageSettings settings = e.PageSettings;
-				PageInfo pageInfo = renderer.FormattedDocument.GetPageInfo(pageNumber);
+				PageInfo pageInfo = Renderer!.FormattedDocument!.GetPageInfo(pageNumber);
 
 				// set portrait/landscape
 				settings.Landscape = pageInfo.Orientation == PageOrientation.Landscape;
@@ -149,7 +144,7 @@ namespace WebWriter.Documents
 				PageSettings settings = e.PageSettings;
 				try
 					{
-					Graphics graphics = e.Graphics;
+					Graphics graphics = e.Graphics!;
 					IntPtr hdc = graphics.GetHdc();
 					int xOffset = GetDeviceCaps(hdc, PHYSICALOFFSETX);
 					int yOffset = GetDeviceCaps(hdc, PHYSICALOFFSETY);
@@ -165,8 +160,8 @@ namespace WebWriter.Documents
 //#warning TODO WPFPDF
 // TODO WPFPDF
 #else
-					XGraphics gfx = XGraphics.FromGraphics(graphics, size);
-					renderer.RenderPage(gfx, pageNumber);
+					XGraphics gfx = XGraphics.FromGraphics(graphics, size, null!);
+					Renderer!.RenderPage(gfx, pageNumber);
 #endif
 					}
 				catch
@@ -190,11 +185,10 @@ namespace WebWriter.Documents
 			}
 
 		[DllImport("gdi32.dll")]
-		static extern int GetDeviceCaps(IntPtr hdc, int capability);
-		// ReSharper disable InconsistentNaming
+		private static extern int GetDeviceCaps(IntPtr hdc, int capability);
+
 		const int PHYSICALOFFSETX = 112; // Physical Printable Area x margin
 		const int PHYSICALOFFSETY = 113; // Physical Printable Area y margin
-																		 // ReSharper restore InconsistentNaming
 		}
 
 	/// <summary>

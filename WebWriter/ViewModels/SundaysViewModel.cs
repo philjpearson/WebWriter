@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	03 April 2024 22:00:44
+//	Last mod:	04 February 2025 15:07:06
 //
 namespace WebWriter.ViewModels
 	{
@@ -15,26 +15,45 @@ namespace WebWriter.ViewModels
 
 	public class SundaysViewModel : ViewModelBase
 		{
+		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
 		public SundaysViewModel()
 			{
 			}
 
 		public override string Title { get { return "Sunday bookings"; } }
 
-		StaffordMySQLConnection dbCon;
-		MySqlDataAdapter daSundays;
-		DataSet dsSundays;
+		StaffordMySQLConnection? dbCon;
+		MySqlDataAdapter? daSundays;
+		DataSet? dsSundays;
 
-		// TODO: Register models with the vmpropmodel codesnippet
-		// TODO: Register view model properties with the vmprop or vmpropviewmodeltomodel codesnippets
-
-		public DataView Sundays { get; set; }
+		public DataView? Sundays { get; set; }
 
 		public bool FutureOnly { get; set; } = true;
 
 		public bool UnprocessedOnly { get; set; }
 
-		// TODO: Register commands with the vmcommand or vmcommandwithcanexecute codesnippets
+		/// <summary>
+		/// Gets the ExportCommand command.
+		/// </summary>
+		public TaskCommand ExportCommand => exportCommand ??= new TaskCommand(ExportCommandExecuteAsync, ExportCommandCanExecute);
+
+		private TaskCommand? exportCommand;
+
+		private bool ExportCommandCanExecute()
+			{
+			return Sundays?.Count > 0;
+			}
+
+		private string filename = @"C:\Users\Phil\OneDrive\My Documents\Ecclesia\Programme\SundayProgrammeExport.xlsx";
+
+		private async Task ExportCommandExecuteAsync()
+			{
+			var prog = new ProgrammeModel(DayOfWeek.Sunday);
+			prog.CreateEmpty(new DateTime(2025, 1, 1), new DateTime(2026, 12, 31));
+			prog.Populate(Sundays!);
+			await prog.ExportToExcel(filename, "Sunday");
+			}
 
 		protected override async Task InitializeAsync()
 			{
@@ -66,7 +85,7 @@ namespace WebWriter.ViewModels
 						string where = "Where True ";
 						if (FutureOnly)
 							{
-							where += $"AND Date > '{DateTime.Now.ToString("yyyy-MM-dd")}' ";
+							where += $"AND Date > '{DateTime.Now:yyyy-MM-dd}' ";
 							}
 						if (UnprocessedOnly)
 							{
@@ -74,22 +93,24 @@ namespace WebWriter.ViewModels
 							}
 						string query = $"SELECT Id, Date, Speaker, Ecclesia, Email, Timestamp, Processed FROM SundayDates {where}ORDER BY Date";
 						daSundays = new MySqlDataAdapter(query, dbCon.Connection);
-						MySqlCommandBuilder cb = new MySqlCommandBuilder(daSundays);
+						var cb = new MySqlCommandBuilder(daSundays);
 
 						dsSundays = new DataSet();
 						daSundays.Fill(dsSundays, "SundayDates");
-						Sundays = dsSundays.Tables["SundayDates"].DefaultView;
+						Sundays = dsSundays.Tables["SundayDates"]!.DefaultView;
+						dbCon.Close();
 						}
 				}
 			catch (Exception ex)
 				{
-				MessageBox.Show(ex.InnerException.Message);
+				logger.Error("Error loading Sundays data from database: {0}", ex.Message);
+				MessageBox.Show(ex.InnerException?.Message);
 				}
 			}
 
 		protected override Task<bool> SaveAsync()
 			{
-			if (dsSundays.HasChanges())
+			if (dsSundays?.HasChanges() == true)
 				{
 				try
 					{
@@ -102,17 +123,19 @@ namespace WebWriter.ViewModels
 								{
 								MissingSchemaAction = MissingSchemaAction.Ignore
 								};
-							MySqlCommandBuilder cb = new MySqlCommandBuilder(daTemp);
+							var cb = new MySqlCommandBuilder(daTemp);
 							var dsTemp = new DataSet();
 							daTemp.Fill(dsTemp, "SundayDates");
 							var changesDataset = dsSundays.GetChanges();
-							dsTemp.Merge(changesDataset);
-							daTemp.Update(dsTemp.Tables["SundayDates"]);
+							dsTemp.Merge(changesDataset!);
+							daTemp.Update(dsTemp.Tables["SundayDates"]!);
+							dbCon.Close();
 							}
 					}
 				catch (Exception ex)
 					{
-					MessageBox.Show(ex.Innermost().Message, Title);
+					logger.Error("Error saving changes to Sundays: {0}", ex.Message);
+					MessageBox.Show(ex.Message, Title);
 					}
 				}
 			return base.SaveAsync();
@@ -120,7 +143,7 @@ namespace WebWriter.ViewModels
 
 		protected override Task<bool> CancelAsync()
 			{
-			if (dsSundays.HasChanges())
+			if (dsSundays?.HasChanges() == true)
 				{
 				var reply = MessageBox.Show("Discard the changes you made?", Title, MessageBoxButton.YesNo, MessageBoxImage.Question);
 				if (reply == MessageBoxResult.No)

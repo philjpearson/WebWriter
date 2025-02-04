@@ -1,24 +1,26 @@
 ﻿//
-//	Last mod:	05 January 2023 11:33:55
+//	Last mod:	04 February 2025 15:07:05
 //
 using System;
 using System.IO;
 using System.Net;
 using System.Text;
 using System.Windows;
+using NLog;
 
 namespace WebWriter.Models
 	{
 	public class Uploader
 		{
-		const string ftpUserName = "u880159079.staffordchristadelphians.org.uk"; // "1007246_code";
-		const string ftpPassword = "z6ZjgSn4tfkM_nD"; // "7wtk3Es1zthmBBHWdPyY";
+		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+
+		const string ftpUserName = "u880159079.staffordchristadelphians.org.uk";
+		const string ftpPassword = "z6ZjgSn4tfkM_nD";
 
 		public static bool Upload(string localFile, string remotePath, bool binary = false)
 			{
 			int i = 1 + remotePath.LastIndexOf('/');
-			string remoteFilename = remotePath.Substring(i);
-			//			string remoteAddress = $"ftp://ftp01.servage.net/staffordchristadelphians.org.uk/public_html/{remotePath}.new";
+			string remoteFilename = remotePath[i..];
 			string remoteAddress = $"ftp://staffordchristadelphians.org.uk/{remotePath}.new";
 			FtpWebRequest request = (FtpWebRequest)WebRequest.Create(remoteAddress);
 			request.Method = WebRequestMethods.Ftp.UploadFile;
@@ -26,7 +28,7 @@ namespace WebWriter.Models
 
 			bool success = false;
 			FtpWebResponse response;
-			Stream requestStream = null;
+			Stream? requestStream = null;
 
 			try
 				{
@@ -65,6 +67,7 @@ namespace WebWriter.Models
 				response = (FtpWebResponse)request.GetResponse();
 				if (response.StatusCode != FtpStatusCode.CommandOK && response.StatusCode != FtpStatusCode.ClosingData)
 					{
+					logger.Error("ftp upload failed.\r\nResponse status was '{0}'", response.StatusDescription);
 					MessageBox.Show($"ftp upload failed.\r\nResponse status was '{response.StatusDescription}'", "WebWriter", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 					}
 				else
@@ -75,6 +78,7 @@ namespace WebWriter.Models
 				}
 			catch (Exception ex)
 				{
+				logger.Error("Exception during upload: {0}", ex.Message);
 				MessageBox.Show($"Exception during upload: {ex.Message}", "WebWriter", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 				}
 			finally
@@ -91,6 +95,7 @@ namespace WebWriter.Models
 				response = (FtpWebResponse)request.GetResponse();
 				if (response.StatusCode != FtpStatusCode.FileActionOK)
 					{
+					logger.Error("ftp rename after upload failed.\r\nResponse status was '{0}'", response.StatusDescription);
 					MessageBox.Show($"ftp rename after upload failed.\r\nResponse status was '{response.StatusDescription}'", "WebWriter", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 					}
 				response.Close();

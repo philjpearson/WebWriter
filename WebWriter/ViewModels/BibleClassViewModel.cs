@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	27 January 2024 20:27:02
+//	Last mod:	04 February 2025 15:07:06
 //
 namespace WebWriter.ViewModels
 	{
@@ -8,15 +8,17 @@ namespace WebWriter.ViewModels
 	using System.Threading.Tasks;
 	using System.Windows;
 	using Catel.MVVM;
-	using Models;
 	using MySqlConnector;
 	using PJP.Utilities;
+	using WebWriter.Models;
 	using WebWriter.Utilities;
 
 #nullable enable
 
 	public class BibleClassViewModel : ViewModelBase
 		{
+		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
 		public BibleClassViewModel()
 			{
 			}
@@ -27,16 +29,33 @@ namespace WebWriter.ViewModels
 		MySqlDataAdapter? daBibleClass;
 		DataSet? dsBibleClass;
 
-		// TODO: Register models with the vmpropmodel codesnippet
-		// TODO: Register view model properties with the vmprop or vmpropviewmodeltomodel codesnippets
-
 		public DataView? BibleClass { get; set; }
 
 		public bool FutureOnly { get; set; } = true;
 
 		public bool UnprocessedOnly { get; set; }
 
-		// TODO: Register commands with the vmcommand or vmcommandwithcanexecute codesnippets
+		/// <summary>
+		/// Gets the ExportCommand command.
+		/// </summary>
+		public TaskCommand ExportCommand => exportCommand ??= new TaskCommand(ExportCommandExecuteAsync, ExportCommandCanExecute);
+
+		private TaskCommand? exportCommand;
+
+		private bool ExportCommandCanExecute()
+			{
+			return BibleClass?.Count > 0;
+			}
+
+		private string filename = @"C:\Users\Phil\OneDrive\My Documents\Ecclesia\Programme\BCProgrammeExport.xlsx";
+
+		private async Task ExportCommandExecuteAsync()
+			{
+			var prog = new ProgrammeModel(DayOfWeek.Wednesday);
+			prog.CreateEmpty(new DateTime(2025, 1, 1), new DateTime(2026, 12, 31));
+			prog.Populate(BibleClass!);
+			await prog.ExportToExcel(filename, "Bible Class");
+			}
 
 		protected override async Task InitializeAsync()
 			{
@@ -58,7 +77,7 @@ namespace WebWriter.ViewModels
 						string where = "Where True ";
 						if (FutureOnly)
 							{
-							where += $"AND Date > '{DateTime.Now.ToString("yyyy-MM-dd")}' ";
+							where += $"AND Date > '{DateTime.Now:yyyy-MM-dd}' ";
 							}
 						if (UnprocessedOnly)
 							{
@@ -70,11 +89,12 @@ namespace WebWriter.ViewModels
 
 						dsBibleClass = new DataSet();
 						daBibleClass.Fill(dsBibleClass, "BibleClassDates");
-						BibleClass = dsBibleClass.Tables["BibleClassDates"].DefaultView;
+						BibleClass = dsBibleClass.Tables["BibleClassDates"]!.DefaultView;
 						}
 				}
 			catch (Exception ex)
 				{
+				logger.Error("Error loading Bible Class data from database: {0}", ex.Message);
 				MessageBox.Show(ex.Innermost().Message, Title);
 				}
 			}
@@ -98,13 +118,14 @@ namespace WebWriter.ViewModels
 							var dsTemp = new DataSet();
 							daTemp.Fill(dsTemp, "BibleClassDates");
 							var changesDataset = dsBibleClass.GetChanges();
-							dsTemp.Merge(changesDataset);
-							daTemp.Update(dsTemp.Tables["BibleClassDates"]);
+							dsTemp.Merge(changesDataset!);
+							daTemp.Update(dsTemp.Tables["BibleClassDates"]!);
 							}
 					}
 				catch (Exception ex)
 					{
-					MessageBox.Show(ex.Innermost().Message, Title);
+					logger.Error("Error saving Bible Class changes to database: {0}", ex.Message);
+					MessageBox.Show(ex.Message, Title);
 					}
 				}
 			return base.SaveAsync();

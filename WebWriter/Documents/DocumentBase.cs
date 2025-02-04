@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	27 January 2023 14:24:51
+//	Last mod:	04 February 2025 14:36:47
 //
 using System;
 using System.Drawing.Printing;
@@ -57,7 +57,7 @@ namespace WebWriter.Documents
 			try
 				{
 				CreateDocument();
-				var pdfRenderer = new PdfDocumentRenderer(true) { Document = MigraDocument };
+				var pdfRenderer = new PdfDocumentRenderer() { Document = MigraDocument };
 				pdfRenderer.RenderDocument();
 				pdfRenderer.PdfDocument.Save(outputFileName);
 				}
@@ -100,8 +100,7 @@ namespace WebWriter.Documents
 				{
 				try
 					{
-					if (printerSettings == null)
-						printerSettings = new PrinterSettings();
+					printerSettings ??= new PrinterSettings();
 
 					CreateDocument();
 					using (var printDocument = new MigraDocPrintDocument(MigraDocument) { PrinterSettings = printerSettings })
@@ -152,16 +151,16 @@ namespace WebWriter.Documents
 		protected virtual void DefineStyles()
 			{
 			// Get the predefined style Normal.
-			Style style = MigraDocument.Styles["Normal"];
-			style.Font.Name = "GillSans";
+			Style? style = MigraDocument.Styles["Normal"];
+			style!.Font.Name = "Calibri";
 
 			style = MigraDocument.Styles[StyleNames.Header];
-			style.ParagraphFormat.AddTabStop("8cm", MigraDoc.DocumentObjectModel.TabAlignment.Center);
+			style!.ParagraphFormat.AddTabStop("8cm", MigraDoc.DocumentObjectModel.TabAlignment.Center);
 			style.Font.Size = 16;
 			style.ParagraphFormat.Alignment = ParagraphAlignment.Center;
 
 			style = MigraDocument.Styles[StyleNames.Footer];
-			style.ParagraphFormat.AddTabStop("16cm", MigraDoc.DocumentObjectModel.TabAlignment.Right);
+			style!.ParagraphFormat.AddTabStop("16cm", MigraDoc.DocumentObjectModel.TabAlignment.Right);
 
 			// Create a new style called Table based on style Normal
 			style = MigraDocument.Styles.AddStyle("Table", "Normal");

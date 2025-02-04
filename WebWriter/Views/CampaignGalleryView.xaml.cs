@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	27 April 2016 18:06:04
+//	Last mod:	04 February 2025 12:07:58
 //
 namespace WebWriter.Views
 	{
@@ -12,7 +12,7 @@ namespace WebWriter.Views
 				: this(null)
 			{ }
 
-		public CampaignGalleryView(CampaignGalleryViewModel viewModel)
+		public CampaignGalleryView(CampaignGalleryViewModel? viewModel)
 				: base(viewModel)
 			{
 			InitializeComponent();

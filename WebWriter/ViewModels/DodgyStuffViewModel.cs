@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	04 May 2021 15:40:43
+//	Last mod:	04 February 2025 12:14:52
 //
 namespace WebWriter.ViewModels
 	{
@@ -14,7 +14,7 @@ namespace WebWriter.ViewModels
 
 	public class DodgyStuffViewModel : ViewModelBase
 		{
-		ChangeNotificationWrapper wrapper;
+		ChangeNotificationWrapper? wrapper;
 
 		public DodgyStuffViewModel(List<string> dodgyStuff)
 			{
@@ -24,16 +24,14 @@ namespace WebWriter.ViewModels
 
 		public override string Title { get { return "Dodgy stuff"; } }
 
-		// TODO: Register models with the vmpropmodel codesnippet
 		[Model]
 		public ObservableCollection<string> DodgyStuff { get; set; }
 
-		// TODO: Register view model properties with the vmprop or vmpropviewmodeltomodel codesnippets
 		public ObservableCollection<string> SelectedThings { get; set; }
 
 		private void OnSelectedThingsChanged()
 			{
-			if (!(wrapper is null))
+			if (wrapper is not null)
 				{
 				wrapper.CollectionChanged -= Wrapper_CollectionChanged;
 				}
@@ -44,14 +42,13 @@ namespace WebWriter.ViewModels
 				}
 			}
 
-		private void Wrapper_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+		private void Wrapper_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 			{
 			DeleteCommand.RaiseCanExecuteChanged();
 			MakeLegitimateCommand.RaiseCanExecuteChanged();
 			}
 
-		// TODO: Register commands with the vmcommand or vmcommandwithcanexecute codesnippets
-		private Command deleteCommand;
+		private Command? deleteCommand;
 
 		public Command DeleteCommand
 			{
@@ -85,7 +82,7 @@ namespace WebWriter.ViewModels
 			return SelectedThings?.Count > 0;
 			}
 
-		private Command makeLegitimateCommand;
+		private Command? makeLegitimateCommand;
 
 		public Command MakeLegitimateCommand
 			{

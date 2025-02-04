@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	18 December 2023 15:35:51
+//	Last mod:	04 February 2025 14:50:37
 //
 namespace WebWriter.ViewModels
 	{
@@ -11,15 +11,20 @@ namespace WebWriter.ViewModels
 	using Catel.IoC;
 	using Catel.MVVM;
 	using Catel.Services;
+	using RWS.UIClasses;
 	using WebWriter.Models;
 	using WebWriter.Workers;
 
 	public class MainWindowViewModel : ViewModelBase
 		{
+		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
 		private readonly IUIVisualizerService uiVisualiserService;
 
 		public MainWindowViewModel(IUIVisualizerService uiVisualiserService)
 			{
+			logger.Info("Starting Version {0}", AssemblyInfo.AssemblyFileVersion);
+
 			Argument.IsNotNull(() => uiVisualiserService);
 			this.uiVisualiserService = uiVisualiserService;
 
@@ -32,10 +37,6 @@ namespace WebWriter.ViewModels
 
 		public override string Title { get { return "Phil's Web Writer"; } }
 
-		// TODO: Register models with the vmpropmodel codesnippet
-		// TODO: Register view model properties with the vmprop or vmpropviewmodeltomodel codesnippets
-
-		// TODO: Register commands with the vmcommand or vmcommandwithcanexecute codesnippets
 		/// <summary>
 		/// Gets the ExitCommand command.
 		/// </summary>
@@ -116,7 +117,7 @@ namespace WebWriter.ViewModels
 				}
 			}
 
-		private TaskCommand<object> recordingsCommand;
+		private TaskCommand<object>? recordingsCommand;
 
 		/// <summary>
 		/// Method to invoke when the RecordingsCommand command is executed.
@@ -139,7 +140,7 @@ namespace WebWriter.ViewModels
 				}
 			}
 
-		private TaskCommand<object> sundayCommand;
+		private TaskCommand<object>? sundayCommand;
 
 		/// <summary>
 		/// Method to invoke when the RundayCommand command is executed.
@@ -162,7 +163,7 @@ namespace WebWriter.ViewModels
 				}
 			}
 
-		private TaskCommand<object> bibleCassCommand;
+		private TaskCommand<object>? bibleCassCommand;
 
 		/// <summary>
 		/// Method to invoke when the RundayCommand command is executed.
@@ -185,10 +186,10 @@ namespace WebWriter.ViewModels
 				}
 			}
 
-		private TaskCommand<object> lockdownProgrammeCommand;
+		private TaskCommand<object>? lockdownProgrammeCommand;
 
 		/// <summary>
-		/// Method to invoke when the RecordingsCommand command is executed.
+		/// Method to invoke when the lockdownProgrammeCommand command is executed.
 		/// </summary>
 		/// <param name="parameter">The parameter of the command.</param>
 		private async Task<bool?> LockdownProgrammeCommand_Execute(object parameter)
@@ -197,6 +198,7 @@ namespace WebWriter.ViewModels
 
 			var filePath = @"C:\Users\Phil\OneDrive\My Documents\Ecclesia\Programme\LockdownProgramme.csv";
 
+			logger.Info("Uploading programme CSV file");
 			var result = Uploader.Upload(filePath, "private/programme/LockdownProgramme.csv");
 
 			if (result)
@@ -208,23 +210,34 @@ namespace WebWriter.ViewModels
 					var bibleClass = prog.BibleClass;
 
 					filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"Ecclesia\Programme\Ecclesial programme.pdf");
-					result = prog.CreatePdf(filePath, new DateTime(2024, 1, 1));
+					result = prog.CreatePdf(filePath, new DateTime(2024, 9, 1));
 					if (result)
 						{
 						result = Uploader.Upload(filePath, "programme/Ecclesial programme.pdf", true);
+						if (result)
+							logger.Info("Programme PDF uploaded successfully.");
+						else
+							logger.Error("Programme PDF upload failed.");
 						}
 					}
 				catch (Exception ex)
 					{
+					logger.Error("Error creating PDF: {0}", ex.Message);
 					MessageBox.Show($"Error creating PDF: {ex.Message}", Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
 					reportedError = true;
 					}
 				}
 
 			if (result)
+				{
+				logger.Info("Programme CSV uploaded successfully");
 				MessageBox.Show("Programme update uploaded successfully", Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Information);
+				}
 			else if (!reportedError)
+				{
+				logger.Error("Error uploading programme CSV");
 				MessageBox.Show("Oops! Something went wrong", Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
+				}
 			return await Task.FromResult(result);
 			}
 

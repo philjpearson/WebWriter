@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	27 January 2023 15:05:09
+//	Last mod:	04 February 2025 12:07:59
 //
 using System.Threading.Tasks;
 using Catel.MVVM;
@@ -22,13 +22,13 @@ namespace WebWriter.ViewModels
 
 		public uint TypeId { get; set; }
 
-		public string FilePath { get; set; }
+		public string? FilePath { get; set; }
 
-		public string Text { get; set; }
+		public string? Text { get; set; }
 
-		public string Speaker { get; set; }
+		public string? Speaker { get; set; }
 
-		public string Ecclesia { get; set; }
+		public string? Ecclesia { get; set; }
 
 		/// <summary>
 		/// Gets the BrowseCommand command.
@@ -42,7 +42,7 @@ namespace WebWriter.ViewModels
 				}
 			}
 
-		private TaskCommand<object> browseCommand;
+		private TaskCommand<object>? browseCommand;
 
 		/// <summary>
 		/// Method to invoke when the BrowseCommand command is executed.

@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	27 January 2024 20:27:01
+//	Last mod:	04 February 2025 13:50:27
 //
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,9 @@ namespace WebWriter.Utilities
 	{
 	class CursorOverride : IDisposable
 		{
-    static Stack<Cursor?> stack = new Stack<Cursor?>();
+		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
+		private static Stack<Cursor?> stack = new();
 
 		public CursorOverride(string changeToCursorResourceName)
 			: this(LoadFromResource(changeToCursorResourceName))
@@ -49,6 +51,7 @@ namespace WebWriter.Utilities
 				}
 			catch (Exception ex)
 				{
+				logger.Error("Failed to load cursor from resources: {0}", ex.Message);
 				}
 			return cursor;
 			}

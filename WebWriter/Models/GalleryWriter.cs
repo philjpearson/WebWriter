@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	05 January 2023 08:57:44
+//	Last mod:	04 February 2025 11:21:36
 //
 using System;
 using System.IO;
@@ -14,7 +14,7 @@ namespace WebWriter.Models
 	public class GalleryWriter
 		{
 		private GalleryModel gallery;
-		private XmlDocument newDoc;
+		private XmlDocument? newDoc;
 		private const string galleryPage = @"D:\Documents\My Web Sites\StaffordChristadelphians\gallery\index.html";
 		private const string newGalleryPage = @"D:\Documents\My Web Sites\StaffordChristadelphians\gallery\index-new.html";
 
@@ -43,7 +43,7 @@ namespace WebWriter.Models
 			XmlNode rootDiv = newDoc.CreateElement("div");
 			XmlAttribute attr = newDoc.CreateAttribute("id");
 			attr.Value = "BibleHourVideos";
-			rootDiv.Attributes.Append(attr);
+			rootDiv.Attributes!.Append(attr);
 			newDoc.AppendChild(rootDiv);
 
 			foreach (var video in gallery.Videos.Where(v => v.Publish && v.IsBibleHour && !string.IsNullOrWhiteSpace(v.Link)))
@@ -56,9 +56,9 @@ namespace WebWriter.Models
 				{
 				XmlDocument doc = new XmlDocument();
 				doc.Load(galleryPage);
-				XmlNode vidDiv = doc.SelectSingleNode("//div[@id='BibleHourVideos']");
+				XmlNode? vidDiv = doc.SelectSingleNode("//div[@id='BibleHourVideos']");
 				XmlNode newDiv = doc.ImportNode(rootDiv, true);
-				vidDiv.ParentNode.ReplaceChild(newDiv, vidDiv);
+				vidDiv?.ParentNode?.ReplaceChild(newDiv, vidDiv);
 				doc.Save(newGalleryPage);
 				MessageBox.Show(string.Format("New gallery index page written to {0}", newGalleryPage), "Web Writer");
 				}
@@ -95,7 +95,7 @@ namespace WebWriter.Models
 
 		private void WriteVideo(XmlNode root, VideoModel video)
 			{
-			XmlElement div = newDoc.CreateElement("div");
+			XmlElement div = newDoc!.CreateElement("div");
 			if (!string.IsNullOrWhiteSpace(video.Tag))
 				{
 				AppendAttribute(div, "id", video.Tag);
@@ -133,14 +133,14 @@ namespace WebWriter.Models
 			{
 			if (!string.IsNullOrWhiteSpace(video.Details))
 				{
-				var p = newDoc.CreateElement("p");
+				var p = newDoc!.CreateElement("p");
 				p.InnerText = video.Details;
 				coldiv.AppendChild(p);
 				}
 
 			if (!string.IsNullOrWhiteSpace(video.Speaker))
 				{
-				var p = newDoc.CreateElement("p");
+				var p = newDoc!.CreateElement("p");
 				p.InnerText = string.Format("The speaker is {0}", video.Speaker);
 				if (!string.IsNullOrWhiteSpace(video.Ecclesia))
 					{
@@ -154,7 +154,7 @@ namespace WebWriter.Models
 			{
 			if (video.IsBibleHour)
 				{
-				var p = newDoc.CreateElement("p");
+				var p = newDoc!.CreateElement("p");
 				p.InnerText = string.Format("Our Bible Hour presentation on {0:d MMMM yyyy}", video.Date);
 				coldiv.AppendChild(p);
 				}
@@ -163,13 +163,13 @@ namespace WebWriter.Models
 		private void WriteVideoIframe(VideoModel video, XmlElement coldiv)
 			{
 			Size size = video.GetSize();
-			var iframe = newDoc.CreateElement("iframe");
+			var iframe = newDoc!.CreateElement("iframe");
 			///////// doesn't work! ////////// iframe.IsEmpty = false; // ensure it gets a closing tag (self-closed iframe doesn't work)
 			iframe.InnerText = " ";	///////////// try this
 			AppendAttribute(iframe, "width", size.Width.ToString());
 			AppendAttribute(iframe, "height", size.Height.ToString());
 			AppendAttribute(iframe, "style", "border:0;");
-			AppendAttribute(iframe, "allowfullscreen", null);
+			AppendAttribute(iframe, "allowfullscreen", null!);
 			if (size.Width <= 160)
 				{
 				AppendAttribute(iframe, "class", "video-thumbnail");
@@ -184,7 +184,7 @@ namespace WebWriter.Models
 
 		private void WriteVideoTitle(VideoModel video, XmlElement coldiv)
 			{
-			var h4 = newDoc.CreateElement("h4");
+			var h4 = newDoc!.CreateElement("h4");
 			h4.InnerText = video.Title;
 			coldiv.AppendChild(h4);
 			}
@@ -242,10 +242,10 @@ namespace WebWriter.Models
 
 		private void AppendAttribute(XmlNode node, string name, string value)
 			{
-			XmlAttribute a = newDoc.CreateAttribute(name);
+			XmlAttribute a = newDoc!.CreateAttribute(name);
 			if (value != null)
 				a.Value = value;
-			node.Attributes.Append(a);
+			node.Attributes!.Append(a);
 			}
 		}
 	}

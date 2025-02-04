@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	11 October 2023 15:56:46
+//	Last mod:	04 February 2025 12:07:58
 //
 namespace WebWriter.Views
 	{
@@ -12,7 +12,7 @@ namespace WebWriter.Views
 				: this(null)
 			{ }
 
-		public SundaysView(SundaysViewModel viewModel)
+		public SundaysView(SundaysViewModel? viewModel)
 				: base(viewModel)
 			{
 			InitializeComponent();
