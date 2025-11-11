@@ -1,4 +1,4 @@
-﻿<!-- Last mod: 29 December 2016 19:01:31 -->
+﻿<!-- Last mod: 05 February 2025 14:32:04 -->
 
 <catel:DataWindow x:Class="WebWriter.Views.GalleryView"
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -19,7 +19,8 @@
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 
-		<DataGrid ItemsSource="{Binding Videos}" AutoGenerateColumns="False">
+		<DataGrid ItemsSource="{Binding Videos}" AutoGenerateColumns="False"
+							IsReadOnly="{Binding Path=(models:StaticProperties.EditingEnabled),Mode=OneWay,Converter={catel:BooleanToOppositeBooleanConverter}}">
 			<DataGrid.Columns>
 				<DataGridCheckBoxColumn Binding="{Binding Publish}" Header="Publish" Width="55" />
 				<DataGridTextColumn Binding="{Binding Title}" Header="Title" Width="250"/>

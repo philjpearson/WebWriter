@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	04 February 2025 12:07:59
+//	Last mod:	05 February 2025 15:55:15
 //
 using System;
 using System.Collections.Generic;
@@ -66,7 +66,7 @@ namespace WebWriter.Workers
         MessageBox.Show("Nothing dodgy", "WebWriter AntiHacker", MessageBoxButton.OK, MessageBoxImage.Information);
       else
         {
-        IUIVisualizerService uIVisualiserService = ServiceLocator.Default.ResolveType<IUIVisualizerService>();
+        IUIVisualizerService? uIVisualiserService = ServiceLocator.Default.ResolveType<IUIVisualizerService>();
 				if (uIVisualiserService is not null)
 					{
           await uIVisualiserService.ShowDialogAsync<DodgyStuffViewModel>(dodgy);

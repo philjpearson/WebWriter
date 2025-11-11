@@ -1,33 +1,31 @@
 ﻿//
-//	Last mod:	04 February 2025 12:08:00
+//	Last mod:	05 February 2025 15:11:31
 //
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using Catel.Data;
-using Catel.Runtime.Serialization;
 
 namespace WebWriter.Models
 	{
 	[Serializable]
 	public class GalleryModel : SavableModelBase<GalleryModel>
 		{
-		ChangeNotificationWrapper? wrapper;
+		private readonly ChangeNotificationWrapper? wrapper;
 
 		public GalleryModel()
 			{
-			Videos = new ObservableCollection<VideoModel>();
+			Videos = [];
 			wrapper = new ChangeNotificationWrapper(Videos);
 			wrapper.CollectionChanged += Wrapper_CollectionChanged;
 			wrapper.CollectionItemPropertyChanged += Wrapper_CollectionItemPropertyChanged;
 			}
 
 		public enum ChangeType { None, Edit, Add, Delete };
-		Dictionary<VideoModel, ChangeType> changeDictionary = new Dictionary<VideoModel, ChangeType>();
+
+		private readonly Dictionary<VideoModel, ChangeType> changeDictionary = [];
 
 		//public static GalleryModel Load(string filePath)
 		//	{
@@ -46,23 +44,11 @@ namespace WebWriter.Models
 		/// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
 		/// <param name="context"><see cref="StreamingContext"/>.</param>
 		protected GalleryModel(SerializationInfo info, StreamingContext context)
-				: base(info, context)
+				//: base(info, context)
 			{
 			}
 
-		/// <summary>
-		/// Gets or sets the property value.
-		/// </summary>
-		public ObservableCollection<VideoModel> Videos
-			{
-			get { return GetValue<ObservableCollection<VideoModel>>(VideosProperty); }
-			set { SetValue(VideosProperty, value); }
-			}
-
-		/// <summary>
-		/// Register the Videos property so it is known in the class.
-		/// </summary>
-		public static readonly PropertyData VideosProperty = RegisterProperty("Videos", typeof(ObservableCollection<VideoModel>), null);
+		public ObservableCollection<VideoModel> Videos { get; set; }
 
 		public ReadOnlyDictionary<VideoModel, ChangeType> GetChanges()
 			{
@@ -126,8 +112,7 @@ namespace WebWriter.Models
 													nameof(VideoModel.Ecclesia),
 													nameof(VideoModel.Details) }.Contains(e.PropertyName))
 				{
-				if (!changeDictionary.ContainsKey(video))
-					changeDictionary.Add(video, ChangeType.Edit);
+				changeDictionary.TryAdd(video, ChangeType.Edit);
 				if (e.PropertyName == nameof(VideoModel.Tag))
 					CheckDuplicateTags();
 				}

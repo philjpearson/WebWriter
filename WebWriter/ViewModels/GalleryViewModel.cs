@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	04 February 2025 13:50:27
+//	Last mod:	05 February 2025 15:26:08
 //
 namespace WebWriter.ViewModels
 	{
@@ -23,6 +23,7 @@ namespace WebWriter.ViewModels
 	using System.Threading.Tasks;
 	using System.Windows;
 	using WebWriter.Models;
+	using WebWriter.Utilities;
 
 	public class GalleryViewModel : ViewModelBase
 		{
@@ -37,8 +38,6 @@ namespace WebWriter.ViewModels
 			this.messageService = messageService;
 
 			OkCommand = new Command<object>(OnOkCommandExecute);
-			ImportCommand = new Command<object>(OnImportExecute);
-			ExportCommand = new TaskCommand<object>(OnExportExecuteAsync);
 			SortCommand = new Command(OnSortCommandExecute);
 
 			Gallery = new GalleryModel();
@@ -51,29 +50,15 @@ namespace WebWriter.ViewModels
 
 		public override string Title { get { return "Video Gallery View"; } }
 
-		// TODO: Register models with the vmpropmodel codesnippet
 		/// <summary>
 		/// Gets or sets the property value.
 		/// </summary>
 		[Model]
 		[Expose(nameof(Videos))]
-		public GalleryModel Gallery
-			{
-			get { return GetValue<GalleryModel>(GalleryProperty); }
-			private set { SetValue(GalleryProperty, value); }
-			}
-
-		/// <summary>
-		/// Register the Gallery property so it is known in the class.
-		/// </summary>
-		public static readonly PropertyData GalleryProperty = RegisterProperty("Gallery", typeof(GalleryModel));
-
-		// TODO: Register view model properties with the vmprop or vmpropviewmodeltomodel codesnippets
+		public GalleryModel Gallery { get; set; }
 
 		[ViewModelToModel]
 		public ObservableCollection<VideoModel>? Videos { get; set; }
-
-		// TODO: Register commands with the vmcommand or vmcommandwithcanexecute codesnippets
 
 		/// <summary>
 		/// Gets the OkCommand command.
@@ -94,13 +79,28 @@ namespace WebWriter.ViewModels
 		/// <summary>
 		/// Gets the ImportCommand command.
 		/// </summary>
-		public Command<object> ImportCommand { get; private set; }
+		public Command<object?, object?> ImportCommand => importCommand ??= new Command<object?, object?>(ImportCommand_Execute, ImportCommand_CanExecute);
+
+		private Command<object?, object?>? importCommand;
+
+		/// <summary>
+		/// Method to check whether the ImportCommand command can be executed.
+		/// </summary>
+		/// <param name="parameter">The parameter of the command.</param>
+		private bool ImportCommand_CanExecute(object? parameter)
+			{
+			return StaticProperties.EditingEnabled;
+			}
 
 		/// <summary>
 		/// Method to invoke when the ImportCommand command is executed.
 		/// </summary>
-		private void OnImportExecute()
+		/// <param name="parameter">The parameter of the command.</param>
+		private void ImportCommand_Execute(object? parameter)
 			{
+			if (!StaticProperties.EditingEnabled)
+				return;
+
 			FileInfo fi = new FileInfo(excelFilePath);
 			using (ExcelPackage ep = new ExcelPackage(fi))
 				{
@@ -156,14 +156,21 @@ namespace WebWriter.ViewModels
 		/// <summary>
 		/// Gets the ExportCommand command.
 		/// </summary>
-		public TaskCommand<object> ExportCommand { get; private set; }
+		public TaskCommand ExportCommand => exportCommand ??= new TaskCommand(ExportCommandExecuteAsync, ExportCommandCanExecute);
+
+		private TaskCommand? exportCommand;
+
+		private bool ExportCommandCanExecute()
+			{
+			return StaticProperties.EditingEnabled;
+			}
 
 		/// <summary>
 		/// Method to invoke when the ExportCommand command is executed.
 		/// </summary>
-		private Task OnExportExecuteAsync(object param)
+		private async Task<bool> ExportCommandExecuteAsync()
 			{
-			return ExportToExcelAsync();
+			return await ExportToExcelAsync();
 			}
 
 		/// <summary>
@@ -185,27 +192,30 @@ namespace WebWriter.ViewModels
 
 			try
 				{
-				var response = await httpClient.GetAsync("https://staffordchristadelphians.org.uk/manage/index.php");
-				if (response.StatusCode != HttpStatusCode.OK)
-					await messageService.ShowWarningAsync($"Reading videos table failed: {response.ReasonPhrase}", Application.Current.MainWindow.Title);
-				else
+				using (var wait = new CursorOverride("earth.ani"))
 					{
-					var html = await response.Content.ReadAsStringAsync();
-					var doc = new HtmlDocument();
-					doc.LoadHtml(html);
-					var table = doc.DocumentNode.SelectSingleNode("//table[@class='videosTable']")
-											.Descendants("tr")
-											.Where(tr => tr.Elements("td").Count() > 1)
-											.Select(tr => tr.Elements("td").Select(td => td.InnerText.Trim()).ToList())
-											.ToList();
-					Videos!.Clear();
-
-					foreach (var row in table)
+					var response = await httpClient.GetAsync("https://staffordchristadelphians.org.uk/manage/index.php");
+					if (response.StatusCode != HttpStatusCode.OK)
+						await messageService.ShowWarningAsync($"Reading videos table failed: {response.ReasonPhrase}", Application.Current.MainWindow.Title);
+					else
 						{
-						Videos.Add(new VideoModel()
-							{ Id = int.Parse(row[0]), Date = DateTime.Parse(row[1]), Title = row[2], Tag = row[3], Link = row[4], Speaker = row[5], Ecclesia = row[6], Details = row[7] });
+						var html = await response.Content.ReadAsStringAsync();
+						var doc = new HtmlDocument();
+						doc.LoadHtml(html);
+						var table = doc.DocumentNode.SelectSingleNode("//table[@class='videosTable']")
+												.Descendants("tr")
+												.Where(tr => tr.Elements("td").Count() > 1)
+												.Select(tr => tr.Elements("td").Select(td => td.InnerText.Trim()).ToList())
+												.ToList();
+						Videos!.Clear();
+
+						foreach (var row in table)
+							{
+							Videos.Add(new VideoModel()
+								{ Id = int.Parse(row[0]), Date = DateTime.Parse(row[1]), Title = row[2], Tag = row[3], Link = row[4], Speaker = row[5], Ecclesia = row[6], Details = row[7] });
+							}
+						Gallery.ResetChanges();
 						}
-					Gallery.ResetChanges();
 					}
 				}
 			catch (Exception ex)
@@ -217,19 +227,21 @@ namespace WebWriter.ViewModels
 
 		protected override async Task<bool> SaveAsync()
 			{
-			if (Videos!.Any(v => v.HasDuplicateTag))
+			if (StaticProperties.EditingEnabled)
 				{
-				var answer = await messageService.ShowAsync("Save with duplicate tags?", Application.Current.MainWindow.Title, MessageButton.YesNo, MessageImage.Question);
-				if (answer == MessageResult.No)
-					return false;
-				}
-			try
-				{
-				var changes = Gallery.GetChanges();
-				foreach (var change in changes)
+				if (Videos!.Any(v => v.HasDuplicateTag))
 					{
-					switch (change.Value)
+					var answer = await messageService.ShowAsync("Save with duplicate tags?", Application.Current.MainWindow.Title, MessageButton.YesNo, MessageImage.Question);
+					if (answer == MessageResult.No)
+						return false;
+					}
+				try
+					{
+					var changes = Gallery.GetChanges();
+					foreach (var change in changes)
 						{
+						switch (change.Value)
+							{
 						case GalleryModel.ChangeType.Edit:
 							await UpdateVideoAsync(change.Key);
 							break;
@@ -245,16 +257,17 @@ namespace WebWriter.ViewModels
 						case GalleryModel.ChangeType.None:
 						default:
 							break;
+							}
 						}
 					}
+				catch (Exception ex)
+					{
+					Console.Write(ex.ToString());
+					await messageService.ShowErrorAsync(ex.Message);
+					return false;
+					}
+				Gallery.ResetChanges();
 				}
-			catch (Exception ex)
-				{
-				Console.Write(ex.ToString());
-				await messageService.ShowErrorAsync(ex.Message);
-				return false;
-				}
-			Gallery.ResetChanges();
 			return await base.SaveAsync();
 			}
 
@@ -333,8 +346,6 @@ namespace WebWriter.ViewModels
 
 		protected override async Task CloseAsync()
 			{
-			// TODO: unsubscribe from events here
-
 			httpClient.Dispose();
 			await base.CloseAsync();
 			}

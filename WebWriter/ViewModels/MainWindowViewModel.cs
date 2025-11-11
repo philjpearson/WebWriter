@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	04 February 2025 14:50:37
+//	Last mod:	11 November 2025 16:55:12
 //
 namespace WebWriter.ViewModels
 	{
@@ -12,8 +12,8 @@ namespace WebWriter.ViewModels
 	using Catel.MVVM;
 	using Catel.Services;
 	using RWS.UIClasses;
+	using WebWriter.Email;
 	using WebWriter.Models;
-	using WebWriter.Workers;
 
 	public class MainWindowViewModel : ViewModelBase
 		{
@@ -28,24 +28,46 @@ namespace WebWriter.ViewModels
 			Argument.IsNotNull(() => uiVisualiserService);
 			this.uiVisualiserService = uiVisualiserService;
 
-			ExitCommand = new Command<object>(OnExitExecute);
-			TitlesCommand = new TaskCommand<object>(OnTitlesExecute);
-			GalleryCommand = new TaskCommand<object>(OnGalleryExecute);
-			SettingsCommand = new TaskCommand(OnSettingsExecuteAsync);
-			CampaignGalleryCommand = new TaskCommand<object>(OnCampaignGalleryExecute);
+			ExitCommand = new Command<object?>(OnExitExecute);
+			TitlesCommand = new TaskCommand<object?>(OnTitlesExecute);
+			GalleryCommand = new TaskCommand<object?>(OnGalleryExecute);
+			CampaignGalleryCommand = new TaskCommand<object?>(OnCampaignGalleryExecute);
 			}
 
 		public override string Title { get { return "Phil's Web Writer"; } }
 
+		public bool UserIsEntitled { get { return Environment.UserName == "Phil"; } }
+
+		/// <summary>
+		/// Gets the EnableEditingCommand command.
+		/// </summary>
+		public Command<object?> EnableEditingCommand => enableEditingCommand ??= new Command<object?>(EnableEditingCommand_Execute);
+
+		private Command<object?>? enableEditingCommand;
+
+		/// <summary>
+		/// Method to invoke when the EnableEditingCommand command is executed.
+		/// </summary>
+		/// <param name="parameter">The parameter of the command.</param>
+		private void EnableEditingCommand_Execute(object? parameter)
+			{
+			if (UserIsEntitled)
+				{
+				StaticProperties.EditingEnabled = !StaticProperties.EditingEnabled;
+				LockdownProgrammeCommand.RaiseCanExecuteChanged();
+				SettingsCommand.RaiseCanExecuteChanged();
+				}
+			}
+
 		/// <summary>
 		/// Gets the ExitCommand command.
 		/// </summary>
-		public Command<object> ExitCommand { get; private set; }
+		public Command<object?> ExitCommand { get; private set; }
 
 		/// <summary>
 		/// Method to invoke when the ExitCommand command is executed.
 		/// </summary>
-		private void OnExitExecute(object parameter)
+		private void OnExitExecute(object? parameter)
 			{
 			Application.Current.Shutdown();
 			}
@@ -53,146 +75,168 @@ namespace WebWriter.ViewModels
 		/// <summary>
 		/// Gets the TitlesCommand command.
 		/// </summary>
-		public TaskCommand<object> TitlesCommand { get; private set; }
+		public TaskCommand<object?> TitlesCommand { get; private set; }
 
 		/// <summary>
 		/// Method to invoke when the TitlesCommand command is executed.
 		/// </summary>
-		private async Task<bool?> OnTitlesExecute(object parameter)
+		private async Task<bool?> OnTitlesExecute(object? parameter)
 			{
-			TitlesViewModel vm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<TitlesViewModel>();
-			return await uiVisualiserService.ShowDialogAsync(vm);
+			var vm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<TitlesViewModel>();
+			return (await uiVisualiserService.ShowDialogAsync(vm!)).DialogResult;
 			}
 
 		/// <summary>
 		/// Gets the GalleryCommand command.
 		/// </summary>
-		public TaskCommand<object> GalleryCommand { get; private set; }
+		public TaskCommand<object?> GalleryCommand { get; private set; }
 
 		/// <summary>
 		/// Method to invoke when the GalleryCommand command is executed.
 		/// </summary>
-		private async Task<bool?> OnGalleryExecute(object parameter)
+		private async Task<bool?> OnGalleryExecute(object? parameter)
 			{
-			GalleryViewModel gvm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<GalleryViewModel>();
-			return await uiVisualiserService.ShowDialogAsync(gvm);
+			var gvm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<GalleryViewModel>();
+			return (await uiVisualiserService.ShowDialogAsync(gvm!)).DialogResult;
 			}
 
 		/// <summary>
 		/// Gets the SettingsCommand command.
 		/// </summary>
-		public TaskCommand SettingsCommand { get; private set; }
+		public TaskCommand SettingsCommand => settingsCommand ??= new TaskCommand(SettingsCommandExecuteAsync, SettingsCommandCanExecute);
 
-		/// <summary>
-		/// Method to invoke when the Settings command is executed.
-		/// </summary>
-		private async Task OnSettingsExecuteAsync()
+		private TaskCommand? settingsCommand;
+
+		private bool SettingsCommandCanExecute()
 			{
-			var ant = new AntiHacker();
-			await ant.CheckDirectoriesAsync();
+			return StaticProperties.EditingEnabled;
+			}
+
+		private async Task SettingsCommandExecuteAsync()
+			{
+			//var ant = new AntiHacker();
+			//await ant.CheckDirectoriesAsync();
+			if (StaticProperties.EditingEnabled)
+				{
+				if (!UserIsEntitled)
+					{
+					MessageBox.Show("You are not entitled to access the settings.", Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Warning);
+					return;
+					}
+				IUIVisualizerService? uIVisualiserService = ServiceLocator.Default.ResolveType<IUIVisualizerService>();
+				if (uIVisualiserService is not null)
+					{
+					await uIVisualiserService.ShowDialogAsync<EmailRecipientsViewModel>();
+					}
+				}
 			}
 
 		/// <summary>
 		/// Gets the CampaignGalleryCommand command.
 		/// </summary>
-		public TaskCommand<object> CampaignGalleryCommand { get; private set; }
+		public TaskCommand<object?> CampaignGalleryCommand { get; private set; }
 
 		/// <summary>
 		/// Method to invoke when the CampaignGalleryCommand command is executed.
 		/// </summary>
-		private async Task<bool?> OnCampaignGalleryExecute(object parameter)
+		private async Task<bool?> OnCampaignGalleryExecute(object? parameter)
 			{
-			CampaignGalleryViewModel cgvm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<CampaignGalleryViewModel>();
-			return await uiVisualiserService.ShowDialogAsync(cgvm);
+			var cgvm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<CampaignGalleryViewModel>();
+			return (await uiVisualiserService.ShowDialogAsync(cgvm!)).DialogResult;
 			}
 
 		/// <summary>
 		/// Gets the RecordingsCommand command.
 		/// </summary>
-		public TaskCommand<object> RecordingsCommand
+		public TaskCommand<object?> RecordingsCommand
 			{
 			get
 				{
-				return recordingsCommand ??= new TaskCommand<object>(RecordingsCommand_Execute);
+				return recordingsCommand ??= new TaskCommand<object?>(RecordingsCommand_Execute);
 				}
 			}
 
-		private TaskCommand<object>? recordingsCommand;
+		private TaskCommand<object?>? recordingsCommand;
 
 		/// <summary>
 		/// Method to invoke when the RecordingsCommand command is executed.
 		/// </summary>
 		/// <param name="parameter">The parameter of the command.</param>
-		private async Task<bool?> RecordingsCommand_Execute(object parameter)
+		private async Task<bool?> RecordingsCommand_Execute(object? parameter)
 			{
-			RecordingsViewModel vm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<RecordingsViewModel>();
-			return await uiVisualiserService.ShowDialogAsync(vm);
+			var vm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<RecordingsViewModel>();
+			return (await uiVisualiserService.ShowDialogAsync(vm!)).DialogResult;
 			}
 
 		/// <summary>
 		/// Gets the SundayCommand command.
 		/// </summary>
-		public TaskCommand<object> SundayCommand
+		public TaskCommand<object?> SundayCommand
 			{
 			get
 				{
-				return sundayCommand ??= new TaskCommand<object>(SundayCommand_Execute);
+				return sundayCommand ??= new TaskCommand<object?>(SundayCommand_Execute);
 				}
 			}
 
-		private TaskCommand<object>? sundayCommand;
+		private TaskCommand<object?>? sundayCommand;
 
 		/// <summary>
 		/// Method to invoke when the RundayCommand command is executed.
 		/// </summary>
 		/// <param name="parameter">The parameter of the command.</param>
-		private async Task<bool?> SundayCommand_Execute(object parameter)
+		private async Task<bool?> SundayCommand_Execute(object? parameter)
 			{
 			var vm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<SundaysViewModel>();
-			return await uiVisualiserService.ShowDialogAsync(vm);
+			return (await uiVisualiserService.ShowDialogAsync(vm!)).DialogResult;
 			}
 
 		/// <summary>
 		/// Gets the SundayCommand command.
 		/// </summary>
-		public TaskCommand<object> BibleClassCommand
+		public TaskCommand<object?> BibleClassCommand
 			{
 			get
 				{
-				return bibleCassCommand ??= new TaskCommand<object>(BibleClassCommand_Execute);
+				return bibleCassCommand ??= new TaskCommand<object?>(BibleClassCommand_Execute);
 				}
 			}
 
-		private TaskCommand<object>? bibleCassCommand;
+		private TaskCommand<object?>? bibleCassCommand;
 
 		/// <summary>
 		/// Method to invoke when the RundayCommand command is executed.
 		/// </summary>
 		/// <param name="parameter">The parameter of the command.</param>
-		private async Task<bool?> BibleClassCommand_Execute(object parameter)
+		private async Task<bool?> BibleClassCommand_Execute(object? parameter)
 			{
 			var vm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<BibleClassViewModel>();
-			return await uiVisualiserService.ShowDialogAsync(vm);
+			return (await uiVisualiserService.ShowDialogAsync(vm!)).DialogResult;
 			}
 
 		/// <summary>
 		/// Gets the LockdownProgrammeCommand command.
 		/// </summary>
-		public TaskCommand<object> LockdownProgrammeCommand
+		public TaskCommand<object?, object?> LockdownProgrammeCommand
 			{
 			get
 				{
-				return lockdownProgrammeCommand ??= new TaskCommand<object>(LockdownProgrammeCommand_Execute);
+				return lockdownProgrammeCommand ??= new TaskCommand<object?, object?>(LockdownProgrammeCommand_Execute, LockdownProgrammeCommand_CanExecute);
 				}
 			}
 
-		private TaskCommand<object>? lockdownProgrammeCommand;
+		private bool LockdownProgrammeCommand_CanExecute(object? param)
+			{
+			return StaticProperties.EditingEnabled;
+			}
+
+		private TaskCommand<object?, object?>? lockdownProgrammeCommand;
 
 		/// <summary>
 		/// Method to invoke when the lockdownProgrammeCommand command is executed.
 		/// </summary>
 		/// <param name="parameter">The parameter of the command.</param>
-		private async Task<bool?> LockdownProgrammeCommand_Execute(object parameter)
+		private async Task<bool?> LockdownProgrammeCommand_Execute(object? parameter)
 			{
 			bool reportedError = false;
 
@@ -230,8 +274,18 @@ namespace WebWriter.ViewModels
 
 			if (result)
 				{
-				logger.Info("Programme CSV uploaded successfully");
-				MessageBox.Show("Programme update uploaded successfully", Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Information);
+				var emailed = await MailSender.SendMailAsync(MailSender.CreateProgrammeUpdateEmail());
+
+				if (emailed)
+					{
+					logger.Info("Programme CSV uploaded successfully and email sent");
+					MessageBox.Show("Programme update uploaded successfully and email sent", Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Information);
+					}
+				else
+					{
+					logger.Info("Programme CSV uploaded successfully but email sending failed");
+					MessageBox.Show("Programme update uploaded successfully but email sending failed", Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Warning);
+					}
 				}
 			else if (!reportedError)
 				{

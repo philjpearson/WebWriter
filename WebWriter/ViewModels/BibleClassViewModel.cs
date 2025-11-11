@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	04 February 2025 15:07:06
+//	Last mod:	10 November 2025 17:14:25
 //
 namespace WebWriter.ViewModels
 	{
@@ -21,6 +21,7 @@ namespace WebWriter.ViewModels
 
 		public BibleClassViewModel()
 			{
+			FutureOnly = true;
 			}
 
 		public override string Title { get { return "Bible Class bookings"; } }
@@ -31,7 +32,7 @@ namespace WebWriter.ViewModels
 
 		public DataView? BibleClass { get; set; }
 
-		public bool FutureOnly { get; set; } = true;
+		public bool FutureOnly { get; set; }
 
 		public bool UnprocessedOnly { get; set; }
 

@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	04 February 2025 11:06:41
+//	Last mod:	11 November 2025 16:41:08
 //
 using System.Reflection;
 using System.Resources;
@@ -55,4 +55,4 @@ using System.Windows;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.25035.0")]
+[assembly: AssemblyFileVersion("1.0.25315.0")]

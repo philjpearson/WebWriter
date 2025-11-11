@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	04 February 2025 15:07:05
+//	Last mod:	10 November 2025 17:14:25
 //
 using System;
 using System.Collections.Generic;
@@ -65,11 +65,12 @@ namespace WebWriter.Models
 				return false;
 				}
 
-			ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+			ExcelPackage.License.SetNonCommercialPersonal("Stafford Christadelphians");
 			using var ep = new ExcelPackage(excelFile);
 			try
 				{
 				ExcelWorksheet? ws;
+				int startYear = DateTime.Now.Year;
 
 #if false
 				ws = (from w in ep.Workbook.Worksheets where w.Name == "2024" select w).FirstOrDefault();
@@ -88,11 +89,29 @@ namespace WebWriter.Models
 						}
 					}
 #endif
-				ws = (from w in ep.Workbook.Worksheets where w.Name == "2025" select w).FirstOrDefault();
+				ws = (from w in ep.Workbook.Worksheets where w.Name == startYear.ToString() select w).FirstOrDefault();
 				if (ws != null)
 					{
 					int row = 4;
-					while (ws.Cells[row, 2].Value is DateTime dt && dt.Year == 2025)
+
+					while (ws.Cells[row, 2].Value is DateTime dt && dt.Year == startYear)
+						{
+						var sunday = Programme!.Where(p => p.Date.Date == dt.Date).FirstOrDefault();
+						if (sunday != null)
+							{
+							sunday.Collection2 = ws.Cells[row, 21].Value as string;
+							sunday.Collection3 = ws.Cells[row, 22].Value as string;
+							}
+						row++;
+						}
+					}
+				startYear++;
+				ws = (from w in ep.Workbook.Worksheets where w.Name == startYear.ToString() select w).FirstOrDefault();
+				if (ws != null)
+					{
+					int row = 4;
+
+					while (ws.Cells[row, 2].Value is DateTime dt && dt.Year == startYear)
 						{
 						var sunday = Programme!.Where(p => p.Date.Date == dt.Date).FirstOrDefault();
 						if (sunday != null)

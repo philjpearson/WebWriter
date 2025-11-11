@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	04 February 2025 12:54:04
+//	Last mod:	04 February 2025 16:38:59
 //
 using System;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ public class ProgrammeModel
 	{
 	private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-	private readonly IMessageService messageService;
+	private readonly IMessageService? messageService;
 	private readonly DayOfWeek day;
 
 	public List<ProgrammeItem> Programme { get; set; } = [];
@@ -81,20 +81,21 @@ public class ProgrammeModel
 		catch (Exception ex)
 			{
 			logger.Error($"Export to Excel failed: {ex.Message}");
-			await messageService.ShowAsync($"Excel export failed: {ex.Message}", RWS.UIClasses.AssemblyInfo.AssemblyTitle, MessageButton.OK, MessageImage.Error);
+			await messageService?.ShowAsync($"Excel export failed: {ex.Message}", RWS.UIClasses.AssemblyInfo.AssemblyTitle, MessageButton.OK, MessageImage.Error)!;
 			}
 		}
 
 	object?[] ExportRowSupplier(ProgrammeItem pi)
 		{
-		object?[] result = new object?[15];
+		object?[] result = new object?[5];
 
-		result[0] = pi.Date;
-		result[1] = pi.Speaker;
-		result[2] = pi.Ecclesia;
+		int index = 0;
+		result[index++] = pi.Date;
+		result[index++] = pi.Speaker;
+		result[index++] = pi.Ecclesia;
 		if (day == DayOfWeek.Wednesday)
-			result[4] = pi.Subject;
-		result[3] = pi.Email;
+			result[index++] = pi.Subject;
+		result[index++] = pi.Email;
 		return result;
 		}
 	}

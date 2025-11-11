@@ -1,16 +1,10 @@
 ﻿//
-//	Last mod:	03 May 2021 13:00:30
+//	Last mod:	04 February 2025 15:46:07
 //
 namespace WebWriter
 	{
 	using System.Windows;
-
-	using Catel.ApiCop;
-	using Catel.ApiCop.Listeners;
-	using Catel.IoC;
 	using Catel.Logging;
-	using Catel.Reflection;
-	using Catel.Windows;
 
 	/// <summary>
 	/// Interaction logic for App.xaml
@@ -52,15 +46,6 @@ namespace WebWriter
 			Log.Info("Calling base.OnStartup");
 
 			base.OnStartup(e);
-			}
-
-		protected override void OnExit(ExitEventArgs e)
-			{
-			// Get advisory report in console
-			ApiCopManager.AddListener(new ConsoleApiCopListener());
-			ApiCopManager.WriteResults();
-
-			base.OnExit(e);
 			}
 		}
 	}

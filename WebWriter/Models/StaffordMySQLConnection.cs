@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	27 January 2024 20:27:01
+//	Last mod:	07 February 2025 16:47:38
 //
 using System;
 using MySqlConnector;
@@ -10,7 +10,7 @@ namespace WebWriter.Models
 	{
 	class StaffordMySQLConnection : IDisposable
 		{
-		private string server = "srv495.hstgr.io";
+		private string server = "srv583.hstgr.io"; // "srv495.hstgr.io"
 		private string userName = "u880159079_phil";
 		private const string password = "z6ZjgSn4tfkM_nD";
 

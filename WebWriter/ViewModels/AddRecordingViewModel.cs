@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	04 February 2025 12:07:59
+//	Last mod:	04 February 2025 16:00:16
 //
 using System.Threading.Tasks;
 using Catel.MVVM;
@@ -33,22 +33,22 @@ namespace WebWriter.ViewModels
 		/// <summary>
 		/// Gets the BrowseCommand command.
 		/// </summary>
-		public TaskCommand<object> BrowseCommand
+		public TaskCommand<object?> BrowseCommand
 			{
 			get
 				{
-				browseCommand ??= new TaskCommand<object>(BrowseCommand_ExecuteAsync);
+				browseCommand ??= new TaskCommand<object?>(BrowseCommand_ExecuteAsync);
 				return browseCommand;
 				}
 			}
 
-		private TaskCommand<object>? browseCommand;
+		private TaskCommand<object?>? browseCommand;
 
 		/// <summary>
 		/// Method to invoke when the BrowseCommand command is executed.
 		/// </summary>
 		/// <param name="parameter">The parameter of the command.</param>
-		private async Task BrowseCommand_ExecuteAsync(object parameter)
+		private async Task BrowseCommand_ExecuteAsync(object? parameter)
 			{
 			fileOpenContext.Title = "Select the audio recording";
 			fileOpenContext.Filter = "mp3 files (*.mp3)|*.mp3|All files (*.*)|*.*";

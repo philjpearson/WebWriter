@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	04 February 2025 12:07:56
+//	Last mod:	04 February 2025 16:38:57
 //
 namespace WebWriter.ViewModels
 	{
@@ -19,70 +19,30 @@ namespace WebWriter.ViewModels
 
 		public override string Title { get { return "Campaign Photo Gallery"; } }
 
-		// TODO: Register models with the vmpropmodel codesnippet
+		public string Folder { get; set; }
 
-		// TODO: Register view model properties with the vmprop or vmpropviewmodeltomodel codesnippets
-		/// <summary>
-		/// Gets or sets the Folder property value
-		/// </summary>
-		public string Folder
-			{
-			get { return GetValue<string>(FolderProperty); }
-			set { SetValue(FolderProperty, value); }
-			}
+		public List<string> Files { get; set; } = [];
 
-		/// <summary>
-		/// Register the Folder property so it is known in the class.
-		/// </summary>
-		public static readonly PropertyData FolderProperty = RegisterProperty("Folder", typeof(string));
+		public string Output { get; set; } = string.Empty;
 
-		/// <summary>
-		/// Gets or sets the Files property value
-		/// </summary>
-		public List<string> Files
-			{
-			get { return GetValue<List<string>>(FilesProperty); }
-			set { SetValue(FilesProperty, value); }
-			}
-
-		/// <summary>
-		/// Register the Files property so it is known in the class.
-		/// </summary>
-		public static readonly PropertyData FilesProperty = RegisterProperty("Files", typeof(List<string>));
-
-		/// <summary>
-		/// Gets or sets the Output property value
-		/// </summary>
-		public string Output
-			{
-			get { return GetValue<string>(OutputProperty); }
-			set { SetValue(OutputProperty, value); }
-			}
-
-		/// <summary>
-		/// Register the Output property so it is known in the class.
-		/// </summary>
-		public static readonly PropertyData OutputProperty = RegisterProperty("Output", typeof(string));
-
-		// TODO: Register commands with the vmcommand or vmcommandwithcanexecute codesnippets
 		/// <summary>
 		/// Gets the GoCommand command.
 		/// </summary>
-		public Command<object> GoCommand
+		public Command<object?> GoCommand
 			{
 			get
 				{
-				return goCommand ??= new Command<object>(GoCommand_Execute);
+				return goCommand ??= new Command<object?>(GoCommand_Execute);
 				}
 			}
 
-		private Command<object>? goCommand;
+		private Command<object?>? goCommand;
 
 		/// <summary>
 		/// Method to invoke when the GoCommand command is executed.
 		/// </summary>
 		/// <param name="parameter">The parameter of the command.</param>
-		private void GoCommand_Execute(object parameter)
+		private void GoCommand_Execute(object? parameter)
 			{
 			var files = Directory.GetFiles(Folder, "*.jpg", SearchOption.AllDirectories).ToList();
 			Files = files.Where(f=>!f.Contains("thumbnails")).ToList();
@@ -91,21 +51,21 @@ namespace WebWriter.ViewModels
 		/// <summary>
 		/// Gets the CreateOutputCommand command.
 		/// </summary>
-		public Command<object> CreateOutputCommand
+		public Command<object?> CreateOutputCommand
 			{
 			get
 				{
-				return createOutputCommand ??= new Command<object>(CreateOutputCommand_Execute);
+				return createOutputCommand ??= new Command<object?>(CreateOutputCommand_Execute);
 				}
 			}
 
-		private Command<object>? createOutputCommand;
+		private Command<object?>? createOutputCommand;
 
 		/// <summary>
 		/// Method to invoke when the CreateOutputCommand command is executed.
 		/// </summary>
 		/// <param name="parameter">The parameter of the command.</param>
-		private void CreateOutputCommand_Execute(object parameter)
+		private void CreateOutputCommand_Execute(object? parameter)
 			{
 			//var data = [
 			//  {

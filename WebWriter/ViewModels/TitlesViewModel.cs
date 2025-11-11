@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	04 February 2025 12:07:57
+//	Last mod:	04 February 2025 16:38:57
 //
 namespace WebWriter.ViewModels
 	{
@@ -18,31 +18,19 @@ namespace WebWriter.ViewModels
 		{
 		public TitlesViewModel()
 			{
+			Titles = [];
 			}
 
 		public override string Title { get { return "Bible Hour Titles"; } }
 
 		const string filePath = @"C:\Users\Phil\OneDrive\My Documents\Ecclesia\Web site\titles.csv";
 
-		/// <summary>
-		/// Gets or sets the Titles property value
-		/// </summary>
-		public ObservableCollection<BibleHourTitle> Titles
-			{
-			get { return GetValue<ObservableCollection<BibleHourTitle>>(TitlesProperty); }
-			set { SetValue(TitlesProperty, value); }
-			}
-
-		/// <summary>
-		/// Register the Titles property so it is known in the class.
-		/// </summary>
-		public static readonly PropertyData TitlesProperty = RegisterProperty("Titles", typeof(ObservableCollection<BibleHourTitle>));
+		public ObservableCollection<BibleHourTitle> Titles { get; set; }
 
 		protected override async Task InitializeAsync()
 			{
 			await base.InitializeAsync();
 
-			Titles = [];
 			try
 				{
 				var engine = new FileHelperEngine<BibleHourTitleRecord>();

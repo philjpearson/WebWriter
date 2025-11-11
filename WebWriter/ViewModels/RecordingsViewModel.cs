@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	04 February 2025 15:07:06
+//	Last mod:	04 February 2025 15:45:18
 //
 namespace WebWriter.ViewModels
 	{
@@ -23,7 +23,7 @@ namespace WebWriter.ViewModels
 		{
 		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-		private readonly UIVisualizerService uiVisualiserService;
+		private readonly UIVisualizerService? uiVisualiserService;
 
 		public class Recording : ModelBase
 			{
@@ -78,7 +78,7 @@ namespace WebWriter.ViewModels
 		/// Method to check whether the AddCommand command can be executed.
 		/// </summary>
 		/// <param name="parameter">The parameter of the command.</param>
-		private bool AddCommand_CanExecute(object parameter)
+		private bool AddCommand_CanExecute(object? parameter)
 			{
 			return true;
 			}
@@ -87,17 +87,17 @@ namespace WebWriter.ViewModels
 		/// Method to invoke when the AddCommand command is executed.
 		/// </summary>
 		/// <param name="parameter">The parameter of the command.</param>
-		private async Task AddCommand_ExecuteAsync(object parameter)
+		private async Task AddCommand_ExecuteAsync(object? parameter)
 			{
 			var vm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<AddRecordingViewModel>();
-			if (await uiVisualiserService.ShowDialogAsync(vm) == true)
+			if ((await uiVisualiserService!.ShowDialogAsync(vm!)).DialogResult == true)
 				{
 				var t = dsRecordings!.Tables["Recordings"]!;
-				if (!t.AsEnumerable().Any(r => (string)r["File"] == vm.FilePath))
+				if (!t.AsEnumerable().Any(r => (string)r["File"] == vm!.FilePath))
 					{
 					var recordingToAdd = new RecordingToAdd
 						{
-						TypeId = vm.TypeId,
+						TypeId = vm!.TypeId,
 						FilePath = vm.FilePath!,
 						Text = vm.Text ?? string.Empty,
 						Speaker = vm.Speaker ?? string.Empty,

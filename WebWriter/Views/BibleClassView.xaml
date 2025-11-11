@@ -1,4 +1,4 @@
-﻿<!-- Last mod: 04 February 2025 09:29:31 -->
+﻿<!-- Last mod: 05 February 2025 14:10:21 -->
 
 <catel:DataWindow x:Class="WebWriter.Views.BibleClassView"
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -6,6 +6,7 @@
                   xmlns:catel="http://schemas.catelproject.com"
 									xmlns:doodads="clr-namespace:Doodads;assembly=Doodads"
                   xmlns:vm="clr-namespace:WebWriter.ViewModels"
+									xmlns:models="clr-namespace:WebWriter.Models"
                   SizeToContent="Width" ResizeMode="CanResizeWithGrip"
                   Title="{Binding Title}"
                   >
@@ -26,7 +27,8 @@
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 
-		<DataGrid ItemsSource="{Binding BibleClass}" AutoGenerateColumns="False" RowStyle="{StaticResource BookingRowStyle}">
+		<DataGrid ItemsSource="{Binding BibleClass}" AutoGenerateColumns="False" RowStyle="{StaticResource BookingRowStyle}"
+							IsReadOnly="{Binding Path=(models:StaticProperties.EditingEnabled),Mode=OneWay,Converter={catel:BooleanToOppositeBooleanConverter}}">
 			<DataGrid.Columns>
 				<DataGridTextColumn Binding="{Binding Date,StringFormat=dd MMM yyyy}" Header="Date" Width="100" />
 				<DataGridTextColumn Binding="{Binding Speaker}" Header="Speaker" Width="150"/>
@@ -44,6 +46,7 @@
 				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition />
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
@@ -57,7 +60,9 @@
 										 CheckedBackground="Green" CheckedForeground="White" UncheckedBackground="DarkRed" UncheckedForeground="White"
 										 CheckedText="On" UncheckedText="Off" CornerRadius="6" Width="50" Height="20" ThumbCornerRadius="6" 
 										 Margin="6"/>
-			<Button Grid.Column="5" Content="Export" Command="{Binding ExportCommand}" Padding="16,6" />
+			<TextBlock Grid.Column="5" Text="Editing Enabled" Visibility="{Binding Path=(models:StaticProperties.EditingEnabled),Mode=OneWay,Converter={catel:BooleanToHidingVisibilityConverter}}"
+								 HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Foreground="Green"/>
+			<Button Grid.Column="6" Content="Export" Command="{Binding ExportCommand}" Padding="16,6" />
 		</Grid>
 	</Grid>
 </catel:DataWindow>

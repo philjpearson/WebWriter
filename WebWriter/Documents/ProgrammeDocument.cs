@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	04 February 2025 14:36:47
+//	Last mod:	27 September 2025 11:58:22
 //
 using System;
 using System.Linq;
@@ -18,7 +18,7 @@ namespace WebWriter.Documents
 		DateTime startDate;
 
 		public ProgrammeDocument(LockdownProgramme programme, DateTime startDate)
-			: base("Stafford Christadelphian Ecclesia", "Programme 2025 (God willing)")
+			: base("Stafford Christadelphian Ecclesia", "Programme 2025-2026 (God willing)")
 			{
 			this.startDate = startDate;
 			Programme = programme;
