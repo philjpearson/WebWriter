@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	10 November 2025 17:14:25
+//	Last mod:	28 November 2025 11:05:03
 //
 namespace WebWriter.ViewModels
 	{
@@ -91,6 +91,7 @@ namespace WebWriter.ViewModels
 						dsBibleClass = new DataSet();
 						daBibleClass.Fill(dsBibleClass, "BibleClassDates");
 						BibleClass = dsBibleClass.Tables["BibleClassDates"]!.DefaultView;
+						BibleClass.ListChanged += (s, e) => { RaisePropertyChanged(nameof(BibleClass)); };
 						}
 				}
 			catch (Exception ex)

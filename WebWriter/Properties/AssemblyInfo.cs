@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	11 November 2025 16:41:08
+//	Last mod:	30 March 2026 12:42:17
 //
 using System.Reflection;
 using System.Resources;
@@ -16,7 +16,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("WebWriter")]
-[assembly: AssemblyCopyright("Copyright © by Phil J Pearson 2015-2025")]
+[assembly: AssemblyCopyright("Copyright © by Phil J Pearson 2015-2026")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: SupportedOSPlatform("windows")]
@@ -55,4 +55,4 @@ using System.Windows;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.25315.0")]
+[assembly: AssemblyFileVersion("1.0.26089.0")]

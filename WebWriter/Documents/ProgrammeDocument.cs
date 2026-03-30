@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	27 September 2025 11:58:22
+//	Last mod:	30 March 2026 12:42:24
 //
 using System;
 using System.Linq;
@@ -21,6 +21,13 @@ namespace WebWriter.Documents
 			: base("Stafford Christadelphian Ecclesia", "Programme 2025-2026 (God willing)")
 			{
 			this.startDate = startDate;
+			int startYear = Math.Min(programme.Sunday.First().Date.Year, programme.BibleClass.First().Date.Year);
+			int endYear = Math.Max(programme.Sunday.Last().Date.Year, programme.BibleClass.Last().Date.Year);
+			if (startYear == endYear)
+				Subtitle = $"Programme for {startYear} (God willing)";
+			else
+				Subtitle = $"Programme for {startYear}-{endYear} (God willing)";
+
 			Programme = programme;
 			HeaderImageResourceName = "";
 			FooterLeftText = $"Issued: {DateTime.Now:d MMMM yyyy}";

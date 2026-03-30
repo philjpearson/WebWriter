@@ -1,12 +1,14 @@
 ﻿//
-//	Last mod:	11 November 2025 16:55:12
+//	Last mod:	04 December 2025 17:02:38
 //
 namespace WebWriter.ViewModels
 	{
 	using System;
+	using System.Collections.Generic;
 	using System.IO;
 	using System.Threading.Tasks;
 	using System.Windows;
+	using System.Windows.Documents;
 	using Catel;
 	using Catel.IoC;
 	using Catel.MVVM;
@@ -242,6 +244,8 @@ namespace WebWriter.ViewModels
 
 			var filePath = @"C:\Users\Phil\OneDrive\My Documents\Ecclesia\Programme\LockdownProgramme.csv";
 
+			TrimCSV(filePath);
+
 			logger.Info("Uploading programme CSV file");
 			var result = Uploader.Upload(filePath, "private/programme/LockdownProgramme.csv");
 
@@ -293,6 +297,22 @@ namespace WebWriter.ViewModels
 				MessageBox.Show("Oops! Something went wrong", Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
 				}
 			return await Task.FromResult(result);
+			}
+
+		private void TrimCSV(string filePath)
+			{
+			var lines = new List<string>(File.ReadAllLines(filePath));
+			int i = 0;
+			while (i < lines.Count)
+				{
+				if (lines[i].Replace(",", "").Trim().Length == 0)
+					{
+					lines.RemoveAt(i);
+					}
+				else
+					i++;
+				}
+			File.WriteAllLines(filePath, lines);
 			}
 
 		protected override Task CloseAsync()

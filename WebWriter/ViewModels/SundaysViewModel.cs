@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	10 November 2025 17:14:25
+//	Last mod:	28 November 2025 11:09:42
 //
 namespace WebWriter.ViewModels
 	{
@@ -99,6 +99,7 @@ namespace WebWriter.ViewModels
 						dsSundays = new DataSet();
 						daSundays.Fill(dsSundays, "SundayDates");
 						Sundays = dsSundays.Tables["SundayDates"]!.DefaultView;
+						Sundays.ListChanged += (s, e) => { RaisePropertyChanged(nameof(Sundays)); };
 						dbCon.Close();
 						}
 				}

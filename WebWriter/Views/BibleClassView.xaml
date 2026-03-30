@@ -1,4 +1,4 @@
-﻿<!-- Last mod: 05 February 2025 14:10:21 -->
+﻿<!-- Last mod: 28 November 2025 11:05:03 -->
 
 <catel:DataWindow x:Class="WebWriter.Views.BibleClassView"
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
