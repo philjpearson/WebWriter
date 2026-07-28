@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	04 December 2025 17:02:38
+//	Last mod:	27 July 2026 19:52:09
 //
 namespace WebWriter.ViewModels
 	{
@@ -100,6 +100,19 @@ namespace WebWriter.ViewModels
 			{
 			var gvm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<GalleryViewModel>();
 			return (await uiVisualiserService.ShowDialogAsync(gvm!)).DialogResult;
+			}
+
+		/// <summary>
+		/// Gets the BcVideosCommand command.
+		/// </summary>
+		public TaskCommand BcVideosCommand => _BcVideosCommand ??= new TaskCommand(BcVideosCommandExecuteAsync);
+
+		private TaskCommand? _BcVideosCommand;
+
+		private async Task<bool?> BcVideosCommandExecuteAsync()
+			{
+			var bcgvm = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<BcGalleryViewModel>();
+			return (await uiVisualiserService.ShowDialogAsync(bcgvm!)).DialogResult;
 			}
 
 		/// <summary>

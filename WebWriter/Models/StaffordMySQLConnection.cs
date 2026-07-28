@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	07 February 2025 16:47:38
+//	Last mod:	28 July 2026 15:50:35
 //
 using System;
 using MySqlConnector;
@@ -20,7 +20,7 @@ namespace WebWriter.Models
 
 		public StaffordMySQLConnection()
 			{
-			string connstring = string.Format($"Server={server}; Database={DatabaseName}; Uid={userName}; Pwd={password}");
+			string connstring = string.Format($"Server={server}; Database={DatabaseName}; Uid={userName}; Pwd={password}; Convert Zero Datetime=True; Allow Zero Datetime=True");
 			Connection = new MySqlConnection(connstring);
 			}
 

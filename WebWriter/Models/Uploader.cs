@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	04 February 2025 15:07:05
+//	Last mod:	24 June 2026 13:11:26
 //
 using System;
 using System.IO;
@@ -21,7 +21,8 @@ namespace WebWriter.Models
 			{
 			int i = 1 + remotePath.LastIndexOf('/');
 			string remoteFilename = remotePath[i..];
-			string remoteAddress = $"ftp://staffordchristadelphians.org.uk/{remotePath}.new";
+//			string remoteAddress = $"ftp://staffordchristadelphians.org.uk/{remotePath}.new";
+			string remoteAddress = $"ftp://153.92.7.25/{remotePath}.new";
 			FtpWebRequest request = (FtpWebRequest)WebRequest.Create(remoteAddress);
 			request.Method = WebRequestMethods.Ftp.UploadFile;
 			request.Credentials = new NetworkCredential(ftpUserName, ftpPassword);

@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	05 February 2025 15:11:31
+//	Last mod:	27 July 2026 19:52:55
 //
 using System;
 using System.Collections.Generic;
@@ -26,27 +26,6 @@ namespace WebWriter.Models
 		public enum ChangeType { None, Edit, Add, Delete };
 
 		private readonly Dictionary<VideoModel, ChangeType> changeDictionary = [];
-
-		//public static GalleryModel Load(string filePath)
-		//	{
-		//	GalleryModel gallery = null;
-
-		//	using (FileStream stream = new FileStream(filePath, FileMode.Open))
-		//		{
-		//		gallery = Load(stream, SerializationFactory.GetXmlSerializer());
-		//		}
-		//	return gallery;
-		//	}
-
-		/// <summary>
-		/// Initializes a new object based on <see cref="SerializationInfo"/>.
-		/// </summary>
-		/// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
-		/// <param name="context"><see cref="StreamingContext"/>.</param>
-		protected GalleryModel(SerializationInfo info, StreamingContext context)
-				//: base(info, context)
-			{
-			}
 
 		public ObservableCollection<VideoModel> Videos { get; set; }
 
