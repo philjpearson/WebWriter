@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	28 July 2026 16:17:45
+//	Last mod:	28 July 2026 17:16:50
 //
 namespace WebWriter.ViewModels
 	{
@@ -245,9 +245,9 @@ namespace WebWriter.ViewModels
 			if (dbCon.Open())
 				{
 				using var cmd = dbCon.Connection.CreateCommand();
-				cmd.CommandText = query;
+					cmd.CommandText = query;
 					cmd.Parameters.AddWithValue("@key", video.Key);
-					cmd.Parameters.AddWithValue("@date", video.Date);
+					cmd.Parameters.AddWithValue("@date", new MySqlDateTime(video.Date));
 					cmd.Parameters.AddWithValue("@title", video.Title);
 					cmd.Parameters.AddWithValue("@speaker", video.Speaker);
 					cmd.Parameters.AddWithValue("@ecclesia", video.Ecclesia);
@@ -284,12 +284,18 @@ namespace WebWriter.ViewModels
 
 		private async Task UpdateVideoAsync(BcVideoModel video)
 			{
-			string query = @$"UPDATE BCVideos SET `Date`='{video.Date}',`Title`='{video.Title}',`Speaker`='{video.Speaker}',`Ecclesia`='{video.Ecclesia}',`Link`='{video.Link}' WHERE `Key`='{video.Key}'";
+			string query = @$"UPDATE BCVideos SET `Date`=@date,`Title`=@title,`Speaker`=@speaker,`Ecclesia`=@ecclesia,`Link`=@link WHERE `Key`='{video.Key}'";
 			using (dbCon = new StaffordMySQLConnection())
 				if (dbCon.Open())
 					{
 					using var cmd = dbCon.Connection.CreateCommand();
 					cmd.CommandText = query;
+					cmd.Parameters.AddWithValue("@key", video.Key);
+					cmd.Parameters.AddWithValue("@date", new MySqlDateTime(video.Date));
+					cmd.Parameters.AddWithValue("@title", video.Title);
+					cmd.Parameters.AddWithValue("@speaker", video.Speaker);
+					cmd.Parameters.AddWithValue("@ecclesia", video.Ecclesia);
+					cmd.Parameters.AddWithValue("@link", video.Link);
 					try
 						{
 						await cmd.ExecuteNonQueryAsync();
