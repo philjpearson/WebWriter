@@ -1,4 +1,4 @@
-﻿<!-- Last mod: 27 July 2026 19:48:32 -->
+﻿<!-- Last mod: 17 October 2026 18:07:59 -->
 
 <catel:Window x:Class="WebWriter.Views.MainWindow"
               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -78,6 +78,9 @@
 				</Button>
 				<Button Grid.Row="1" Grid.Column="1" Height="150" Background="{DynamicResource BackgroundBrush}" BorderThickness="3" Margin="6,0,0,6" Command="{Binding SundayCommand}" >
 					<TextBlock FontFamily="Segoe UI Semibold" Text="Sundays" FontSize="48" TextOptions.TextFormattingMode="Display" TextWrapping="Wrap" TextAlignment="Center" Foreground="{DynamicResource TextBrush}" />
+				</Button>
+				<Button Grid.Row="1" Grid.Column="2" Height="150" Background="{DynamicResource BackgroundBrush}" BorderThickness="3" Margin="6,0,0,6" Command="{Binding ForPhilCommand}" >
+					<TextBlock FontFamily="Segoe UI Semibold" Text="for Phil" FontSize="48" TextOptions.TextFormattingMode="Display" TextWrapping="Wrap" TextAlignment="Center" Foreground="{DynamicResource TextBrush}" />
 				</Button>
 			</Grid>
       <Grid Grid.Row="2" Visibility="{Binding UserIsEntitled,Converter={catel:BooleanToCollapsingVisibilityConverter}}">

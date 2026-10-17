@@ -1,5 +1,5 @@
 ﻿//
-//	Last mod:	27 July 2026 19:52:09
+//	Last mod:	17 October 2026 18:08:00
 //
 namespace WebWriter.ViewModels
 	{
@@ -9,6 +9,7 @@ namespace WebWriter.ViewModels
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Documents;
+	using System.Windows.Input;
 	using Catel;
 	using Catel.IoC;
 	using Catel.MVVM;
@@ -57,6 +58,7 @@ namespace WebWriter.ViewModels
 				{
 				StaticProperties.EditingEnabled = !StaticProperties.EditingEnabled;
 				LockdownProgrammeCommand.RaiseCanExecuteChanged();
+				ForPhilCommand.RaiseCanExecuteChanged();
 				SettingsCommand.RaiseCanExecuteChanged();
 				}
 			}
@@ -129,8 +131,6 @@ namespace WebWriter.ViewModels
 
 		private async Task SettingsCommandExecuteAsync()
 			{
-			//var ant = new AntiHacker();
-			//await ant.CheckDirectoriesAsync();
 			if (StaticProperties.EditingEnabled)
 				{
 				if (!UserIsEntitled)
@@ -310,6 +310,65 @@ namespace WebWriter.ViewModels
 				MessageBox.Show("Oops! Something went wrong", Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
 				}
 			return await Task.FromResult(result);
+			}
+
+		/// <summary>
+		/// Gets the ForPhilCommand command.
+		/// </summary>
+		public TaskCommand<object?, object?> ForPhilCommand
+			{
+			get
+				{
+				return forPhilCommand ??= new TaskCommand<object?, object?>(ForPhilCommand_Execute, ForPhilCommand_CanExecute);
+				}
+			}
+
+		private bool ForPhilCommand_CanExecute(object? param)
+			{
+			return StaticProperties.EditingEnabled;
+			}
+
+		private TaskCommand<object?, object?>? forPhilCommand;
+
+		private async Task<bool> ForPhilCommand_Execute(object? parameter)
+			{
+			bool upload = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
+			return await CreateAndMaybeUploadPdf(upload);
+			}
+
+		private async Task<bool> CreateAndMaybeUploadPdf(bool upload)
+			{
+			bool result = false;
+			var filePath = @"C:\Users\Phil\OneDrive\My Documents\Ecclesia\Programme\LockdownProgramme.csv";
+
+			TrimCSV(filePath);
+
+			await Task.Run(() =>
+				{ 
+				try
+					{
+					var prog = LockdownProgramme.Load(filePath);
+					var sundays = prog.Sunday;
+					var bibleClass = prog.BibleClass;
+
+					filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"Ecclesia\Programme\Ecclesial programme.pdf");
+					result = prog.CreatePdf(filePath, new DateTime(2024, 9, 1));
+					if (result && upload)
+						{
+						result = Uploader.Upload(filePath, "programme/Ecclesial programme.pdf", true);
+						if (result)
+							logger.Info("Programme PDF uploaded successfully.");
+						else
+							logger.Error("Programme PDF upload failed.");
+						}
+					}
+				catch (Exception ex)
+					{
+					logger.Error("Error creating PDF: {0}", ex.Message);
+					MessageBox.Show($"Error creating PDF: {ex.Message}", Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
+					}
+				});
+			return result;
 			}
 
 		private void TrimCSV(string filePath)
